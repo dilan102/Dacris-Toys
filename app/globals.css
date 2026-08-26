@@ -402,12 +402,30 @@ svg {
   border-radius: 18px;
 }
 
-.product-card > img {
+.product-card > img,
+.product-card > a > img {
   width: 100%;
   aspect-ratio: 1.2 / 1;
+  height: auto;
   border-radius: 12px;
   object-fit: cover;
   background: #edf9fb;
+}
+
+.product-card > a {
+  display: block;
+}
+
+.add-button {
+  display: grid;
+  place-items: center;
+  flex: 0 0 39px;
+  width: 39px;
+  height: 39px;
+  border-radius: 999px;
+  color: white;
+  background: var(--purple);
+  box-shadow: 0 8px 15px rgba(155, 92, 255, 0.23);
 }
 
 .product-card h3 {
@@ -452,6 +470,457 @@ svg {
   color: white;
   background: var(--purple);
   box-shadow: 0 8px 15px rgba(155, 92, 255, 0.23);
+}
+
+.inner-page {
+  padding-top: 18px;
+}
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 15;
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) 48px;
+  align-items: center;
+  gap: 12px;
+  width: min(100%, 1160px);
+  margin: 0 auto;
+  padding: 0 20px 12px;
+  background: rgba(248, 247, 255, 0.96);
+}
+
+.app-header > strong {
+  justify-self: center;
+  color: #26324a;
+  font-size: 18px;
+  font-weight: 950;
+}
+
+.page-intro {
+  margin: 22px 0 18px;
+}
+
+.page-intro h1 {
+  color: #26324a;
+  font-size: 30px;
+  font-weight: 950;
+  line-height: 1.05;
+}
+
+.page-intro p {
+  max-width: 520px;
+  margin-top: 7px;
+  color: var(--muted);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.compact-intro {
+  margin: 0;
+}
+
+.product-detail,
+.cart-layout,
+.checkout-layout,
+.profile-layout,
+.editor-layout {
+  display: grid;
+  gap: 18px;
+}
+
+.detail-media,
+.detail-panel,
+.summary-card,
+.login-card,
+.profile-box,
+.cart-item,
+.admin-table,
+.empty-media {
+  border: 1px solid var(--line);
+  background: white;
+  box-shadow: 0 9px 22px rgba(60, 44, 94, 0.08);
+}
+
+.detail-media {
+  overflow: hidden;
+  border-radius: 22px;
+}
+
+.detail-media img,
+.editor-layout > img {
+  width: 100%;
+  height: auto;
+  display: block;
+  aspect-ratio: 1.2 / 1;
+  object-fit: cover;
+}
+
+.detail-panel {
+  padding: 22px;
+  border-radius: 22px;
+}
+
+.detail-panel h1 {
+  margin-top: 12px;
+  color: #26324a;
+  font-size: 31px;
+  font-weight: 950;
+  line-height: 1.05;
+}
+
+.detail-panel > strong,
+.checkout-total {
+  display: block;
+  margin-top: 12px;
+  color: var(--purple);
+  font-size: 27px;
+  font-weight: 950;
+}
+
+.detail-panel > p,
+.payment-card > p {
+  margin-top: 13px;
+  color: #4a566f;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.55;
+}
+
+.stock-pill,
+.status-pill {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 30px;
+  align-items: center;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.stock-pill {
+  padding: 0 12px;
+  color: #148456;
+  background: #dcfff1;
+}
+
+.quantity-row {
+  display: inline-grid;
+  grid-template-columns: 42px 44px 42px;
+  align-items: center;
+  margin-top: 18px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fbfaff;
+}
+
+.quantity-row button {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 0;
+  color: var(--purple);
+  background: transparent;
+}
+
+.quantity-row span {
+  text-align: center;
+  color: #26324a;
+  font-weight: 950;
+}
+
+.quantity-row.small {
+  grid-template-columns: 34px 34px 34px;
+  margin-top: 10px;
+}
+
+.quantity-row.small button {
+  width: 34px;
+  height: 34px;
+}
+
+.wide {
+  width: 100%;
+  margin-top: 18px;
+}
+
+.cart-list {
+  display: grid;
+  gap: 13px;
+}
+
+.cart-item {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr);
+  gap: 14px;
+  align-items: center;
+  padding: 12px;
+  border-radius: 18px;
+}
+
+.cart-item img {
+  width: 92px;
+  height: 78px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.cart-item h2,
+.summary-card h2,
+.login-card h2,
+.profile-box h2,
+.admin-product-row h2,
+.order-row h2 {
+  color: #26324a;
+  font-size: 16px;
+  font-weight: 950;
+  line-height: 1.2;
+}
+
+.cart-item p {
+  margin-top: 5px;
+  color: var(--purple);
+  font-weight: 950;
+}
+
+.summary-card {
+  align-self: start;
+  padding: 20px;
+  border-radius: 22px;
+}
+
+.summary-card > div:not(.secure-line) {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 14px;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.summary-card strong {
+  color: #26324a;
+}
+
+.summary-card .total-row {
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.summary-card .total-row strong {
+  color: var(--purple);
+  font-size: 20px;
+}
+
+.checkout-form,
+.editor-form {
+  display: grid;
+  gap: 13px;
+}
+
+.checkout-form label {
+  display: grid;
+  gap: 8px;
+  color: #344057;
+  font-size: 13px;
+  font-weight: 950;
+}
+
+.checkout-form input,
+.checkout-form textarea {
+  width: 100%;
+  min-height: 50px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 0 15px;
+  color: #26324a;
+  background: white;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  outline: none;
+}
+
+.checkout-form textarea {
+  min-height: 104px;
+  padding-top: 14px;
+  resize: vertical;
+}
+
+.secure-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #148456;
+  font-size: 13px;
+  font-weight: 950;
+}
+
+.secure-line svg {
+  width: 20px;
+  height: 20px;
+}
+
+.profile-layout {
+  max-width: 900px;
+}
+
+.login-card,
+.profile-box {
+  padding: 22px;
+  border-radius: 22px;
+}
+
+.login-card {
+  display: grid;
+  justify-items: start;
+  gap: 13px;
+}
+
+.login-actions,
+.admin-actions {
+  display: grid;
+  width: 100%;
+  gap: 12px;
+}
+
+.login-actions button {
+  border: 0;
+}
+
+.profile-grid,
+.admin-stats {
+  display: grid;
+  gap: 14px;
+}
+
+.profile-box svg {
+  width: 32px;
+  height: 32px;
+  color: var(--purple);
+}
+
+.profile-box h2 {
+  margin-top: 12px;
+}
+
+.admin-link {
+  color: var(--purple);
+  font-size: 14px;
+  font-weight: 900;
+  text-align: center;
+  text-decoration: none;
+}
+
+.admin-page {
+  background: #f6f8fb;
+}
+
+.admin-stats {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.admin-actions {
+  margin-top: 18px;
+}
+
+.admin-table {
+  display: grid;
+  gap: 1px;
+  overflow: hidden;
+  margin-top: 18px;
+  border-radius: 20px;
+}
+
+.admin-product-row,
+.order-row {
+  display: grid;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px;
+  color: inherit;
+  background: white;
+  text-decoration: none;
+}
+
+.admin-product-row {
+  grid-template-columns: 62px minmax(0, 1fr) auto;
+}
+
+.admin-product-row img {
+  width: 62px;
+  height: 52px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.admin-product-row p,
+.order-row p {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.admin-product-row strong,
+.order-row strong {
+  color: var(--purple);
+  font-size: 13px;
+  font-weight: 950;
+}
+
+.page-action-row {
+  align-items: end;
+}
+
+.page-action-row .secondary-button {
+  min-width: 92px;
+  min-height: 44px;
+}
+
+.editor-layout > img,
+.empty-media {
+  overflow: hidden;
+  border-radius: 22px;
+}
+
+.empty-media {
+  display: grid;
+  place-items: center;
+  min-height: 220px;
+  color: var(--muted);
+  font-weight: 900;
+}
+
+.order-filters {
+  margin-top: 0;
+}
+
+.order-row {
+  grid-template-columns: minmax(0, 1fr) auto auto;
+}
+
+.status-pill {
+  padding: 0 10px;
+}
+
+.status-pill.paid {
+  color: #148456;
+  background: #dcfff1;
+}
+
+.status-pill.pending {
+  color: #a06a00;
+  background: #fff0c7;
+}
+
+.status-pill.failed {
+  color: #bf2d2d;
+  background: #ffe2e2;
 }
 
 .product-footer svg {
@@ -729,6 +1198,20 @@ svg {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .product-detail,
+  .cart-layout,
+  .checkout-layout,
+  .editor-layout {
+    grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+    align-items: start;
+  }
+
+  .profile-grid,
+  .login-actions,
+  .admin-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .footer {
     display: grid;
     grid-template-columns: 1fr auto 1fr;
@@ -801,6 +1284,10 @@ svg {
   .section h2,
   .offer-card h2 {
     font-size: 24px;
+  }
+
+  .admin-actions {
+    max-width: 560px;
   }
 }
 
