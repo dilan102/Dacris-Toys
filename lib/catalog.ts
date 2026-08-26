@@ -75,7 +75,7 @@ export const products: Product[] = [
 
 export const cartPreview = [
   { productId: "bloques-madera", quantity: 1 },
-  { productId: "rompecabezas", quantity: 1 },
+  { productId: "rompecabezas", quantity: 2 },
 ];
 
 export function formatPrice(value: number) {

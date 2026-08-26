@@ -157,7 +157,9 @@ svg {
   color: var(--orange);
   font-size: clamp(45px, 13vw, 82px);
   letter-spacing: 0;
-  text-shadow: 0 7px 0 rgba(255, 255, 255, 0.95), 0 11px 16px rgba(11, 87, 136, 0.18);
+  text-shadow:
+    0 7px 0 rgba(255, 255, 255, 0.95),
+    0 11px 16px rgba(11, 87, 136, 0.18);
 }
 
 .hero-copy > p:last-child {
@@ -1091,7 +1093,7 @@ svg {
   margin: 25px auto 0;
   padding: 27px 20px 28px;
   color: white;
-  background: #65b5ff;
+  background: linear-gradient(115deg, #9a65f4 0%, #c2a0ff 58%, #fbfbff 100%);
   border-radius: 0;
 }
 
