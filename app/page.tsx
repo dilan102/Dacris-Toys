@@ -8,7 +8,6 @@ import {
   getCategoryProductCount,
   getFeaturedProducts,
   sectionCategories,
-  toySubcategories,
 } from "@/lib/catalog";
 
 const guarantees = [
@@ -42,7 +41,7 @@ export default function Home() {
     <main className="site-shell">
       <section className="hero">
         <div className="hero-top" aria-label="Navegación principal">
-          <HomeMenu sections={sectionCategories} toySubsections={toySubcategories} />
+          <HomeMenu />
           <Link className="brand-pill" href="/" aria-label="Ir al inicio">
             <Image
               src="/Dacris-Logo.png"
@@ -103,15 +102,16 @@ export default function Home() {
             <h2>Categorías</h2>
             <Link href="/categorias/todos">Explorar todo</Link>
           </div>
-          <div className="chips" aria-label="Categorías">
+          <div className="section-card-grid home-category-grid" aria-label="Categorías principales">
             {sectionCategories.map((category) => (
               <Link
-                className="chip"
+                className="section-card"
                 href={`/categorias/${category.slug}`}
                 key={category.slug}
               >
-                {category.name}
-                <span>{getCategoryProductCount(category.slug)}</span>
+                <strong>{category.name}</strong>
+                <p>{category.description}</p>
+                <span>{getCategoryProductCount(category.slug)} productos</span>
               </Link>
             ))}
           </div>

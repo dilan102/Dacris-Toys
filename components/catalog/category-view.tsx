@@ -7,7 +7,6 @@ import {
   getCategoryProductCount,
   getProductsByCategory,
   getSubcategories,
-  mainCategories,
   sectionCategories,
 } from "@/lib/catalog";
 
@@ -30,44 +29,17 @@ export function CategoryView({ slug }: CategoryViewProps) {
     prices.length > 0
       ? `${formatPrice(Math.min(...prices))} - ${formatPrice(Math.max(...prices))}`
       : "Próximamente";
+  const summaryCount = showSectionCards
+    ? `${sectionCategories.length} categorías`
+    : `${visibleProducts.length} productos`;
 
   return (
     <section className="content-wrap">
-      <div className="chips" aria-label="Categorías">
-        {mainCategories.map((item) => (
-          <Link
-            className={
-              item.slug === slug || item.slug === category.parentSlug
-                ? "chip active"
-                : "chip"
-            }
-            href={`/categorias/${item.slug}`}
-            key={item.slug}
-          >
-            {item.name}
-            <span>{getCategoryProductCount(item.slug)}</span>
-          </Link>
-        ))}
-      </div>
-      {subcategories.length > 0 ? (
-        <div className="chips subcategory-chips" aria-label="Subcategorías de juguetería">
-          {subcategories.map((item) => (
-            <Link
-              className={item.slug === slug ? "chip active" : "chip"}
-              href={`/categorias/jugueteria/${item.slug}`}
-              key={item.slug}
-            >
-              {item.name}
-              <span>{getCategoryProductCount(item.slug)}</span>
-            </Link>
-          ))}
-        </div>
-      ) : null}
       <div className="catalog-heading">
         <div className="page-intro compact-intro">
           <h1>
             {category.slug === "todos"
-              ? "Todo el catálogo"
+              ? "Categorías"
               : parentCategory
                 ? `${parentCategory.name}: ${category.name}`
                 : category.name}
@@ -75,8 +47,8 @@ export function CategoryView({ slug }: CategoryViewProps) {
           <p>{category.description}</p>
         </div>
         <div className="catalog-summary" aria-label="Resumen del catálogo">
-          <span>{visibleProducts.length} productos</span>
-          <span>{priceRange}</span>
+          <span>{summaryCount}</span>
+          {!showSectionCards ? <span>{priceRange}</span> : null}
         </div>
       </div>
       {showSectionCards ? (
@@ -105,15 +77,15 @@ export function CategoryView({ slug }: CategoryViewProps) {
           ))}
         </div>
       ) : null}
-      {visibleProducts.length > 0 ? (
+      {!showSectionCards && visibleProducts.length > 0 ? (
         <div className="product-grid">
           {visibleProducts.map((product) => (
             <ProductCard product={product} key={product.id} />
           ))}
         </div>
-      ) : (
+      ) : !showSectionCards ? (
         <div className="empty-media">Muy pronto tendremos productos aquí</div>
-      )}
+      ) : null}
     </section>
   );
 }
