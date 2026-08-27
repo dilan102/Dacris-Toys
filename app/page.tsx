@@ -3,7 +3,11 @@ import Link from "next/link";
 import { BottomNav } from "@/components/ui/bottom-nav";
 import { Icon } from "@/components/ui/icon";
 import { ProductCard } from "@/components/product/product-card";
-import { categories, products } from "@/lib/catalog";
+import {
+  getCategoryProductCount,
+  getFeaturedProducts,
+  mainCategories,
+} from "@/lib/catalog";
 
 const guarantees = [
   { icon: "truck", title: "Envío rápido", text: "Entrega en 2-3 días" },
@@ -26,6 +30,12 @@ const reviews = [
 ];
 
 export default function Home() {
+  const featuredProducts = getFeaturedProducts();
+  const featuredRows = [
+    featuredProducts.filter((_, index) => index % 2 === 0),
+    featuredProducts.filter((_, index) => index % 2 === 1),
+  ];
+
   return (
     <main className="site-shell">
       <section className="hero">
@@ -89,15 +99,19 @@ export default function Home() {
 
       <div className="content-wrap" id="catalogo">
         <section className="section">
-          <h2>Categorías</h2>
+          <div className="section-title-row">
+            <h2>Categorías</h2>
+            <Link href="/categorias/todos">Explorar todo</Link>
+          </div>
           <div className="chips" aria-label="Categorías">
-            {categories.map((category) => (
+            {mainCategories.map((category) => (
               <Link
                 className={category.slug === "todos" ? "chip active" : "chip"}
                 href={`/categorias/${category.slug}`}
                 key={category.slug}
               >
                 {category.name}
+                <span>{getCategoryProductCount(category.slug)}</span>
               </Link>
             ))}
           </div>
@@ -109,7 +123,7 @@ export default function Home() {
             <p>20% OFF en juguetes educativos.</p>
             <p>Código: DACRI20</p>
           </div>
-          <Link href="/categorias/juguetes">
+          <Link href="/categorias/jugueteria">
             Ver ofertas <Icon name="arrow" />
           </Link>
         </section>
@@ -119,9 +133,22 @@ export default function Home() {
             <h2>Productos destacados</h2>
             <Link href="/categorias/todos">Ver todo</Link>
           </div>
-          <div className="product-grid">
-            {products.map((product) => (
-              <ProductCard product={product} key={product.id} />
+          <div className="featured-carousel" aria-label="Productos destacados">
+            {featuredRows.map((row, rowIndex) => (
+              <div
+                className={
+                  rowIndex === 0
+                    ? "featured-track"
+                    : "featured-track featured-track-reverse"
+                }
+                key={rowIndex}
+              >
+                {[...row, ...row].map((product, index) => (
+                  <div className="featured-slide" key={`${product.id}-${index}`}>
+                    <ProductCard product={product} />
+                  </div>
+                ))}
+              </div>
             ))}
           </div>
         </section>
