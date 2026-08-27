@@ -85,6 +85,10 @@ export const categories: Category[] = [
 
 export const mainCategories = categories.filter((category) => !category.parentSlug);
 
+export const sectionCategories = mainCategories.filter(
+  (category) => category.slug !== "todos",
+);
+
 export const toySubcategories = categories.filter(
   (category) => category.parentSlug === "jugueteria",
 );

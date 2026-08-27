@@ -2,11 +2,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { BottomNav } from "@/components/ui/bottom-nav";
 import { Icon } from "@/components/ui/icon";
+import { HomeMenu } from "@/components/navigation/home-menu";
 import { ProductCard } from "@/components/product/product-card";
 import {
   getCategoryProductCount,
   getFeaturedProducts,
-  mainCategories,
+  sectionCategories,
+  toySubcategories,
 } from "@/lib/catalog";
 
 const guarantees = [
@@ -40,9 +42,7 @@ export default function Home() {
     <main className="site-shell">
       <section className="hero">
         <div className="hero-top" aria-label="Navegación principal">
-          <button className="icon-button ghost" aria-label="Abrir menú">
-            <Icon name="menu" />
-          </button>
+          <HomeMenu sections={sectionCategories} toySubsections={toySubcategories} />
           <Link className="brand-pill" href="/" aria-label="Ir al inicio">
             <Image
               src="/Dacris-Logo.png"
@@ -104,9 +104,9 @@ export default function Home() {
             <Link href="/categorias/todos">Explorar todo</Link>
           </div>
           <div className="chips" aria-label="Categorías">
-            {mainCategories.map((category) => (
+            {sectionCategories.map((category) => (
               <Link
-                className={category.slug === "todos" ? "chip active" : "chip"}
+                className="chip"
                 href={`/categorias/${category.slug}`}
                 key={category.slug}
               >

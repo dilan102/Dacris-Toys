@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { Icon } from "@/components/ui/icon";
 
 type BottomNavProps = {
@@ -13,8 +16,26 @@ const items = [
 ] as const;
 
 export function BottomNav({ active }: BottomNavProps) {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    function handleScroll() {
+      setIsVisible(window.scrollY > 80);
+    }
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
-    <nav className="bottom-nav" aria-label="Navegación inferior">
+    <nav
+      className={isVisible ? "bottom-nav" : "bottom-nav bottom-nav-hidden"}
+      aria-label="Navegación inferior"
+    >
       {items.map((item) => (
         <Link
           className={active === item.key ? "active" : undefined}
