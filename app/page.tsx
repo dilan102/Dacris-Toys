@@ -3,7 +3,7 @@ import Link from "next/link";
 import { BottomNav } from "@/components/ui/bottom-nav";
 import { Icon } from "@/components/ui/icon";
 import { HomeMenu } from "@/components/navigation/home-menu";
-import { ProductCard } from "@/components/product/product-card";
+import { FeaturedCarousel } from "@/components/product/featured-carousel";
 import {
   getFeaturedProducts,
   sectionCategories,
@@ -159,27 +159,7 @@ export default function Home() {
           <div className="section-title-row">
             <h2>Productos destacados</h2>
           </div>
-          <div className="featured-carousel" aria-label="Productos destacados">
-            {featuredRows.map((row, rowIndex) => (
-              <div
-                className={
-                  rowIndex === 0
-                    ? "featured-track"
-                    : "featured-track featured-track-reverse"
-                }
-                key={rowIndex}
-              >
-                {[...row, ...row].map((product, index) => (
-                  <div
-                    className="featured-slide"
-                    key={`${product.id}-${index}`}
-                  >
-                    <ProductCard product={product} />
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
+          <FeaturedCarousel rows={featuredRows} />
         </section>
 
         <section className="section">

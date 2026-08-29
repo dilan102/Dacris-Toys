@@ -540,18 +540,30 @@ svg {
 
 .featured-track {
   display: flex;
-  width: max-content;
+  width: 100%;
   gap: 16px;
-  animation: featured-scroll 42s linear infinite;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.featured-track::-webkit-scrollbar {
+  display: none;
 }
 
 .featured-track-reverse {
-  animation-name: featured-scroll-reverse;
+  animation-name: none;
 }
 
 .featured-slide {
   flex: 0 0 calc((min(100vw, 1160px) - 56px) / 2);
   max-width: 270px;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
 
 .featured-slide .product-card {
@@ -1857,9 +1869,24 @@ svg {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
+  .featured-track {
+    width: max-content;
+    overflow-x: visible;
+    scroll-snap-type: none;
+    touch-action: auto;
+    user-select: auto;
+    -webkit-user-select: auto;
+    animation: featured-scroll 42s linear infinite;
+  }
+
+  .featured-track-reverse {
+    animation-name: featured-scroll-reverse;
+  }
+
   .featured-slide {
     flex-basis: calc((min(100vw, 1160px) - 84px) / 2);
     max-width: none;
+    scroll-snap-align: none;
   }
 
   .related-grid {
