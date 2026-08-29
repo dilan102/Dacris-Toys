@@ -127,12 +127,12 @@ export const categoryCardDesign: Record<
   hogar: {
     image: "/category-hogar.png",
     width: 575,
-    height: 385,
+    height: 410,
   },
   jugueteria: {
     image: "/category-jugueteria.png",
     width: 665,
-    height: 390,
+    height: 420,
   },
 };
 
