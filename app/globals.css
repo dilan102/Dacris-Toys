@@ -789,7 +789,15 @@ svg {
 }
 
 .home-category-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   margin-top: 17px;
+}
+
+.home-category-grid .section-card {
+  flex: 1 1 156px;
+  max-width: 260px;
 }
 
 .compact-section-grid {
@@ -1663,6 +1671,14 @@ svg {
 
   .section-card-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .home-category-grid {
+    display: flex;
+  }
+
+  .home-category-grid .section-card {
+    flex-basis: 214px;
   }
 
   .compact-section-grid {
