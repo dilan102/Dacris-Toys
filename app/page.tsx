@@ -231,7 +231,7 @@ export default function Home() {
           <p>© 2026 · Todos los derechos reservados</p>
           <div className="footer-socials" aria-label="Redes sociales">
             <a
-              href="https://www.instagram.com/"
+              href="https://www.instagram.com/toysdacris?utm_source=qr&igsh=OXUyb2FvcWFsYzE2"
               aria-label="Instagram"
               target="_blank"
               rel="noreferrer"
@@ -239,7 +239,7 @@ export default function Home() {
               <Icon name="instagram" />
             </a>
             <a
-              href="https://www.facebook.com/"
+              href="https://www.facebook.com/share/1BESveKCrG/"
               aria-label="Facebook"
               target="_blank"
               rel="noreferrer"
@@ -247,12 +247,21 @@ export default function Home() {
               <Icon name="facebook" />
             </a>
             <a
-              href="https://wa.me/573001234567"
+              href="https://wa.me/573122180298"
               aria-label="WhatsApp"
               target="_blank"
               rel="noreferrer"
             >
               <Icon name="whatsapp" />
+            </a>
+
+            <a
+              href="https://www.tiktok.com/@dacris.toys?_r=1&_t=ZS-99Gzk0v0vu3"
+              aria-label="Tiktok"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Icon name="tiktok" />
             </a>
           </div>
         </div>
@@ -272,8 +281,8 @@ export default function Home() {
         </nav>
         <div className="footer-contact">
           <h3>Contacto</h3>
-          <a href="tel:+573001234567">+57 300 123 4567</a>
-          <a href="mailto:hola@dacristoys.com">hola@dacristoys.com</a>
+          <a href="tel:+573122180298">+57 312 218 0298</a>
+          <a href="mailto:dacristoys@gmail.com">dacristoys@gmail.com</a>
         </div>
         <p className="tagline">
           &quot;Juguetes que hacen sonreír. Para cada edad, con amor.&quot;
