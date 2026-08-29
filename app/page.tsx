@@ -33,37 +33,45 @@ const reviews = [
 const categoryCardDesign: Record<
   string,
   {
-    tone: string;
-    headline: string;
     image: string;
+    width: number;
+    height: number;
   }
 > = {
   ferreteria: {
-    tone: "category-card-ferreteria",
-    headline: "Herramientas y soluciones para tu día a día.",
-    image: "/product-kit-medico.png",
+    image: "/category-ferreteria.png",
+    width: 490,
+    height: 430,
   },
   cacharreria: {
-    tone: "category-card-cacharreria",
-    headline: "Todo lo práctico para casa, cocina y momentos útiles.",
-    image: "/product-rompecabezas.png",
+    image: "/category-cacharreria.png",
+    width: 490,
+    height: 430,
   },
   belleza: {
-    tone: "category-card-belleza",
-    headline: "Detalles para cuidarte, regalar y verte increíble.",
-    image: "/product-cocinita.png",
+    image: "/category-belleza.png",
+    width: 490,
+    height: 430,
   },
   hogar: {
-    tone: "category-card-hogar",
-    headline: "Convierte cada espacio en un lugar más cómodo.",
-    image: "/product-bloques.png",
+    image: "/category-hogar.png",
+    width: 575,
+    height: 385,
   },
   jugueteria: {
-    tone: "category-card-jugueteria",
-    headline: "Diversión para todas las edades y sonrisas aseguradas.",
-    image: "/product-bloques.png",
+    image: "/category-jugueteria.png",
+    width: 665,
+    height: 390,
   },
 };
+
+const categoryDisplayOrder = [
+  "ferreteria",
+  "cacharreria",
+  "belleza",
+  "hogar",
+  "jugueteria",
+];
 
 export default function Home() {
   const featuredProducts = getFeaturedProducts();
@@ -71,6 +79,17 @@ export default function Home() {
     featuredProducts.filter((_, index) => index % 2 === 0),
     featuredProducts.filter((_, index) => index % 2 === 1),
   ];
+  const orderedSectionCategories = [...sectionCategories].sort(
+    (categoryA, categoryB) => {
+      const orderA = categoryDisplayOrder.indexOf(categoryA.slug);
+      const orderB = categoryDisplayOrder.indexOf(categoryB.slug);
+
+      return (
+        (orderA === -1 ? categoryDisplayOrder.length : orderA) -
+        (orderB === -1 ? categoryDisplayOrder.length : orderB)
+      );
+    },
+  );
 
   return (
     <main className="site-shell">
@@ -163,36 +182,28 @@ export default function Home() {
             className="section-card-grid home-category-grid"
             aria-label="Categorías principales"
           >
-            {sectionCategories.map((category) => {
+            {orderedSectionCategories.map((category) => {
               const design = categoryCardDesign[category.slug] ?? {
-                tone: "category-card-default",
-                headline: category.description,
-                image: "/product-bloques.png",
+                image: "/category-jugueteria.png",
+                width: 665,
+                height: 390,
               };
 
               return (
                 <Link
-                  className={`category-showcase ${design.tone}`}
+                  className="category-showcase"
                   href={`/categorias/${category.slug}`}
                   key={category.slug}
                 >
-                  <span className="category-frame" aria-hidden="true" />
-                  <span className="category-copy">
-                    <strong>{category.name}</strong>
-                    <span>{design.headline}</span>
-                  </span>
                   <Image
-                    className="category-image"
                     src={design.image}
-                    alt=""
-                    width={1152}
-                    height={896}
+                    alt={`${category.name}: ${category.description}`}
+                    width={design.width}
+                    height={design.height}
                   />
-                  <span className="category-count">
-                    {getCategoryProductCount(category.slug)} productos
-                  </span>
-                  <span className="category-button">
-                    Ver productos <Icon name="arrow" />
+                  <span className="sr-only">
+                    Ver {getCategoryProductCount(category.slug)} productos de{" "}
+                    {category.name}
                   </span>
                 </Link>
               );

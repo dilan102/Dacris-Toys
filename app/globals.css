@@ -49,6 +49,17 @@ svg {
   display: block;
 }
 
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .site-shell {
   width: 100%;
   min-height: 100vh;
@@ -790,8 +801,9 @@ svg {
 
 .home-category-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  margin-top: 17px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  margin-top: 12px;
 }
 
 .compact-section-grid {
@@ -800,215 +812,30 @@ svg {
 
 .category-showcase {
   position: relative;
-  isolation: isolate;
-  display: grid;
-  align-content: start;
-  min-height: 252px;
+  display: block;
   overflow: hidden;
-  padding: 31px 26px 24px;
-  border: 4px solid rgba(255, 255, 255, 0.62);
-  border-radius: 28px;
-  color: #10233d;
+  border-radius: 10px;
   text-decoration: none;
-  box-shadow:
-    inset 0 -9px 0 rgba(0, 0, 0, 0.08),
-    inset 0 8px 0 rgba(255, 255, 255, 0.2),
-    0 13px 25px rgba(59, 52, 88, 0.18);
+  transition:
+    filter 160ms ease,
+    transform 160ms ease;
 }
 
-.category-showcase::before,
-.category-showcase::after,
-.category-frame {
-  position: absolute;
-  content: "";
-  pointer-events: none;
-}
-
-.category-showcase::before {
-  inset: 13px;
-  z-index: -1;
-  border: 3px solid rgba(255, 255, 255, 0.52);
-  border-radius: 21px;
-}
-
-.category-showcase::after {
-  right: 23px;
-  top: 27px;
-  width: 29px;
-  height: 29px;
-  border-radius: 9px;
-  background: rgba(255, 255, 255, 0.34);
-  box-shadow:
-    -230px 4px 0 -8px rgba(255, 255, 255, 0.42),
-    -13px 188px 0 -8px rgba(255, 255, 255, 0.38);
-  transform: rotate(18deg);
-}
-
-.category-frame {
-  inset: 0;
-  z-index: -2;
-  background:
-    radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.24), transparent 18%),
-    radial-gradient(circle at 92% 88%, rgba(0, 0, 0, 0.12), transparent 24%);
-}
-
-.category-copy {
-  position: relative;
-  z-index: 2;
-  display: grid;
-  gap: 16px;
-  width: min(62%, 286px);
-}
-
-.category-copy strong {
-  color: #fff8ea;
-  font-size: clamp(37px, 9vw, 56px);
-  font-weight: 950;
-  line-height: 0.92;
-  text-shadow:
-    0 3px 0 rgba(82, 48, 39, 0.36),
-    0 8px 12px rgba(36, 31, 50, 0.18);
-}
-
-.category-copy span {
-  color: rgba(14, 31, 49, 0.9);
-  font-size: 17px;
-  font-weight: 900;
-  line-height: 1.24;
-}
-
-.category-image {
-  position: absolute;
-  right: -34px;
-  bottom: -25px;
-  z-index: 1;
-  width: min(52%, 250px);
+.category-showcase img {
+  display: block;
+  width: 100%;
   height: auto;
-  filter: drop-shadow(0 12px 11px rgba(31, 35, 59, 0.22));
-  transform: rotate(-4deg);
 }
 
-.category-count {
-  position: absolute;
-  top: 19px;
-  right: 20px;
-  z-index: 2;
-  min-height: 28px;
-  padding: 7px 11px;
-  border-radius: 999px;
-  color: rgba(255, 255, 255, 0.92);
-  background: rgba(25, 28, 48, 0.22);
-  font-size: 11px;
-  font-weight: 950;
-  line-height: 1.1;
-}
-
-.category-button {
-  position: absolute;
-  left: 25px;
-  bottom: 23px;
-  z-index: 2;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 47px;
-  padding: 0 18px;
-  border-radius: 999px;
-  color: white;
-  background: #147fd0;
-  box-shadow:
-    inset 0 2px 0 rgba(255, 255, 255, 0.25),
-    0 7px 10px rgba(31, 36, 61, 0.26);
-  font-size: 14px;
-  font-weight: 950;
-}
-
-.category-button svg {
-  width: 19px;
-  height: 19px;
-}
-
-.category-showcase:hover .category-button,
-.category-showcase:focus-visible .category-button {
+.category-showcase:hover,
+.category-showcase:focus-visible {
+  filter: saturate(1.06);
   transform: translateY(-1px);
 }
 
 .category-showcase:focus-visible {
   outline: 3px solid rgba(38, 50, 74, 0.45);
   outline-offset: 3px;
-}
-
-.category-card-ferreteria {
-  background: #f7b90d;
-}
-
-.category-card-ferreteria .category-frame {
-  background:
-    repeating-linear-gradient(
-      135deg,
-      transparent 0 18px,
-      rgba(38, 34, 32, 0.8) 18px 28px,
-      rgba(255, 255, 255, 0.25) 28px 38px
-    ),
-    linear-gradient(145deg, #ffc61a, #e99705);
-  background-size: 94px 94px, auto;
-}
-
-.category-card-ferreteria .category-frame::after {
-  position: absolute;
-  inset: 14px;
-  content: "";
-  border-radius: 21px;
-  background: linear-gradient(145deg, #ffc31c, #efa806);
-}
-
-.category-card-cacharreria {
-  background: linear-gradient(145deg, #43d7c8, #23a99e);
-}
-
-.category-card-cacharreria .category-button {
-  background: #ff5c8e;
-}
-
-.category-card-belleza {
-  background: linear-gradient(145deg, #ff5f96, #e93d75);
-}
-
-.category-card-belleza .category-button {
-  background: #7f45da;
-}
-
-.category-card-hogar {
-  background: linear-gradient(145deg, #9bd956, #67b73a);
-}
-
-.category-card-hogar .category-button {
-  background: #12aeb0;
-}
-
-.category-card-jugueteria {
-  background: linear-gradient(145deg, #a98be6, #7651be);
-}
-
-.category-card-jugueteria::before {
-  border-style: dashed;
-}
-
-.category-card-jugueteria .category-copy {
-  width: min(54%, 320px);
-}
-
-.category-card-jugueteria .category-copy span {
-  color: #142848;
-}
-
-.category-card-jugueteria .category-button,
-.category-card-default .category-button {
-  background: #f5b414;
-}
-
-.category-card-default {
-  background: linear-gradient(145deg, #69bdff, #9b5cff);
 }
 
 .section-card {
@@ -1882,11 +1709,7 @@ svg {
 
   .home-category-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 20px;
-  }
-
-  .category-showcase {
-    min-height: 288px;
+    gap: 16px;
   }
 
   .compact-section-grid {
@@ -2009,31 +1832,24 @@ svg {
   }
 
   .home-category-grid {
-    grid-template-columns: repeat(6, minmax(0, 1fr));
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
     gap: 22px;
   }
 
   .category-showcase {
-    grid-column: span 2;
-    min-height: 316px;
-    padding: 36px 31px 27px;
+    flex: 0 1 calc((100% - 44px) / 3);
+    border-radius: 24px;
   }
 
-  .category-showcase:nth-child(n + 4) {
-    grid-column: span 3;
-    min-height: 300px;
+  .category-showcase:nth-child(4) {
+    flex-basis: min(40.5%, 575px);
   }
 
-  .category-showcase:nth-child(n + 4) .category-image {
-    width: min(48%, 310px);
-  }
-
-  .category-copy strong {
-    font-size: clamp(43px, 4.5vw, 58px);
-  }
-
-  .category-card-jugueteria .category-copy {
-    width: min(50%, 330px);
+  .category-showcase:nth-child(5) {
+    flex-basis: min(47%, 665px);
   }
 
   .section h2,
