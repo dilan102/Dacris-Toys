@@ -21,40 +21,52 @@ export function FeaturedCarousel({ rows }: FeaturedCarouselProps) {
   const didDrag = useRef(false);
   const resumeTimer = useRef<number | null>(null);
   const trackRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const isLooping = useRef(false);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(max-width: 759px)");
     let animationFrame = 0;
+
+    function normalizeLoop(track: HTMLDivElement) {
+      if (isLooping.current) return;
+
+      const midpoint = track.scrollWidth / 2;
+      const maxScrollLeft = track.scrollWidth - track.clientWidth;
+
+      if (midpoint <= 0 || maxScrollLeft <= 0) return;
+
+      isLooping.current = true;
+
+      if (track.scrollLeft <= 2) {
+        track.scrollLeft += midpoint;
+        startScrollLeft.current += midpoint;
+      } else if (track.scrollLeft >= maxScrollLeft - 2) {
+        track.scrollLeft -= midpoint;
+        startScrollLeft.current -= midpoint;
+      }
+
+      window.requestAnimationFrame(() => {
+        isLooping.current = false;
+      });
+    }
 
     function tick() {
       if (mediaQuery.matches && !isTouching.current) {
         trackRefs.current.forEach((track, index) => {
           if (!track) return;
 
-          const midpoint = track.scrollWidth / 2;
           const direction = index % 2 === 0 ? 1 : -1;
 
-          if (direction === 1) {
-            track.scrollLeft += 0.32;
-
-            if (track.scrollLeft >= midpoint) {
-              track.scrollLeft -= midpoint;
-            }
-          } else {
-            track.scrollLeft -= 0.32;
-
-            if (track.scrollLeft <= 0) {
-              track.scrollLeft += midpoint;
-            }
-          }
+          track.scrollLeft += direction * 0.32;
+          normalizeLoop(track);
         });
       }
 
       animationFrame = window.requestAnimationFrame(tick);
     }
 
-    trackRefs.current.forEach((track, index) => {
-      if (!track || index % 2 === 0) return;
+    trackRefs.current.forEach((track) => {
+      if (!track || !mediaQuery.matches) return;
 
       track.scrollLeft = track.scrollWidth / 2;
     });
@@ -97,9 +109,29 @@ export function FeaturedCarousel({ rows }: FeaturedCarouselProps) {
   }
 
   function handleScroll(event: UIEvent<HTMLDivElement>) {
+    const track = event.currentTarget;
+    const midpoint = track.scrollWidth / 2;
+    const maxScrollLeft = track.scrollWidth - track.clientWidth;
+
+    if (!isLooping.current && midpoint > 0 && maxScrollLeft > 0) {
+      isLooping.current = true;
+
+      if (track.scrollLeft <= 2) {
+        track.scrollLeft += midpoint;
+        startScrollLeft.current += midpoint;
+      } else if (track.scrollLeft >= maxScrollLeft - 2) {
+        track.scrollLeft -= midpoint;
+        startScrollLeft.current -= midpoint;
+      }
+
+      window.requestAnimationFrame(() => {
+        isLooping.current = false;
+      });
+    }
+
     if (!isTouching.current) return;
 
-    if (Math.abs(event.currentTarget.scrollLeft - startScrollLeft.current) > 8) {
+    if (Math.abs(track.scrollLeft - startScrollLeft.current) > 8) {
       didDrag.current = true;
     }
   }
