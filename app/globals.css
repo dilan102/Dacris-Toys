@@ -306,6 +306,7 @@ svg {
 
 .primary-button svg,
 .secondary-button svg,
+.section-link-button svg,
 .offer-card a svg {
   width: 22px;
   height: 22px;
@@ -485,12 +486,30 @@ svg {
   gap: 16px;
 }
 
-.section-title-row a {
+.section-link-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
   flex: 0 0 auto;
+  min-height: 42px;
+  padding: 0 16px;
+  border: 2px solid rgba(155, 92, 255, 0.2);
+  border-radius: 999px;
   color: var(--purple);
+  background: #ffffff;
+  box-shadow: 0 8px 18px rgba(49, 62, 99, 0.08);
   font-size: 13px;
   font-weight: 900;
   text-decoration: none;
+  white-space: nowrap;
+}
+
+.section-link-button:hover,
+.section-link-button:focus-visible {
+  color: white;
+  background: var(--purple);
+  outline: none;
 }
 
 .product-grid {
@@ -1434,23 +1453,32 @@ svg {
 }
 
 .footer {
+  display: grid;
+  gap: 20px;
   width: min(100%, 1160px);
   margin: 25px auto 0;
-  padding: 27px 20px 28px;
+  padding: 28px 20px 30px;
   color: white;
   background: linear-gradient(115deg, #9a65f4 0%, #c2a0ff 58%, #fbfbff 100%);
   border-radius: 0;
 }
 
+.footer-brand,
+.footer-contact {
+  min-width: 0;
+}
+
 .footer h2 {
   font-size: 23px;
   font-weight: 950;
+  line-height: 1.05;
 }
 
 .footer h3 {
-  margin-top: 18px;
+  margin: 0 0 9px;
   font-size: 13px;
   font-weight: 950;
+  text-transform: uppercase;
 }
 
 .footer p,
@@ -1462,15 +1490,91 @@ svg {
   text-decoration: none;
 }
 
-.footer-links {
+.footer-brand p {
+  margin-top: 7px;
+}
+
+.footer-socials {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px 27px;
-  margin-top: 14px;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.footer-socials a {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  color: white;
+  transition:
+    background 160ms ease,
+    transform 160ms ease;
+}
+
+.footer-socials a:hover,
+.footer-socials a:focus-visible {
+  background: rgba(255, 255, 255, 0.3);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.footer-socials svg {
+  width: 20px;
+  height: 20px;
+}
+
+.footer-links {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.footer-links a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.13);
+  color: white;
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1.1;
+  text-align: center;
+}
+
+.footer-links a:hover,
+.footer-links a:focus-visible {
+  background: rgba(255, 255, 255, 0.24);
+  outline: none;
+}
+
+.footer-links svg {
+  flex: 0 0 17px;
+  width: 17px;
+  height: 17px;
+}
+
+.footer-contact {
+  display: grid;
+  gap: 4px;
+}
+
+.footer-contact a {
+  overflow-wrap: anywhere;
 }
 
 .tagline {
-  margin-top: 18px;
+  margin: 0;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.26);
   font-size: 12px;
 }
 
@@ -1597,15 +1701,30 @@ svg {
   }
 
   .footer {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(260px, 0.8fr) minmax(0, 1fr);
+    align-items: start;
     gap: 32px;
     padding-inline: 34px;
     border-radius: 28px 28px 0 0;
   }
 
+  .footer-links {
+    justify-self: center;
+    width: min(100%, 330px);
+  }
+
+  .footer-contact {
+    justify-items: end;
+    text-align: right;
+  }
+
+  .footer-socials {
+    justify-content: flex-start;
+  }
+
   .tagline {
     grid-column: 1 / -1;
+    text-align: center;
   }
 
   .bottom-nav {

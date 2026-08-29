@@ -100,7 +100,9 @@ export default function Home() {
         <section className="section">
           <div className="section-title-row">
             <h2>Categorías</h2>
-            <Link href="/categorias/todos">Explorar todo</Link>
+            <Link className="section-link-button" href="/categorias/todos">
+              Explorar todo <Icon name="arrow" />
+            </Link>
           </div>
           <div className="section-card-grid home-category-grid" aria-label="Categorías principales">
             {sectionCategories.map((category) => (
@@ -131,7 +133,9 @@ export default function Home() {
         <section className="section">
           <div className="section-title-row">
             <h2>Productos destacados</h2>
-            <Link href="/categorias/todos">Ver todo</Link>
+            <Link className="section-link-button" href="/categorias/todos">
+              Ver todo <Icon name="arrow" />
+            </Link>
           </div>
           <div className="featured-carousel" aria-label="Productos destacados">
             {featuredRows.map((row, rowIndex) => (
@@ -221,20 +225,54 @@ export default function Home() {
       </div>
 
       <footer className="footer">
-        <div>
+        <div className="footer-brand">
           <h2>Dacri&apos;s Toys</h2>
           <p>© 2026 · Todos los derechos reservados</p>
+          <div className="footer-socials" aria-label="Redes sociales">
+            <a
+              href="https://www.instagram.com/"
+              aria-label="Instagram"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Icon name="instagram" />
+            </a>
+            <a
+              href="https://www.facebook.com/"
+              aria-label="Facebook"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Icon name="facebook" />
+            </a>
+            <a
+              href="https://wa.me/573001234567"
+              aria-label="WhatsApp"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Icon name="whatsapp" />
+            </a>
+          </div>
         </div>
-        <div className="footer-links">
-          <Link href="/categorias/todos">Tienda</Link>
-          <Link href="/checkout">Envíos</Link>
-          <Link href="/perfil">Devoluciones</Link>
-          <Link href="/perfil">Contacto</Link>
-        </div>
-        <div>
+        <nav className="footer-links" aria-label="Enlaces del pie de página">
+          <Link href="/categorias/todos">
+            <Icon name="grid" /> Tienda
+          </Link>
+          <Link href="/checkout">
+            <Icon name="truck" /> Envíos
+          </Link>
+          <Link href="/perfil">
+            <Icon name="refresh" /> Devoluciones
+          </Link>
+          <Link href="/perfil">
+            <Icon name="phone" /> Contacto
+          </Link>
+        </nav>
+        <div className="footer-contact">
           <h3>Contacto</h3>
-          <p>+57 300 123 4567</p>
-          <p>hola@dacristoys.com</p>
+          <a href="tel:+573001234567">+57 300 123 4567</a>
+          <a href="mailto:hola@dacristoys.com">hola@dacristoys.com</a>
         </div>
         <p className="tagline">
           &quot;Juguetes que hacen sonreír. Para cada edad, con amor.&quot;

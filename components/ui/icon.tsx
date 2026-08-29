@@ -134,6 +134,39 @@ export function Icon({ name }: IconProps) {
     );
   }
 
+  if (name === "instagram") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect {...common} x="4" y="4" width="16" height="16" rx="5" />
+        <circle {...common} cx="12" cy="12" r="3.2" />
+        <circle cx="17" cy="7" r="1.1" fill="currentColor" />
+      </svg>
+    );
+  }
+
+  if (name === "facebook") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path
+          fill="currentColor"
+          d="M13.7 21v-7.8h2.6l.4-3h-3V8.3c0-.9.2-1.5 1.5-1.5h1.6V4.1c-.8-.1-1.6-.1-2.4-.1-2.4 0-4.1 1.5-4.1 4.2v2H7.6v3h2.7V21h3.4z"
+        />
+      </svg>
+    );
+  }
+
+  if (name === "whatsapp") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path {...common} d="M5.4 19.1 6.5 16A7.5 7.5 0 1 1 9 18.2l-3.6.9z" />
+        <path
+          {...common}
+          d="M9.4 8.7c.2-.5.4-.5.7-.5h.5c.2 0 .4.1.5.4l.7 1.7c.1.2.1.4-.1.6l-.5.6c.6 1.1 1.4 1.9 2.5 2.5l.6-.5c.2-.2.4-.2.6-.1l1.7.7c.3.1.4.3.4.5v.5c0 .3 0 .5-.5.7-.5.3-1.4.5-2.3.2-2.5-.7-4.7-2.9-5.4-5.4-.3-.9-.1-1.8.2-2.3z"
+        />
+      </svg>
+    );
+  }
+
   if (name === "lock") {
     return (
       <svg viewBox="0 0 24 24" aria-hidden="true">
