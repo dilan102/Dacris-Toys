@@ -51,7 +51,11 @@ export default function Home() {
               priority
             />
           </Link>
-          <Link className="icon-button light" href="/carrito" aria-label="Abrir carrito">
+          <Link
+            className="icon-button light"
+            href="/carrito"
+            aria-label="Abrir carrito"
+          >
             <Icon name="cart" />
           </Link>
         </div>
@@ -95,6 +99,22 @@ export default function Home() {
           </div>
         </div>
       </section>
+      <section className="section">
+        <h2>Garantías</h2>
+        <div className="guarantee-grid">
+          {guarantees.map((item) => (
+            <article className="info-card compact" key={item.title}>
+              <div className="soft-icon">
+                <Icon name={item.icon} />
+              </div>
+              <div>
+                <h3>{item.title}</h3>
+                <p>{item.text}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
 
       <div className="content-wrap" id="catalogo">
         <section className="section">
@@ -104,7 +124,10 @@ export default function Home() {
               Explorar todo <Icon name="arrow" />
             </Link>
           </div>
-          <div className="section-card-grid home-category-grid" aria-label="Categorías principales">
+          <div
+            className="section-card-grid home-category-grid"
+            aria-label="Categorías principales"
+          >
             {sectionCategories.map((category) => (
               <Link
                 className="section-card"
@@ -117,17 +140,6 @@ export default function Home() {
               </Link>
             ))}
           </div>
-        </section>
-
-        <section className="offer-card">
-          <div>
-            <h2>Oferta del mes</h2>
-            <p>20% OFF en juguetes educativos.</p>
-            <p>Código: DACRI20</p>
-          </div>
-          <Link href="/categorias/jugueteria">
-            Ver ofertas <Icon name="arrow" />
-          </Link>
         </section>
 
         <section className="section">
@@ -148,28 +160,14 @@ export default function Home() {
                 key={rowIndex}
               >
                 {[...row, ...row].map((product, index) => (
-                  <div className="featured-slide" key={`${product.id}-${index}`}>
+                  <div
+                    className="featured-slide"
+                    key={`${product.id}-${index}`}
+                  >
                     <ProductCard product={product} />
                   </div>
                 ))}
               </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="section">
-          <h2>Garantías</h2>
-          <div className="guarantee-grid">
-            {guarantees.map((item) => (
-              <article className="info-card compact" key={item.title}>
-                <div className="soft-icon">
-                  <Icon name={item.icon} />
-                </div>
-                <div>
-                  <h3>{item.title}</h3>
-                  <p>{item.text}</p>
-                </div>
-              </article>
             ))}
           </div>
         </section>
@@ -213,7 +211,10 @@ export default function Home() {
               cada edad. Queremos que la infancia sea mágica.
             </p>
             <div className="about-actions">
-              <Link className="secondary-button filled" href="/categorias/todos">
+              <Link
+                className="secondary-button filled"
+                href="/categorias/todos"
+              >
                 Conocer más <Icon name="arrow" />
               </Link>
               <a className="secondary-button outline" href="tel:+573001234567">
