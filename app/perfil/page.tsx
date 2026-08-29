@@ -42,7 +42,7 @@ export default function ProfilePage() {
           Entrar al panel administrativo
         </Link>
       </section>
-      <BottomNav active="perfil" />
+      <BottomNav active="perfil" alwaysVisible />
     </main>
   );
 }

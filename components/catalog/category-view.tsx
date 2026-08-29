@@ -1,13 +1,16 @@
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProductCard } from "@/components/product/product-card";
 import {
+  categoryCardDesign,
   formatPrice,
   getCategory,
   getCategoryProductCount,
   getProductsByCategory,
   getSubcategories,
   sectionCategories,
+  sortCategoriesByDisplayOrder,
 } from "@/lib/catalog";
 
 type CategoryViewProps = {
@@ -24,6 +27,8 @@ export function CategoryView({ slug }: CategoryViewProps) {
   const subcategories = getSubcategories(category.parentSlug ?? category.slug);
   const showSectionCards = category.slug === "todos";
   const showSubcategoryCards = category.slug === "jugueteria";
+  const showProducts = !showSectionCards && !showSubcategoryCards;
+  const orderedSectionCategories = sortCategoriesByDisplayOrder(sectionCategories);
   const prices = visibleProducts.map((product) => product.price);
   const priceRange =
     prices.length > 0
@@ -31,6 +36,8 @@ export function CategoryView({ slug }: CategoryViewProps) {
       : "Próximamente";
   const summaryCount = showSectionCards
     ? `${sectionCategories.length} categorías`
+    : showSubcategoryCards
+      ? `${subcategories.length} subsecciones`
     : `${visibleProducts.length} productos`;
 
   return (
@@ -48,27 +55,53 @@ export function CategoryView({ slug }: CategoryViewProps) {
         </div>
         <div className="catalog-summary" aria-label="Resumen del catálogo">
           <span>{summaryCount}</span>
-          {!showSectionCards ? <span>{priceRange}</span> : null}
+          {showProducts ? <span>{priceRange}</span> : null}
         </div>
       </div>
       {showSectionCards ? (
-        <div className="section-card-grid" aria-label="Secciones del catálogo">
-          {sectionCategories.map((item) => (
-            <Link className="section-card" href={`/categorias/${item.slug}`} key={item.slug}>
-              <strong>{item.name}</strong>
-              <p>{item.description}</p>
-              <span>{getCategoryProductCount(item.slug)} productos</span>
-            </Link>
-          ))}
+        <div
+          className="section-card-grid home-category-grid"
+          aria-label="Secciones del catálogo"
+        >
+          {orderedSectionCategories.map((item) => {
+            const design = categoryCardDesign[item.slug] ?? {
+              image: "/category-jugueteria.png",
+              width: 665,
+              height: 390,
+            };
+
+            return (
+              <Link
+                className="category-showcase"
+                href={`/categorias/${item.slug}`}
+                key={item.slug}
+                scroll={false}
+              >
+                <Image
+                  src={design.image}
+                  alt={`${item.name}: ${item.description}`}
+                  width={design.width}
+                  height={design.height}
+                />
+                <span className="sr-only">
+                  Ver productos de {item.name}
+                </span>
+              </Link>
+            );
+          })}
         </div>
       ) : null}
       {showSubcategoryCards ? (
-        <div className="section-card-grid compact-section-grid" aria-label="Subsecciones">
+        <div
+          className="section-card-grid compact-section-grid toy-section-grid"
+          aria-label="Subsecciones"
+        >
           {subcategories.map((item) => (
             <Link
-              className="section-card"
+              className="section-card toy-section-card"
               href={`/categorias/jugueteria/${item.slug}`}
               key={item.slug}
+              scroll={false}
             >
               <strong>{item.name}</strong>
               <p>{item.description}</p>
@@ -77,13 +110,13 @@ export function CategoryView({ slug }: CategoryViewProps) {
           ))}
         </div>
       ) : null}
-      {!showSectionCards && visibleProducts.length > 0 ? (
+      {showProducts && visibleProducts.length > 0 ? (
         <div className="product-grid">
           {visibleProducts.map((product) => (
             <ProductCard product={product} key={product.id} />
           ))}
         </div>
-      ) : !showSectionCards ? (
+      ) : showProducts ? (
         <div className="empty-media">Muy pronto tendremos productos aquí</div>
       ) : null}
     </section>

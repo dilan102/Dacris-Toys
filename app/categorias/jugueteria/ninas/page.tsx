@@ -16,7 +16,7 @@ export default function NinasPage() {
     <main className="site-shell inner-page">
       <AppHeader title="Niñas" backHref="/categorias/jugueteria" />
       <CategoryView slug="ninas" />
-      <BottomNav active="categorias" />
+      <BottomNav active="categorias" alwaysVisible />
     </main>
   );
 }

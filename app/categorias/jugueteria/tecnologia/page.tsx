@@ -16,7 +16,7 @@ export default function TecnologiaPage() {
     <main className="site-shell inner-page">
       <AppHeader title="Tecnología" backHref="/categorias/jugueteria" />
       <CategoryView slug="tecnologia" />
-      <BottomNav active="categorias" />
+      <BottomNav active="categorias" alwaysVisible />
     </main>
   );
 }

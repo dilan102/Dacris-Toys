@@ -16,7 +16,7 @@ export default function DidacticosPage() {
     <main className="site-shell inner-page">
       <AppHeader title="Didácticos" backHref="/categorias/jugueteria" />
       <CategoryView slug="didacticos" />
-      <BottomNav active="categorias" />
+      <BottomNav active="categorias" alwaysVisible />
     </main>
   );
 }

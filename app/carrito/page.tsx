@@ -74,7 +74,7 @@ export default function CartPage() {
           </Link>
         </aside>
       </section>
-      <BottomNav active="carrito" />
+      <BottomNav active="carrito" alwaysVisible />
     </main>
   );
 }

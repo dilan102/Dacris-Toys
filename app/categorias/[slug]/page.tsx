@@ -43,9 +43,9 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
 
   return (
     <main className="site-shell inner-page">
-      <AppHeader title={category?.name ?? "Catálogo"} />
+      <AppHeader title={category?.name ?? "Catálogo"} backHref="/#catalogo" />
       <CategoryView slug={slug} />
-      <BottomNav active="categorias" />
+      <BottomNav active="categorias" alwaysVisible />
     </main>
   );
 }

@@ -42,6 +42,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
   if (!product) notFound();
 
   const category = getCategory(product.category);
+  const subcategory = product.subcategory ? getCategory(product.subcategory) : null;
+  const productCategoryHref = subcategory
+    ? `/categorias/jugueteria/${subcategory.slug}`
+    : `/categorias/${product.category}`;
+  const productCategoryLabel = subcategory
+    ? `${category?.name}: ${subcategory.name}`
+    : category?.name;
   const relatedProducts = getRelatedProducts(product);
 
   return (
@@ -55,7 +62,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
           <div className="detail-panel">
             <div className="detail-kicker">
               <p className="stock-pill">{product.stock} disponibles</p>
-              <Link href={`/categorias/${product.category}`}>{category?.name}</Link>
+              <Link href={productCategoryHref}>{productCategoryLabel}</Link>
             </div>
             <h1>{product.name}</h1>
             <strong>{formatPrice(product.price)}</strong>
@@ -94,7 +101,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
           <section className="section">
             <div className="section-title-row">
               <h2>También te puede gustar</h2>
-              <Link href={`/categorias/${product.category}`}>Ver categoría</Link>
+              <Link href={productCategoryHref}>Ver categoría</Link>
             </div>
             <div className="product-grid related-grid">
               {relatedProducts.map((item) => (
@@ -104,7 +111,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
           </section>
         ) : null}
       </div>
-      <BottomNav active="categorias" />
+      <BottomNav active="categorias" alwaysVisible />
     </main>
   );
 }

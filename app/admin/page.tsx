@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { AppHeader } from "@/components/ui/app-header";
+import { BottomNav } from "@/components/ui/bottom-nav";
 import { Icon } from "@/components/ui/icon";
 import { products } from "@/lib/catalog";
 
@@ -43,6 +44,7 @@ export default function AdminPage() {
           </Link>
         </div>
       </section>
+      <BottomNav active="perfil" alwaysVisible />
     </main>
   );
 }

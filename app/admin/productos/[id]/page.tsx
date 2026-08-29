@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { AppHeader } from "@/components/ui/app-header";
+import { BottomNav } from "@/components/ui/bottom-nav";
 import { formatPrice, getProduct } from "@/lib/catalog";
 
 type AdminProductPageProps = {
@@ -48,6 +49,7 @@ export default async function AdminProductPage({ params }: AdminProductPageProps
           </button>
         </form>
       </section>
+      <BottomNav active="perfil" alwaysVisible />
     </main>
   );
 }

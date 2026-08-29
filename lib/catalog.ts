@@ -93,6 +93,61 @@ export const toySubcategories = categories.filter(
   (category) => category.parentSlug === "jugueteria",
 );
 
+export const categoryDisplayOrder = [
+  "ferreteria",
+  "cacharreria",
+  "belleza",
+  "hogar",
+  "jugueteria",
+];
+
+export const categoryCardDesign: Record<
+  string,
+  {
+    image: string;
+    width: number;
+    height: number;
+  }
+> = {
+  ferreteria: {
+    image: "/category-ferreteria.png",
+    width: 490,
+    height: 430,
+  },
+  cacharreria: {
+    image: "/category-cacharreria.png",
+    width: 490,
+    height: 430,
+  },
+  belleza: {
+    image: "/category-belleza.png",
+    width: 490,
+    height: 430,
+  },
+  hogar: {
+    image: "/category-hogar.png",
+    width: 575,
+    height: 385,
+  },
+  jugueteria: {
+    image: "/category-jugueteria.png",
+    width: 665,
+    height: 390,
+  },
+};
+
+export function sortCategoriesByDisplayOrder(items: Category[]) {
+  return [...items].sort((categoryA, categoryB) => {
+    const orderA = categoryDisplayOrder.indexOf(categoryA.slug);
+    const orderB = categoryDisplayOrder.indexOf(categoryB.slug);
+
+    return (
+      (orderA === -1 ? categoryDisplayOrder.length : orderA) -
+      (orderB === -1 ? categoryDisplayOrder.length : orderB)
+    );
+  });
+}
+
 export const products: Product[] = [
   {
     id: "bloques-madera",

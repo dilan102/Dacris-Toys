@@ -16,7 +16,7 @@ export default function BebesPage() {
     <main className="site-shell inner-page">
       <AppHeader title="Bebés" backHref="/categorias/jugueteria" />
       <CategoryView slug="bebes" />
-      <BottomNav active="categorias" />
+      <BottomNav active="categorias" alwaysVisible />
     </main>
   );
 }

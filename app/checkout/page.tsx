@@ -63,7 +63,7 @@ export default function CheckoutPage() {
           </Link>
         </aside>
       </section>
-      <BottomNav active="carrito" />
+      <BottomNav active="carrito" alwaysVisible />
     </main>
   );
 }

@@ -5,9 +5,10 @@ import { Icon } from "@/components/ui/icon";
 import { HomeMenu } from "@/components/navigation/home-menu";
 import { ProductCard } from "@/components/product/product-card";
 import {
-  getCategoryProductCount,
   getFeaturedProducts,
   sectionCategories,
+  sortCategoriesByDisplayOrder,
+  categoryCardDesign,
 } from "@/lib/catalog";
 
 const guarantees = [
@@ -30,66 +31,13 @@ const reviews = [
   },
 ];
 
-const categoryCardDesign: Record<
-  string,
-  {
-    image: string;
-    width: number;
-    height: number;
-  }
-> = {
-  ferreteria: {
-    image: "/category-ferreteria.png",
-    width: 490,
-    height: 430,
-  },
-  cacharreria: {
-    image: "/category-cacharreria.png",
-    width: 490,
-    height: 430,
-  },
-  belleza: {
-    image: "/category-belleza.png",
-    width: 490,
-    height: 430,
-  },
-  hogar: {
-    image: "/category-hogar.png",
-    width: 575,
-    height: 385,
-  },
-  jugueteria: {
-    image: "/category-jugueteria.png",
-    width: 665,
-    height: 390,
-  },
-};
-
-const categoryDisplayOrder = [
-  "ferreteria",
-  "cacharreria",
-  "belleza",
-  "hogar",
-  "jugueteria",
-];
-
 export default function Home() {
   const featuredProducts = getFeaturedProducts();
   const featuredRows = [
     featuredProducts.filter((_, index) => index % 2 === 0),
     featuredProducts.filter((_, index) => index % 2 === 1),
   ];
-  const orderedSectionCategories = [...sectionCategories].sort(
-    (categoryA, categoryB) => {
-      const orderA = categoryDisplayOrder.indexOf(categoryA.slug);
-      const orderB = categoryDisplayOrder.indexOf(categoryB.slug);
-
-      return (
-        (orderA === -1 ? categoryDisplayOrder.length : orderA) -
-        (orderB === -1 ? categoryDisplayOrder.length : orderB)
-      );
-    },
-  );
+  const orderedSectionCategories = sortCategoriesByDisplayOrder(sectionCategories);
 
   return (
     <main className="site-shell">
@@ -174,9 +122,6 @@ export default function Home() {
         <section className="section">
           <div className="section-title-row">
             <h2>Categorías</h2>
-            <Link className="section-link-button" href="/categorias/todos">
-              Explorar todo <Icon name="arrow" />
-            </Link>
           </div>
           <div
             className="section-card-grid home-category-grid"
@@ -202,8 +147,7 @@ export default function Home() {
                     height={design.height}
                   />
                   <span className="sr-only">
-                    Ver {getCategoryProductCount(category.slug)} productos de{" "}
-                    {category.name}
+                    Ver productos de {category.name}
                   </span>
                 </Link>
               );
@@ -214,9 +158,6 @@ export default function Home() {
         <section className="section">
           <div className="section-title-row">
             <h2>Productos destacados</h2>
-            <Link className="section-link-button" href="/categorias/todos">
-              Ver todo <Icon name="arrow" />
-            </Link>
           </div>
           <div className="featured-carousel" aria-label="Productos destacados">
             {featuredRows.map((row, rowIndex) => (

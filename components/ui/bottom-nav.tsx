@@ -6,6 +6,7 @@ import { Icon } from "@/components/ui/icon";
 
 type BottomNavProps = {
   active: "inicio" | "categorias" | "carrito" | "perfil";
+  alwaysVisible?: boolean;
 };
 
 const items = [
@@ -15,10 +16,15 @@ const items = [
   { key: "perfil", label: "Perfil", href: "/perfil", icon: "user" },
 ] as const;
 
-export function BottomNav({ active }: BottomNavProps) {
+export function BottomNav({ active, alwaysVisible = false }: BottomNavProps) {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
+    if (alwaysVisible) {
+      setIsVisible(true);
+      return;
+    }
+
     function handleScroll() {
       setIsVisible(window.scrollY > 80);
     }
@@ -29,11 +35,17 @@ export function BottomNav({ active }: BottomNavProps) {
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, []);
+  }, [alwaysVisible]);
 
   return (
     <nav
-      className={isVisible ? "bottom-nav" : "bottom-nav bottom-nav-hidden"}
+      className={[
+        "bottom-nav",
+        alwaysVisible ? "bottom-nav-always" : "",
+        isVisible ? "" : "bottom-nav-hidden",
+      ]
+        .filter(Boolean)
+        .join(" ")}
       aria-label="Navegación inferior"
     >
       {items.map((item) => (

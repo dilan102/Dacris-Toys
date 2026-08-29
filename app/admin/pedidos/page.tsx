@@ -1,4 +1,5 @@
 import { AppHeader } from "@/components/ui/app-header";
+import { BottomNav } from "@/components/ui/bottom-nav";
 import { formatPrice } from "@/lib/catalog";
 
 const orders = [
@@ -41,6 +42,7 @@ export default function AdminOrdersPage() {
           ))}
         </div>
       </section>
+      <BottomNav active="perfil" alwaysVisible />
     </main>
   );
 }

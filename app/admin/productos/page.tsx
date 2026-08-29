@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { AppHeader } from "@/components/ui/app-header";
+import { BottomNav } from "@/components/ui/bottom-nav";
 import { formatPrice, products } from "@/lib/catalog";
 
 export default function AdminProductsPage() {
@@ -31,6 +32,7 @@ export default function AdminProductsPage() {
           ))}
         </div>
       </section>
+      <BottomNav active="perfil" alwaysVisible />
     </main>
   );
 }
