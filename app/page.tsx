@@ -30,6 +30,41 @@ const reviews = [
   },
 ];
 
+const categoryCardDesign: Record<
+  string,
+  {
+    tone: string;
+    headline: string;
+    image: string;
+  }
+> = {
+  ferreteria: {
+    tone: "category-card-ferreteria",
+    headline: "Herramientas y soluciones para tu día a día.",
+    image: "/product-kit-medico.png",
+  },
+  cacharreria: {
+    tone: "category-card-cacharreria",
+    headline: "Todo lo práctico para casa, cocina y momentos útiles.",
+    image: "/product-rompecabezas.png",
+  },
+  belleza: {
+    tone: "category-card-belleza",
+    headline: "Detalles para cuidarte, regalar y verte increíble.",
+    image: "/product-cocinita.png",
+  },
+  hogar: {
+    tone: "category-card-hogar",
+    headline: "Convierte cada espacio en un lugar más cómodo.",
+    image: "/product-bloques.png",
+  },
+  jugueteria: {
+    tone: "category-card-jugueteria",
+    headline: "Diversión para todas las edades y sonrisas aseguradas.",
+    image: "/product-bloques.png",
+  },
+};
+
 export default function Home() {
   const featuredProducts = getFeaturedProducts();
   const featuredRows = [
@@ -128,17 +163,40 @@ export default function Home() {
             className="section-card-grid home-category-grid"
             aria-label="Categorías principales"
           >
-            {sectionCategories.map((category) => (
-              <Link
-                className="section-card"
-                href={`/categorias/${category.slug}`}
-                key={category.slug}
-              >
-                <strong>{category.name}</strong>
-                <p>{category.description}</p>
-                <span>{getCategoryProductCount(category.slug)} productos</span>
-              </Link>
-            ))}
+            {sectionCategories.map((category) => {
+              const design = categoryCardDesign[category.slug] ?? {
+                tone: "category-card-default",
+                headline: category.description,
+                image: "/product-bloques.png",
+              };
+
+              return (
+                <Link
+                  className={`category-showcase ${design.tone}`}
+                  href={`/categorias/${category.slug}`}
+                  key={category.slug}
+                >
+                  <span className="category-frame" aria-hidden="true" />
+                  <span className="category-copy">
+                    <strong>{category.name}</strong>
+                    <span>{design.headline}</span>
+                  </span>
+                  <Image
+                    className="category-image"
+                    src={design.image}
+                    alt=""
+                    width={1152}
+                    height={896}
+                  />
+                  <span className="category-count">
+                    {getCategoryProductCount(category.slug)} productos
+                  </span>
+                  <span className="category-button">
+                    Ver productos <Icon name="arrow" />
+                  </span>
+                </Link>
+              );
+            })}
           </div>
         </section>
 
