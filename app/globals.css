@@ -575,13 +575,13 @@ svg {
   }
 
   to {
-    transform: translateX(calc(-50% - 8px));
+    transform: translateX(-33.333%);
   }
 }
 
 @keyframes featured-scroll-reverse {
   from {
-    transform: translateX(calc(-50% - 8px));
+    transform: translateX(-33.333%);
   }
 
   to {

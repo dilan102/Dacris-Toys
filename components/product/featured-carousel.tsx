@@ -21,32 +21,36 @@ export function FeaturedCarousel({ rows }: FeaturedCarouselProps) {
   const didDrag = useRef(false);
   const resumeTimer = useRef<number | null>(null);
   const trackRefs = useRef<Array<HTMLDivElement | null>>([]);
-  const isLooping = useRef(false);
+  const isLooping = useRef<Array<boolean>>([]);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(max-width: 759px)");
     let animationFrame = 0;
 
-    function normalizeLoop(track: HTMLDivElement) {
-      if (isLooping.current) return;
+    function getLoopWidth(track: HTMLDivElement) {
+      return track.scrollWidth / 3;
+    }
 
-      const midpoint = track.scrollWidth / 2;
+    function normalizeLoop(track: HTMLDivElement, index: number) {
+      if (isLooping.current[index]) return;
+
+      const loopWidth = getLoopWidth(track);
       const maxScrollLeft = track.scrollWidth - track.clientWidth;
 
-      if (midpoint <= 0 || maxScrollLeft <= 0) return;
+      if (loopWidth <= 0 || maxScrollLeft <= 0) return;
 
-      isLooping.current = true;
+      isLooping.current[index] = true;
 
-      if (track.scrollLeft <= 2) {
-        track.scrollLeft += midpoint;
-        startScrollLeft.current += midpoint;
-      } else if (track.scrollLeft >= maxScrollLeft - 2) {
-        track.scrollLeft -= midpoint;
-        startScrollLeft.current -= midpoint;
+      if (track.scrollLeft < loopWidth * 0.5) {
+        track.scrollLeft += loopWidth;
+        startScrollLeft.current += loopWidth;
+      } else if (track.scrollLeft > loopWidth * 1.5) {
+        track.scrollLeft -= loopWidth;
+        startScrollLeft.current -= loopWidth;
       }
 
       window.requestAnimationFrame(() => {
-        isLooping.current = false;
+        isLooping.current[index] = false;
       });
     }
 
@@ -58,7 +62,7 @@ export function FeaturedCarousel({ rows }: FeaturedCarouselProps) {
           const direction = index % 2 === 0 ? 1 : -1;
 
           track.scrollLeft += direction * 0.32;
-          normalizeLoop(track);
+          normalizeLoop(track, index);
         });
       }
 
@@ -68,7 +72,7 @@ export function FeaturedCarousel({ rows }: FeaturedCarouselProps) {
     trackRefs.current.forEach((track) => {
       if (!track || !mediaQuery.matches) return;
 
-      track.scrollLeft = track.scrollWidth / 2;
+      track.scrollLeft = getLoopWidth(track);
     });
 
     animationFrame = window.requestAnimationFrame(tick);
@@ -108,24 +112,24 @@ export function FeaturedCarousel({ rows }: FeaturedCarouselProps) {
     }
   }
 
-  function handleScroll(event: UIEvent<HTMLDivElement>) {
+  function handleScroll(event: UIEvent<HTMLDivElement>, rowIndex: number) {
     const track = event.currentTarget;
-    const midpoint = track.scrollWidth / 2;
+    const loopWidth = track.scrollWidth / 3;
     const maxScrollLeft = track.scrollWidth - track.clientWidth;
 
-    if (!isLooping.current && midpoint > 0 && maxScrollLeft > 0) {
-      isLooping.current = true;
+    if (!isLooping.current[rowIndex] && loopWidth > 0 && maxScrollLeft > 0) {
+      isLooping.current[rowIndex] = true;
 
-      if (track.scrollLeft <= 2) {
-        track.scrollLeft += midpoint;
-        startScrollLeft.current += midpoint;
-      } else if (track.scrollLeft >= maxScrollLeft - 2) {
-        track.scrollLeft -= midpoint;
-        startScrollLeft.current -= midpoint;
+      if (track.scrollLeft < loopWidth * 0.5) {
+        track.scrollLeft += loopWidth;
+        startScrollLeft.current += loopWidth;
+      } else if (track.scrollLeft > loopWidth * 1.5) {
+        track.scrollLeft -= loopWidth;
+        startScrollLeft.current -= loopWidth;
       }
 
       window.requestAnimationFrame(() => {
-        isLooping.current = false;
+        isLooping.current[rowIndex] = false;
       });
     }
 
@@ -169,12 +173,12 @@ export function FeaturedCarousel({ rows }: FeaturedCarouselProps) {
           onPointerLeave={finishDrag}
           onPointerMove={handlePointerMove}
           onPointerUp={finishDrag}
-          onScroll={handleScroll}
+          onScroll={(event) => handleScroll(event, rowIndex)}
           ref={(element) => {
             trackRefs.current[rowIndex] = element;
           }}
         >
-          {[...row, ...row].map((product, index) => (
+          {[...row, ...row, ...row].map((product, index) => (
             <div className="featured-slide" key={`${product.id}-${index}`}>
               <ProductCard product={product} />
             </div>
