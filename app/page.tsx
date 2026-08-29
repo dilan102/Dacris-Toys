@@ -101,6 +101,23 @@ export default function Home() {
       </section>
       <div className="content-wrap" id="catalogo">
         <section className="section">
+          <h2>Garantías</h2>
+          <div className="guarantee-grid">
+            {guarantees.map((item) => (
+              <article className="info-card compact" key={item.title}>
+                <div className="soft-icon">
+                  <Icon name={item.icon} />
+                </div>
+                <div>
+                  <h3>{item.title}</h3>
+                  <p>{item.text}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="section">
           <div className="section-title-row">
             <h2>Categorías</h2>
             <Link className="section-link-button" href="/categorias/todos">
@@ -121,23 +138,6 @@ export default function Home() {
                 <p>{category.description}</p>
                 <span>{getCategoryProductCount(category.slug)} productos</span>
               </Link>
-            ))}
-          </div>
-        </section>
-
-        <section className="section">
-          <h2>Garantías</h2>
-          <div className="guarantee-grid">
-            {guarantees.map((item) => (
-              <article className="info-card compact" key={item.title}>
-                <div className="soft-icon">
-                  <Icon name={item.icon} />
-                </div>
-                <div>
-                  <h3>{item.title}</h3>
-                  <p>{item.text}</p>
-                </div>
-              </article>
             ))}
           </div>
         </section>
