@@ -5,6 +5,11 @@ const supabaseImagePattern = process.env.NEXT_PUBLIC_SUPABASE_URL
   : null;
 
 const nextConfig: NextConfig = {
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "25mb",
+    },
+  },
   images: {
     remotePatterns: supabaseImagePattern ? [supabaseImagePattern] : [],
   },

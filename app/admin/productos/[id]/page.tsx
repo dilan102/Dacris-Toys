@@ -13,6 +13,8 @@ type AdminProductPageProps = {
 };
 
 const statusMessages: Record<string, string> = {
+  "borrar-error": "No se pudo borrar el producto. Revisa permisos de Supabase.",
+  "datos-invalidos": "Revisa nombre, categoría, precio y stock antes de guardar.",
   "guardar-error": "No se pudo guardar. Revisa que la tabla products exista y tenga permisos de escritura.",
 };
 

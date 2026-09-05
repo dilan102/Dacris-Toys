@@ -31,10 +31,28 @@ export function ProductForm({
   initialSubcategory,
 }: ProductFormProps) {
   const [category, setCategory] = useState(initialCategory);
+  const [formError, setFormError] = useState("");
   const showSubcategory = category === "jugueteria";
 
   return (
-    <form className="checkout-form editor-form" action={saveProductAction}>
+    <form
+      className="checkout-form editor-form"
+      action={saveProductAction}
+      onSubmit={(event) => {
+        const formData = new FormData(event.currentTarget);
+        const files = [formData.get("imageFile"), formData.get("videoFile")];
+        const tooLarge = files.some((file) => file instanceof File && file.size > 24 * 1024 * 1024);
+
+        if (tooLarge) {
+          event.preventDefault();
+          setFormError("La imagen o video pesa más de 24 MB. Usa un archivo más liviano.");
+          return;
+        }
+
+        setFormError("");
+      }}
+    >
+      {formError ? <p className="form-status">{formError}</p> : null}
       <label>
         ID / slug
         <input
