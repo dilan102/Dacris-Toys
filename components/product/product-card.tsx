@@ -16,7 +16,6 @@ export function ProductCard({ product }: ProductCardProps) {
         <Image src={product.image} alt={product.name} width={1152} height={896} />
       </Link>
       <div className="product-meta">
-        <span>{product.ageRange}</span>
         <span className={lowStock ? "stock-warning" : undefined}>
           {lowStock ? "Últimas unidades" : `${product.stock} disponibles`}
         </span>

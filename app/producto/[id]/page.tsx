@@ -72,10 +72,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
             <p>{product.detail}</p>
             <dl className="product-specs">
               <div>
-                <dt>Edad</dt>
-                <dd>{product.ageRange}</dd>
-              </div>
-              <div>
                 <dt>Disponibilidad</dt>
                 <dd>{product.stock > 5 ? "Entrega normal" : "Últimas unidades"}</dd>
               </div>

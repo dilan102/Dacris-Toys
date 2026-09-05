@@ -1,22 +1,16 @@
 import Link from "next/link";
-import { loginAction, logoutAction, registerAction } from "@/app/perfil/actions";
+import { logoutAction } from "@/app/perfil/actions";
 import { AppHeader } from "@/components/ui/app-header";
 import { BottomNav } from "@/components/ui/bottom-nav";
 import { Icon } from "@/components/ui/icon";
 import { getSessionUser } from "@/lib/auth";
 
-type ProfilePageProps = {
-  searchParams: Promise<{ estado?: string }>;
+const statusMessages: Record<string, string> = {
+  "cuenta-creada": "Cuenta creada correctamente.",
 };
 
-const statusMessages: Record<string, string> = {
-  "admin-requerido": "Inicia sesión como administrador para entrar al panel.",
-  "cuenta-creada": "Cuenta creada correctamente.",
-  "faltan-datos": "Escribe usuario y contraseña.",
-  "login-invalido": "Usuario o contraseña incorrectos.",
-  "registro-corto": "El usuario debe tener 3 caracteres y la contraseña mínimo 6.",
-  "usuario-existe": "Ese usuario ya existe. Prueba iniciar sesión.",
-  "db-error": "No se pudo conectar con la base de datos. Revisa las tablas de Supabase.",
+type ProfilePageProps = {
+  searchParams: Promise<{ estado?: string }>;
 };
 
 export default async function ProfilePage({ searchParams }: ProfilePageProps) {
@@ -30,7 +24,7 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
       <section className="content-wrap profile-layout">
         <div className="page-intro">
           <h1>Tu perfil</h1>
-          <p>Inicia sesión para guardar pedidos y datos de entrega.</p>
+          <p>Consulta tu cuenta, pedidos y acceso administrativo.</p>
         </div>
 
         {statusMessage ? <p className="form-status">{statusMessage}</p> : null}
@@ -54,58 +48,21 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
             </form>
           </article>
         ) : (
-          <section className="auth-grid">
-            <article className="info-card login-card">
-              <div className="soft-icon heart">
-                <Icon name="user" />
-              </div>
-              <h2>Iniciar sesión</h2>
-              <form className="checkout-form" action={loginAction}>
-                <label>
-                  Usuario
-                  <input name="username" autoComplete="username" required />
-                </label>
-                <label>
-                  Contraseña
-                  <input
-                    name="password"
-                    type="password"
-                    autoComplete="current-password"
-                    required
-                  />
-                </label>
-                <button className="secondary-button filled" type="submit">
-                  Entrar
-                </button>
-              </form>
-            </article>
-
-            <article className="info-card login-card">
-              <div className="soft-icon">
-                <Icon name="badge" />
-              </div>
-              <h2>Crear cuenta</h2>
-              <form className="checkout-form" action={registerAction}>
-                <label>
-                  Usuario
-                  <input name="username" autoComplete="username" required minLength={3} />
-                </label>
-                <label>
-                  Contraseña
-                  <input
-                    name="password"
-                    type="password"
-                    autoComplete="new-password"
-                    required
-                    minLength={6}
-                  />
-                </label>
-                <button className="secondary-button outline" type="submit">
-                  Crear cuenta
-                </button>
-              </form>
-            </article>
-          </section>
+          <article className="info-card login-card">
+            <div className="soft-icon heart">
+              <Icon name="user" />
+            </div>
+            <h2>Invitado</h2>
+            <p>Estás navegando sin iniciar sesión.</p>
+            <div className="login-actions">
+              <Link className="secondary-button filled" href="/acceso">
+                Iniciar sesión
+              </Link>
+              <Link className="secondary-button outline" href="/acceso">
+                Crear cuenta
+              </Link>
+            </div>
+          </article>
         )}
 
         <section className="profile-grid">
@@ -122,7 +79,7 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
         </section>
 
         {!session || session.role === "admin" ? (
-          <Link className="admin-link" href="/admin">
+          <Link className="admin-link" href={session ? "/admin" : "/acceso?estado=admin-requerido"}>
             Entrar al panel administrativo
           </Link>
         ) : null}

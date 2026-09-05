@@ -10,7 +10,7 @@ import {
   categoryCardDesign,
 } from "@/lib/catalog";
 import {
-  getCategoryProductCountFromDb,
+  getCategoryProductCountsFromDb,
   getFeaturedProductsFromDb,
 } from "@/lib/catalog-db";
 
@@ -41,13 +41,8 @@ export default async function Home() {
     featuredProducts.filter((_, index) => index % 2 === 1),
   ];
   const orderedSectionCategories = sortCategoriesByDisplayOrder(sectionCategories);
-  const categoryCounts = new Map<string, number>(
-    await Promise.all(
-      orderedSectionCategories.map(async (category) => [
-        category.slug,
-        await getCategoryProductCountFromDb(category.slug),
-      ] as const),
-    ),
+  const categoryCounts = await getCategoryProductCountsFromDb(
+    orderedSectionCategories.map((category) => category.slug),
   );
 
   return (

@@ -15,7 +15,7 @@ function getString(formData: FormData, key: string) {
 }
 
 function profileRedirect(status: string): never {
-  redirect(`/perfil?estado=${encodeURIComponent(status)}`);
+  redirect(`/acceso?estado=${encodeURIComponent(status)}`);
 }
 
 export async function loginAction(formData: FormData) {

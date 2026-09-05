@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { products as fallbackProducts, type Product } from "@/lib/catalog";
 
@@ -70,7 +71,7 @@ function toProductRow(product: ProductInput): ProductRow {
   };
 }
 
-export async function getProducts() {
+export const getProducts = cache(async function getProducts() {
   const supabase = createSupabaseServerClient();
 
   if (!supabase) return fallbackProducts;
@@ -86,7 +87,7 @@ export async function getProducts() {
   }
 
   return (data ?? []).map((item) => mapProduct(item as ProductRow));
-}
+});
 
 export async function getProductById(id: string) {
   const supabase = createSupabaseServerClient();
@@ -175,6 +176,21 @@ export async function getFeaturedProductsFromDb() {
 
 export async function getCategoryProductCountFromDb(slug: string) {
   return (await getProductsByCategoryFromDb(slug)).length;
+}
+
+export async function getCategoryProductCountsFromDb(slugs: string[]) {
+  const allProducts = await getProducts();
+
+  return new Map(
+    slugs.map((slug) => [
+      slug,
+      allProducts.filter((product) => {
+        if (slug === "todos") return true;
+        if (product.subcategory === slug) return true;
+        return product.category === slug && !product.subcategory;
+      }).length,
+    ] as const),
+  );
 }
 
 export async function getRelatedProductsFromDb(product: Product, limit = 3) {

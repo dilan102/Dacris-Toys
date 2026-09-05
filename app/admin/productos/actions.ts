@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAdminSession } from "@/lib/auth";
-import { toySubcategories } from "@/lib/catalog";
+import { categories, toySubcategories } from "@/lib/catalog";
 import {
   deleteProduct,
   saveProduct,
@@ -37,11 +37,24 @@ export async function saveProductAction(formData: FormData) {
   const name = getString(formData, "name");
   const id = getString(formData, "id") || buildSlug(name);
   const category = getString(formData, "category");
-  const subcategory = getString(formData, "subcategory");
+  const subcategory = category === "jugueteria" ? getString(formData, "subcategory") : "";
   const price = Number(getString(formData, "price"));
   const stock = Number(getString(formData, "stock"));
 
-  if (!id || !name || !category || !Number.isFinite(price) || !Number.isFinite(stock)) {
+  const validCategory = categories.some(
+    (item) => !item.parentSlug && item.slug !== "todos" && item.slug === category,
+  );
+  const validSubcategory =
+    !subcategory || toySubcategories.some((item) => item.slug === subcategory);
+
+  if (
+    !id ||
+    !name ||
+    !validCategory ||
+    !validSubcategory ||
+    !Number.isFinite(price) ||
+    !Number.isFinite(stock)
+  ) {
     throw new Error("Revisa nombre, categoría, precio y stock.");
   }
 
@@ -67,7 +80,7 @@ export async function saveProductAction(formData: FormData) {
     category,
     subcategory: subcategory || undefined,
     stock,
-    ageRange: getString(formData, "ageRange"),
+    ageRange: "",
     tags: parseTags(getString(formData, "tags")),
     featured: formData.get("featured") === "on",
   };
