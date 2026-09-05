@@ -15,7 +15,7 @@ type AdminProductPageProps = {
 export default async function AdminProductPage({ params, searchParams }: AdminProductPageProps) {
   const { id } = await params;
   const query = await searchParams;
-  const product = id === "nuevo" ? null : await getProductById(id);
+  const product = id === "nuevo" ? null : (await getProductById(id)) ?? null;
   const mainCategories = categories.filter(
     (category) => !category.parentSlug && category.slug !== "todos",
   );
