@@ -41,12 +41,12 @@ export default async function Home() {
     featuredProducts.filter((_, index) => index % 2 === 1),
   ];
   const orderedSectionCategories = sortCategoriesByDisplayOrder(sectionCategories);
-  const categoryCounts = new Map(
+  const categoryCounts = new Map<string, number>(
     await Promise.all(
       orderedSectionCategories.map(async (category) => [
         category.slug,
         await getCategoryProductCountFromDb(category.slug),
-      ]),
+      ] as const),
     ),
   );
 

@@ -41,12 +41,12 @@ export async function CategoryView({ slug }: CategoryViewProps) {
     : showSubcategoryCards
       ? `${subcategories.length} subsecciones`
     : `${visibleProducts.length} productos`;
-  const sectionProductCounts = new Map(
+  const sectionProductCounts = new Map<string, number>(
     await Promise.all(
       [...orderedSectionCategories, ...subcategories].map(async (item) => [
         item.slug,
         await getCategoryProductCountFromDb(item.slug),
-      ]),
+      ] as const),
     ),
   );
 

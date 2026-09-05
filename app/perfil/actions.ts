@@ -14,7 +14,7 @@ function getString(formData: FormData, key: string) {
   return String(formData.get(key) ?? "").trim();
 }
 
-function profileRedirect(status: string) {
+function profileRedirect(status: string): never {
   redirect(`/perfil?estado=${encodeURIComponent(status)}`);
 }
 
