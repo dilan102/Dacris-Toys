@@ -26,8 +26,10 @@ export async function CategoryView({ slug }: CategoryViewProps) {
 
   if (!category) notFound();
 
-  const visibleProducts = await getProductsByCategoryFromDb(slug);
-  const session = await getSessionUser();
+  const [visibleProducts, session] = await Promise.all([
+    getProductsByCategoryFromDb(slug),
+    getSessionUser(),
+  ]);
   const parentCategory = category.parentSlug ? getCategory(category.parentSlug) : null;
   const subcategories = getSubcategories(category.parentSlug ?? category.slug);
   const showSectionCards = category.slug === "todos";

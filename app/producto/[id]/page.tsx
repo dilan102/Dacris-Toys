@@ -10,7 +10,7 @@ import {
   formatPrice,
   getCategory,
 } from "@/lib/catalog";
-import { getProductById, getRelatedProductsFromDb } from "@/lib/catalog-db";
+import { getProductById, getProductDetailsFromDb } from "@/lib/catalog-db";
 
 type ProductPageProps = {
   params: Promise<{ id: string }>;
@@ -36,7 +36,7 @@ export async function generateMetadata({
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const { id } = await params;
-  const product = await getProductById(id);
+  const { product, relatedProducts } = await getProductDetailsFromDb(id);
 
   if (!product) notFound();
 
@@ -48,8 +48,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const productCategoryLabel = subcategory
     ? `${category?.name}: ${subcategory.name}`
     : category?.name;
-  const relatedProducts = await getRelatedProductsFromDb(product);
-
   return (
     <main className="site-shell inner-page">
       <AppHeader title="Detalle" backHref="/categorias/todos" />

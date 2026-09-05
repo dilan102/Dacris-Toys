@@ -9,12 +9,17 @@ import { getProductById } from "@/lib/catalog-db";
 
 type AdminProductPageProps = {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ category?: string; subcategory?: string }>;
+  searchParams: Promise<{ category?: string; estado?: string; subcategory?: string }>;
+};
+
+const statusMessages: Record<string, string> = {
+  "guardar-error": "No se pudo guardar. Revisa que la tabla products exista y tenga permisos de escritura.",
 };
 
 export default async function AdminProductPage({ params, searchParams }: AdminProductPageProps) {
   const { id } = await params;
   const query = await searchParams;
+  const statusMessage = query.estado ? statusMessages[query.estado] : null;
   const product = id === "nuevo" ? null : (await getProductById(id)) ?? null;
   const mainCategories = categories.filter(
     (category) => !category.parentSlug && category.slug !== "todos",
@@ -53,6 +58,7 @@ export default async function AdminProductPage({ params, searchParams }: AdminPr
         ) : (
           <div className="empty-media">Imagen</div>
         )}
+        {statusMessage ? <p className="form-status">{statusMessage}</p> : null}
         <ProductForm
           product={product}
           mainCategories={mainCategories}

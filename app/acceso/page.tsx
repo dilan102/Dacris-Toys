@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { AccessSubmitButton } from "@/app/acceso/access-submit-button";
 import { loginAction, registerAction } from "@/app/perfil/actions";
 import { AppHeader } from "@/components/ui/app-header";
 import { BottomNav } from "@/components/ui/bottom-nav";
@@ -58,9 +59,9 @@ export default async function AccessPage({ searchParams }: AccessPageProps) {
                   required
                 />
               </label>
-              <button className="secondary-button filled" type="submit">
+              <AccessSubmitButton variant="filled" pendingText="Entrando...">
                 Entrar
-              </button>
+              </AccessSubmitButton>
             </form>
           </article>
 
@@ -84,9 +85,9 @@ export default async function AccessPage({ searchParams }: AccessPageProps) {
                   minLength={6}
                 />
               </label>
-              <button className="secondary-button outline" type="submit">
+              <AccessSubmitButton variant="outline" pendingText="Creando...">
                 Crear cuenta
-              </button>
+              </AccessSubmitButton>
             </form>
           </article>
         </section>

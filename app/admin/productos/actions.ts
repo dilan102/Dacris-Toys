@@ -31,6 +31,28 @@ function buildSlug(value: string) {
     .replace(/^-+|-+$/g, "");
 }
 
+function redirectToEditor(id: string, status: string): never {
+  redirect(`/admin/productos/${id}?estado=${encodeURIComponent(status)}`);
+}
+
+async function uploadOptionalProductMedia(
+  file: FormDataEntryValue | null,
+  productId: string,
+  kind: "image" | "video",
+) {
+  if (!(file instanceof File) || file.size <= 0) return "";
+
+  try {
+    return await uploadProductMedia(file, productId, kind);
+  } catch (error) {
+    console.error(
+      `No se pudo subir ${kind === "image" ? "la imagen" : "el video"} del producto:`,
+      error instanceof Error ? error.message : error,
+    );
+    return "";
+  }
+}
+
 export async function saveProductAction(formData: FormData) {
   await requireAdminSession();
 
@@ -60,14 +82,10 @@ export async function saveProductAction(formData: FormData) {
 
   const imageFile = formData.get("imageFile");
   const videoFile = formData.get("videoFile");
-  const uploadedImage =
-    imageFile instanceof File && imageFile.size > 0
-      ? await uploadProductMedia(imageFile, id, "image")
-      : "";
-  const uploadedVideo =
-    videoFile instanceof File && videoFile.size > 0
-      ? await uploadProductMedia(videoFile, id, "video")
-      : "";
+  const [uploadedImage, uploadedVideo] = await Promise.all([
+    uploadOptionalProductMedia(imageFile, id, "image"),
+    uploadOptionalProductMedia(videoFile, id, "video"),
+  ]);
 
   const product: ProductInput = {
     id,
@@ -85,7 +103,15 @@ export async function saveProductAction(formData: FormData) {
     featured: formData.get("featured") === "on",
   };
 
-  await saveProduct(product);
+  try {
+    await saveProduct(product);
+  } catch (error) {
+    console.error(
+      "No se pudo guardar el producto:",
+      error instanceof Error ? error.message : error,
+    );
+    redirectToEditor(id, "guardar-error");
+  }
 
   revalidatePath("/");
   revalidatePath("/admin/productos");

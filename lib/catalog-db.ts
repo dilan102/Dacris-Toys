@@ -25,6 +25,8 @@ export type ProductInput = Omit<Product, "subcategory" | "featured"> & {
   featured?: boolean;
 };
 
+type ProductWriteRow = Record<string, string | number | boolean | string[] | null>;
+
 function parseTags(tags: ProductRow["tags"]) {
   if (Array.isArray(tags)) return tags;
   if (typeof tags !== "string") return [];
@@ -53,7 +55,7 @@ function mapProduct(row: ProductRow): Product {
   };
 }
 
-function toProductRow(product: ProductInput): ProductRow {
+function toSnakeProductRow(product: ProductInput): ProductWriteRow {
   return {
     id: product.id,
     name: product.name,
@@ -68,6 +70,47 @@ function toProductRow(product: ProductInput): ProductRow {
     age_range: product.ageRange,
     tags: product.tags,
     featured: product.featured ?? false,
+  };
+}
+
+function toCamelProductRow(product: ProductInput): ProductWriteRow {
+  return {
+    id: product.id,
+    name: product.name,
+    description: product.description,
+    detail: product.detail,
+    price: product.price,
+    image: product.image,
+    videoUrl: product.videoUrl || null,
+    category: product.category,
+    subcategory: product.subcategory || null,
+    stock: product.stock,
+    ageRange: product.ageRange,
+    tags: product.tags,
+    featured: product.featured ?? false,
+  };
+}
+
+function toBasicProductRow(product: ProductInput): ProductWriteRow {
+  return {
+    id: product.id,
+    name: product.name,
+    description: product.description,
+    detail: product.detail,
+    price: product.price,
+    image: product.image,
+    category: product.category,
+    subcategory: product.subcategory || null,
+    stock: product.stock,
+    tags: product.tags,
+    featured: product.featured ?? false,
+  };
+}
+
+function withTextTags(row: ProductWriteRow, product: ProductInput): ProductWriteRow {
+  return {
+    ...row,
+    tags: product.tags.join(", "),
   };
 }
 
@@ -89,7 +132,7 @@ export const getProducts = cache(async function getProducts() {
   return (data ?? []).map((item) => mapProduct(item as ProductRow));
 });
 
-export async function getProductById(id: string) {
+export const getProductById = cache(async function getProductById(id: string) {
   const supabase = createSupabaseServerClient();
 
   if (!supabase) return fallbackProducts.find((product) => product.id === id);
@@ -106,7 +149,7 @@ export async function getProductById(id: string) {
   }
 
   return data ? mapProduct(data as ProductRow) : undefined;
-}
+});
 
 export async function saveProduct(product: ProductInput) {
   const supabase = createSupabaseServerClient();
@@ -115,11 +158,31 @@ export async function saveProduct(product: ProductInput) {
     throw new Error("Faltan variables de Supabase para guardar productos.");
   }
 
-  const { error } = await supabase
-    .from("products")
-    .upsert(toProductRow(product), { onConflict: "id" });
+  const attempts = [
+    toSnakeProductRow(product),
+    withTextTags(toSnakeProductRow(product), product),
+    toCamelProductRow(product),
+    withTextTags(toCamelProductRow(product), product),
+    toBasicProductRow(product),
+    withTextTags(toBasicProductRow(product), product),
+  ];
+  let lastError = "";
 
-  if (error) throw new Error(error.message);
+  for (const row of attempts) {
+    const { error } = await supabase
+      .from("products")
+      .upsert(row, { onConflict: "id" });
+
+    if (!error) return;
+
+    lastError = error.message;
+
+    if (!/array|column|schema|cache|age|video|tag/i.test(error.message)) {
+      break;
+    }
+  }
+
+  throw new Error(lastError || "No se pudo guardar el producto.");
 }
 
 export async function deleteProduct(id: string) {
@@ -208,4 +271,28 @@ export async function getRelatedProductsFromDb(product: Product, limit = 3) {
   );
 
   return [...relatedBySubcategory, ...relatedByCategory].slice(0, limit);
+}
+
+export async function getProductDetailsFromDb(id: string, relatedLimit = 3) {
+  const allProducts = await getProducts();
+  const product = allProducts.find((item) => item.id === id);
+
+  if (!product) return { product: undefined, relatedProducts: [] };
+
+  const relatedBySubcategory = product.subcategory
+    ? allProducts.filter(
+        (item) => item.id !== product.id && item.subcategory === product.subcategory,
+      )
+    : [];
+  const relatedByCategory = allProducts.filter(
+    (item) =>
+      item.id !== product.id &&
+      item.category === product.category &&
+      item.subcategory !== product.subcategory,
+  );
+
+  return {
+    product,
+    relatedProducts: [...relatedBySubcategory, ...relatedByCategory].slice(0, relatedLimit),
+  };
 }

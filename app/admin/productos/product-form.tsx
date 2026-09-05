@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useFormStatus } from "react-dom";
 import { saveProductAction } from "@/app/admin/productos/actions";
-import { type Category, formatPrice, type Product } from "@/lib/catalog";
+import type { Category, Product } from "@/lib/catalog";
 
 type ProductFormProps = {
   product: Product | null;
@@ -11,6 +12,16 @@ type ProductFormProps = {
   initialCategory: string;
   initialSubcategory: string;
 };
+
+function SaveButton() {
+  const { pending } = useFormStatus();
+
+  return (
+    <button className="primary-button wide pending-button" type="submit" disabled={pending}>
+      <span>{pending ? "Guardando..." : "Guardar cambios"}</span>
+    </button>
+  );
+}
 
 export function ProductForm({
   product,
@@ -59,7 +70,7 @@ export function ProductForm({
           type="number"
           name="price"
           defaultValue={product?.price}
-          placeholder={formatPrice(0)}
+          placeholder="$0"
           min="0"
           required
         />
@@ -151,9 +162,7 @@ export function ProductForm({
         <input type="checkbox" name="featured" defaultChecked={product?.featured} />
         Mostrar en destacados
       </label>
-      <button className="primary-button wide" type="submit">
-        Guardar cambios
-      </button>
+      <SaveButton />
     </form>
   );
 }
