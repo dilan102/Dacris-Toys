@@ -6,23 +6,25 @@ import {
   categoryCardDesign,
   formatPrice,
   getCategory,
-  getCategoryProductCount,
-  getProductsByCategory,
   getSubcategories,
   sectionCategories,
   sortCategoriesByDisplayOrder,
 } from "@/lib/catalog";
+import {
+  getCategoryProductCountFromDb,
+  getProductsByCategoryFromDb,
+} from "@/lib/catalog-db";
 
 type CategoryViewProps = {
   slug: string;
 };
 
-export function CategoryView({ slug }: CategoryViewProps) {
+export async function CategoryView({ slug }: CategoryViewProps) {
   const category = getCategory(slug);
 
   if (!category) notFound();
 
-  const visibleProducts = getProductsByCategory(slug);
+  const visibleProducts = await getProductsByCategoryFromDb(slug);
   const parentCategory = category.parentSlug ? getCategory(category.parentSlug) : null;
   const subcategories = getSubcategories(category.parentSlug ?? category.slug);
   const showSectionCards = category.slug === "todos";
@@ -39,6 +41,14 @@ export function CategoryView({ slug }: CategoryViewProps) {
     : showSubcategoryCards
       ? `${subcategories.length} subsecciones`
     : `${visibleProducts.length} productos`;
+  const sectionProductCounts = new Map(
+    await Promise.all(
+      [...orderedSectionCategories, ...subcategories].map(async (item) => [
+        item.slug,
+        await getCategoryProductCountFromDb(item.slug),
+      ]),
+    ),
+  );
 
   return (
     <section className="content-wrap">
@@ -84,7 +94,8 @@ export function CategoryView({ slug }: CategoryViewProps) {
                   height={design.height}
                 />
                 <span className="sr-only">
-                  Ver productos de {item.name}
+                  Ver {sectionProductCounts.get(item.slug) ?? 0} productos de{" "}
+                  {item.name}
                 </span>
               </Link>
             );
@@ -105,7 +116,7 @@ export function CategoryView({ slug }: CategoryViewProps) {
             >
               <strong>{item.name}</strong>
               <p>{item.description}</p>
-              <span>{getCategoryProductCount(item.slug)} productos</span>
+              <span>{sectionProductCounts.get(item.slug) ?? 0} productos</span>
             </Link>
           ))}
         </div>

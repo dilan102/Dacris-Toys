@@ -5,11 +5,14 @@ import { Icon } from "@/components/ui/icon";
 import { HomeMenu } from "@/components/navigation/home-menu";
 import { FeaturedCarousel } from "@/components/product/featured-carousel";
 import {
-  getFeaturedProducts,
   sectionCategories,
   sortCategoriesByDisplayOrder,
   categoryCardDesign,
 } from "@/lib/catalog";
+import {
+  getCategoryProductCountFromDb,
+  getFeaturedProductsFromDb,
+} from "@/lib/catalog-db";
 
 const guarantees = [
   { icon: "truck", title: "Envío rápido", text: "Entrega en 2-3 días" },
@@ -31,13 +34,21 @@ const reviews = [
   },
 ];
 
-export default function Home() {
-  const featuredProducts = getFeaturedProducts();
+export default async function Home() {
+  const featuredProducts = await getFeaturedProductsFromDb();
   const featuredRows = [
     featuredProducts.filter((_, index) => index % 2 === 0),
     featuredProducts.filter((_, index) => index % 2 === 1),
   ];
   const orderedSectionCategories = sortCategoriesByDisplayOrder(sectionCategories);
+  const categoryCounts = new Map(
+    await Promise.all(
+      orderedSectionCategories.map(async (category) => [
+        category.slug,
+        await getCategoryProductCountFromDb(category.slug),
+      ]),
+    ),
+  );
 
   return (
     <main className="site-shell">
@@ -147,7 +158,8 @@ export default function Home() {
                     height={design.height}
                   />
                   <span className="sr-only">
-                    Ver productos de {category.name}
+                    Ver {categoryCounts.get(category.slug) ?? 0} productos de{" "}
+                    {category.name}
                   </span>
                 </Link>
               );

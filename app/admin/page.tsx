@@ -2,12 +2,14 @@ import Link from "next/link";
 import { AppHeader } from "@/components/ui/app-header";
 import { BottomNav } from "@/components/ui/bottom-nav";
 import { Icon } from "@/components/ui/icon";
-import { products } from "@/lib/catalog";
+import { getProducts } from "@/lib/catalog-db";
 
 const paidOrders = 3;
 const pendingOrders = 2;
 
-export default function AdminPage() {
+export default async function AdminPage() {
+  const products = await getProducts();
+
   return (
     <main className="site-shell inner-page admin-page">
       <AppHeader title="Admin" />

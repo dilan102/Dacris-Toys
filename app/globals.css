@@ -1036,12 +1036,18 @@ svg {
 }
 
 .detail-media img,
-.editor-layout > img {
+.detail-media video,
+.editor-preview-media {
   width: 100%;
   height: auto;
   display: block;
   aspect-ratio: 1.2 / 1;
   object-fit: cover;
+}
+
+.detail-media video,
+.editor-preview-media {
+  background: #161a24;
 }
 
 .detail-panel {
@@ -1267,6 +1273,7 @@ svg {
 }
 
 .checkout-form input,
+.checkout-form select,
 .checkout-form textarea {
   width: 100%;
   min-height: 50px;
@@ -1281,10 +1288,50 @@ svg {
   outline: none;
 }
 
+.checkout-form select {
+  appearance: none;
+}
+
 .checkout-form textarea {
   min-height: 104px;
   padding-top: 14px;
   resize: vertical;
+}
+
+.checkbox-field {
+  display: flex;
+  align-items: center;
+  grid-template-columns: none;
+}
+
+.checkbox-field input {
+  width: 20px;
+  min-height: 20px;
+  accent-color: var(--purple);
+}
+
+.delete-product-form {
+  display: grid;
+  gap: 12px;
+}
+
+.danger-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  border: 0;
+  border-radius: 999px;
+  color: white;
+  background: #ef3d31;
+  box-shadow: 0 10px 18px rgba(239, 61, 49, 0.22);
+  font-size: 14px;
+  font-weight: 950;
+  text-decoration: none;
+}
+
+.wide {
+  width: 100%;
 }
 
 .secure-line {
@@ -1303,6 +1350,21 @@ svg {
 
 .profile-layout {
   max-width: 900px;
+}
+
+.auth-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.form-status {
+  padding: 12px 14px;
+  border: 1px solid #ffd58a;
+  border-radius: 14px;
+  color: #7d5400;
+  background: #fff5da;
+  font-size: 13px;
+  font-weight: 900;
 }
 
 .login-card,
@@ -1326,6 +1388,10 @@ svg {
 
 .login-actions button {
   border: 0;
+}
+
+.login-actions a {
+  width: 100%;
 }
 
 .profile-grid,
@@ -1408,6 +1474,12 @@ svg {
   color: var(--purple);
   font-size: 13px;
   font-weight: 950;
+}
+
+.checkout-form input[type="file"] {
+  padding: 13px;
+  color: var(--muted);
+  background: #fbfaff;
 }
 
 .page-action-row {
@@ -1903,6 +1975,7 @@ svg {
   }
 
   .profile-grid,
+  .auth-grid,
   .login-actions,
   .admin-actions {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2060,6 +2133,41 @@ svg {
   }
 
   .product-footer strong {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 520px) {
+  .page-action-row {
+    align-items: stretch;
+  }
+
+  .page-action-row .secondary-button {
+    width: 100%;
+  }
+
+  .admin-product-row {
+    grid-template-columns: 58px minmax(0, 1fr);
+  }
+
+  .admin-product-row strong {
+    grid-column: 2;
+  }
+
+  .editor-layout {
+    gap: 14px;
+  }
+
+  .detail-panel,
+  .login-card,
+  .profile-box {
+    padding: 18px;
+  }
+
+  .checkout-form input,
+  .checkout-form select,
+  .checkout-form textarea {
+    border-radius: 14px;
     font-size: 16px;
   }
 }

@@ -9,9 +9,8 @@ import { ProductCard } from "@/components/product/product-card";
 import {
   formatPrice,
   getCategory,
-  getProduct,
-  getRelatedProducts,
 } from "@/lib/catalog";
+import { getProductById, getRelatedProductsFromDb } from "@/lib/catalog-db";
 
 type ProductPageProps = {
   params: Promise<{ id: string }>;
@@ -21,7 +20,7 @@ export async function generateMetadata({
   params,
 }: ProductPageProps): Promise<Metadata> {
   const { id } = await params;
-  const product = getProduct(id);
+  const product = await getProductById(id);
 
   if (!product) {
     return {
@@ -37,7 +36,7 @@ export async function generateMetadata({
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const { id } = await params;
-  const product = getProduct(id);
+  const product = await getProductById(id);
 
   if (!product) notFound();
 
@@ -49,7 +48,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const productCategoryLabel = subcategory
     ? `${category?.name}: ${subcategory.name}`
     : category?.name;
-  const relatedProducts = getRelatedProducts(product);
+  const relatedProducts = await getRelatedProductsFromDb(product);
 
   return (
     <main className="site-shell inner-page">
@@ -57,7 +56,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
       <div className="content-wrap">
         <section className="product-detail">
           <div className="detail-media">
-            <Image src={product.image} alt={product.name} width={1152} height={896} priority />
+            {product.videoUrl ? (
+              <video src={product.videoUrl} poster={product.image} controls playsInline />
+            ) : (
+              <Image src={product.image} alt={product.name} width={1152} height={896} priority />
+            )}
           </div>
           <div className="detail-panel">
             <div className="detail-kicker">

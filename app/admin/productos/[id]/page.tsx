@@ -1,8 +1,10 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { deleteProductAction, saveProductAction } from "@/app/admin/productos/actions";
 import { AppHeader } from "@/components/ui/app-header";
 import { BottomNav } from "@/components/ui/bottom-nav";
-import { formatPrice, getProduct } from "@/lib/catalog";
+import { categories, formatPrice, toySubcategories } from "@/lib/catalog";
+import { getProductById } from "@/lib/catalog-db";
 
 type AdminProductPageProps = {
   params: Promise<{ id: string }>;
@@ -10,7 +12,10 @@ type AdminProductPageProps = {
 
 export default async function AdminProductPage({ params }: AdminProductPageProps) {
   const { id } = await params;
-  const product = id === "nuevo" ? null : getProduct(id);
+  const product = id === "nuevo" ? null : await getProductById(id);
+  const mainCategories = categories.filter(
+    (category) => !category.parentSlug && category.slug !== "todos",
+  );
 
   if (id !== "nuevo" && !product) notFound();
 
@@ -18,36 +23,171 @@ export default async function AdminProductPage({ params }: AdminProductPageProps
     <main className="site-shell inner-page admin-page">
       <AppHeader title={product ? "Editar producto" : "Nuevo producto"} backHref="/admin/productos" />
       <section className="content-wrap editor-layout">
-        {product ? (
-          <Image src={product.image} alt={product.name} width={1152} height={896} />
+        {product?.videoUrl ? (
+          <video
+            className="editor-preview-media"
+            src={product.videoUrl}
+            poster={product.image}
+            controls
+          />
+        ) : product ? (
+          <Image
+            className="editor-preview-media"
+            src={product.image}
+            alt={product.name}
+            width={1152}
+            height={896}
+          />
         ) : (
           <div className="empty-media">Imagen</div>
         )}
-        <form className="checkout-form editor-form">
+        <form className="checkout-form editor-form" action={saveProductAction}>
+          <label>
+            ID / slug
+            <input
+              type="text"
+              name="id"
+              defaultValue={product?.id}
+              placeholder="bloques-madera"
+            />
+          </label>
           <label>
             Nombre
-            <input type="text" defaultValue={product?.name} placeholder="Nombre del producto" />
+            <input
+              type="text"
+              name="name"
+              defaultValue={product?.name}
+              placeholder="Nombre del producto"
+              required
+            />
+          </label>
+          <label>
+            Descripción corta
+            <input
+              type="text"
+              name="description"
+              defaultValue={product?.description}
+              placeholder="Texto corto para la tarjeta"
+              required
+            />
           </label>
           <label>
             Precio
             <input
               type="number"
+              name="price"
               defaultValue={product?.price}
               placeholder={formatPrice(0)}
+              min="0"
+              required
             />
           </label>
           <label>
             Stock
-            <input type="number" defaultValue={product?.stock} placeholder="0" />
+            <input
+              type="number"
+              name="stock"
+              defaultValue={product?.stock}
+              placeholder="0"
+              min="0"
+              required
+            />
+          </label>
+          <label>
+            Categoría
+            <select name="category" defaultValue={product?.category ?? "jugueteria"} required>
+              {mainCategories.map((category) => (
+                <option value={category.slug} key={category.slug}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            Subsección de juguetería
+            <select name="subcategory" defaultValue={product?.subcategory ?? ""}>
+              <option value="">No aplica</option>
+              {toySubcategories.map((category) => (
+                <option value={category.slug} key={category.slug}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            URL de imagen
+            <input
+              type="text"
+              name="image"
+              defaultValue={product?.image}
+              placeholder="/product-bloques.png"
+            />
+          </label>
+          <label>
+            Subir imagen
+            <input type="file" name="imageFile" accept="image/*" />
+          </label>
+          <label>
+            URL de video
+            <input
+              type="text"
+              name="videoUrl"
+              defaultValue={product?.videoUrl}
+              placeholder="https://..."
+            />
+          </label>
+          <label>
+            Subir video
+            <input type="file" name="videoFile" accept="video/*" />
+          </label>
+          <label>
+            Edad / uso
+            <input
+              type="text"
+              name="ageRange"
+              defaultValue={product?.ageRange}
+              placeholder="3+ años, Casa, Multiuso..."
+              required
+            />
+          </label>
+          <label>
+            Etiquetas
+            <input
+              type="text"
+              name="tags"
+              defaultValue={product?.tags.join(", ")}
+              placeholder="Educativo, Regalo, Colores"
+            />
           </label>
           <label>
             Descripción
-            <textarea defaultValue={product?.detail} placeholder="Descripción corta" />
+            <textarea
+              name="detail"
+              defaultValue={product?.detail}
+              placeholder="Descripción completa"
+              required
+            />
           </label>
-          <button className="primary-button wide" type="button">
+          <label className="checkbox-field">
+            <input
+              type="checkbox"
+              name="featured"
+              defaultChecked={product?.featured}
+            />
+            Mostrar en destacados
+          </label>
+          <button className="primary-button wide" type="submit">
             Guardar cambios
           </button>
         </form>
+        {product ? (
+          <form className="delete-product-form" action={deleteProductAction}>
+            <input type="hidden" name="id" value={product.id} />
+            <button className="danger-button wide" type="submit">
+              Borrar producto
+            </button>
+          </form>
+        ) : null}
       </section>
       <BottomNav active="perfil" alwaysVisible />
     </main>
