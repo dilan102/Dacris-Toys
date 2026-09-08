@@ -14,6 +14,7 @@ const statusMessages: Record<string, string> = {
   "admin-requerido": "Inicia sesión como administrador para entrar al panel.",
   "faltan-datos": "Escribe usuario y contraseña.",
   "login-invalido": "Usuario o contraseña incorrectos.",
+  "demasiados-intentos": "Demasiados intentos. Espera 15 minutos antes de volver a intentarlo.",
   "registro-corto": "El usuario debe tener 3 caracteres y la contraseña mínimo 6.",
   "usuario-existe": "Ese usuario ya existe. Prueba iniciar sesión.",
   "db-error": "No se pudo conectar con la base de datos. Revisa las tablas de Supabase.",

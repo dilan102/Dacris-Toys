@@ -6,6 +6,7 @@ import { AppHeader } from "@/components/ui/app-header";
 import { BottomNav } from "@/components/ui/bottom-nav";
 import { Icon } from "@/components/ui/icon";
 import { ProductCard } from "@/components/product/product-card";
+import { AddToCartButton } from "@/components/product/add-to-cart-button";
 import {
   formatPrice,
   getCategory,
@@ -88,9 +89,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 <Icon name="plus" />
               </button>
             </div>
-            <Link className="primary-button wide" href="/carrito">
-              Agregar al carrito <Icon name="cart" />
-            </Link>
+            <AddToCartButton productId={product.id} />
           </div>
         </section>
 

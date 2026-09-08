@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { requireAdminSession } from "@/lib/auth";
+import { requireAdminSession, requireOwnerSession } from "@/lib/auth";
 import { categories, toySubcategories } from "@/lib/catalog";
 import {
   deleteProduct,
@@ -158,7 +158,7 @@ export async function deleteProductAction(formData: FormData) {
   const id = getString(formData, "id");
 
   try {
-    await requireAdminSession();
+    await requireOwnerSession();
   } catch (error) {
     console.error(
       "Sesión admin inválida al borrar producto:",

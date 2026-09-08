@@ -1,33 +1,27 @@
-import { createHash, createHmac, randomBytes, timingSafeEqual } from "crypto";
+import { createHmac, timingSafeEqual } from "crypto";
+import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 const sessionCookieName = "dacris_session";
-const adminUsername = "Dacris";
-const adminPassword = "dacris123";
-
 export type SessionUser = {
   username: string;
   role: "admin" | "customer";
+  adminRole?: "owner" | "staff";
 };
 
 type UserRow = {
   username: string;
   password_hash: string;
-  password_salt: string;
 };
 
-function getSessionSecret() {
-  return (
-    process.env.AUTH_SESSION_SECRET ??
-    process.env.SUPABASE_SERVICE_ROLE_KEY ??
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ??
-    "dacris-local-session-secret"
-  );
-}
+type AdminUserRow = { username: string; password_hash: string; role: "owner" | "staff" };
+type LoginAttemptRow = { failed_count: number; last_failed_at: string };
 
-function hashPassword(password: string, salt: string) {
-  return createHash("sha256").update(`${salt}:${password}`).digest("hex");
+function getSessionSecret() {
+  const secret = process.env.AUTH_SESSION_SECRET;
+  if (!secret) throw new Error("Falta AUTH_SESSION_SECRET para firmar sesiones.");
+  return secret;
 }
 
 function safeCompare(left: string, right: string) {
@@ -59,7 +53,8 @@ function decodeSession(value?: string): SessionUser | null {
 
     if (
       typeof parsed.username === "string" &&
-      (parsed.role === "admin" || parsed.role === "customer")
+      (parsed.role === "admin" || parsed.role === "customer") &&
+      (parsed.adminRole === undefined || parsed.adminRole === "owner" || parsed.adminRole === "staff")
     ) {
       return parsed;
     }
@@ -101,6 +96,12 @@ export async function requireAdminSession() {
   return session;
 }
 
+export async function requireOwnerSession() {
+  const session = await requireAdminSession();
+  if (session.adminRole !== "owner") throw new Error("Solo el dueño puede realizar esta acción.");
+  return session;
+}
+
 export async function registerCustomer(username: string, password: string) {
   const supabase = createSupabaseServerClient();
 
@@ -108,30 +109,38 @@ export async function registerCustomer(username: string, password: string) {
     throw new Error("Faltan variables de Supabase para crear usuarios.");
   }
 
-  const salt = randomBytes(16).toString("hex");
   const { error } = await supabase.from("app_users").insert({
     username,
-    password_salt: salt,
-    password_hash: hashPassword(password, salt),
+    password_hash: await bcrypt.hash(password, 12),
   });
 
   if (error) throw new Error(error.message);
 }
 
 export async function validateLogin(username: string, password: string): Promise<SessionUser | null> {
-  if (username === adminUsername && password === adminPassword) {
-    return { username: adminUsername, role: "admin" };
-  }
-
   const supabase = createSupabaseServerClient();
 
   if (!supabase) {
     throw new Error("Faltan variables de Supabase para iniciar sesión.");
   }
 
+  const { data: adminData, error: adminError } = await supabase
+    .from("admin_users")
+    .select("username,password_hash,role")
+    .eq("username", username)
+    .maybeSingle();
+  if (adminError) throw new Error(adminError.message);
+  if (adminData) {
+    const admin = adminData as AdminUserRow;
+    if (await bcrypt.compare(password, admin.password_hash)) {
+      return { username: admin.username, role: "admin", adminRole: admin.role };
+    }
+    return null;
+  }
+
   const { data, error } = await supabase
     .from("app_users")
-    .select("username,password_hash,password_salt")
+    .select("username,password_hash")
     .eq("username", username)
     .maybeSingle();
 
@@ -139,9 +148,48 @@ export async function validateLogin(username: string, password: string): Promise
   if (!data) return null;
 
   const user = data as UserRow;
-  const hash = hashPassword(password, user.password_salt);
-
-  if (!safeCompare(hash, user.password_hash)) return null;
+  if (!(await bcrypt.compare(password, user.password_hash))) return null;
 
   return { username: user.username, role: "customer" };
+}
+
+const LOGIN_LIMIT = 5;
+const LOGIN_WINDOW_MS = 15 * 60 * 1000;
+
+export async function isLoginBlocked(username: string) {
+  const supabase = createSupabaseServerClient();
+  if (!supabase) return false;
+  const { data, error } = await supabase
+    .from("login_attempts")
+    .select("failed_count,last_failed_at")
+    .eq("username", username)
+    .maybeSingle();
+  if (error || !data) return false;
+  const attempt = data as LoginAttemptRow;
+  return (
+    attempt.failed_count >= LOGIN_LIMIT &&
+    Date.now() - Date.parse(attempt.last_failed_at) < LOGIN_WINDOW_MS
+  );
+}
+
+export async function recordLoginFailure(username: string) {
+  const supabase = createSupabaseServerClient();
+  if (!supabase) return;
+  const { data } = await supabase
+    .from("login_attempts")
+    .select("failed_count,last_failed_at")
+    .eq("username", username)
+    .maybeSingle();
+  const previous = data as LoginAttemptRow | null;
+  const withinWindow = previous && Date.now() - Date.parse(previous.last_failed_at) < LOGIN_WINDOW_MS;
+  await supabase.from("login_attempts").upsert({
+    username,
+    failed_count: withinWindow ? previous.failed_count + 1 : 1,
+    last_failed_at: new Date().toISOString(),
+  });
+}
+
+export async function clearLoginFailures(username: string) {
+  const supabase = createSupabaseServerClient();
+  if (supabase) await supabase.from("login_attempts").delete().eq("username", username);
 }

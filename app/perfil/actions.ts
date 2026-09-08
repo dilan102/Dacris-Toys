@@ -4,6 +4,9 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import {
   clearSessionUser,
+  clearLoginFailures,
+  isLoginBlocked,
+  recordLoginFailure,
   registerCustomer,
   setSessionUser,
   type SessionUser,
@@ -23,6 +26,7 @@ export async function loginAction(formData: FormData) {
   const password = getString(formData, "password");
 
   if (!username || !password) profileRedirect("faltan-datos");
+  if (await isLoginBlocked(username)) profileRedirect("demasiados-intentos");
 
   let session: SessionUser | null = null;
 
@@ -32,8 +36,12 @@ export async function loginAction(formData: FormData) {
     profileRedirect("db-error");
   }
 
-  if (!session) profileRedirect("login-invalido");
+  if (!session) {
+    await recordLoginFailure(username);
+    profileRedirect("login-invalido");
+  }
 
+  await clearLoginFailures(username);
   await setSessionUser(session);
   revalidatePath("/perfil");
   revalidatePath("/admin");

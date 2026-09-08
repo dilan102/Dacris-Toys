@@ -2,8 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProductCard } from "@/components/product/product-card";
-import { Icon } from "@/components/ui/icon";
-import { getSessionUser } from "@/lib/auth";
 import {
   categoryCardDesign,
   formatPrice,
@@ -26,10 +24,7 @@ export async function CategoryView({ slug }: CategoryViewProps) {
 
   if (!category) notFound();
 
-  const [visibleProducts, session] = await Promise.all([
-    getProductsByCategoryFromDb(slug),
-    getSessionUser(),
-  ]);
+  const visibleProducts = await getProductsByCategoryFromDb(slug);
   const parentCategory = category.parentSlug ? getCategory(category.parentSlug) : null;
   const subcategories = getSubcategories(category.parentSlug ?? category.slug);
   const showSectionCards = category.slug === "todos";
@@ -49,10 +44,6 @@ export async function CategoryView({ slug }: CategoryViewProps) {
   const sectionProductCounts = await getCategoryProductCountsFromDb(
     [...orderedSectionCategories, ...subcategories].map((item) => item.slug),
   );
-  const isAdmin = session?.role === "admin";
-  const addProductHref = category.parentSlug
-    ? `/admin/productos/nuevo?category=${category.parentSlug}&subcategory=${category.slug}`
-    : `/admin/productos/nuevo?category=${category.slug}`;
 
   return (
     <section className="content-wrap">
@@ -72,11 +63,6 @@ export async function CategoryView({ slug }: CategoryViewProps) {
           {showProducts ? <span>{priceRange}</span> : null}
         </div>
       </div>
-      {isAdmin && !showSectionCards ? (
-        <Link className="secondary-button filled catalog-admin-button" href={addProductHref}>
-          Agregar producto <Icon name="plus" />
-        </Link>
-      ) : null}
       {showSectionCards ? (
         <>
           <div
@@ -111,19 +97,6 @@ export async function CategoryView({ slug }: CategoryViewProps) {
               );
             })}
           </div>
-          {isAdmin ? (
-            <div className="admin-category-actions" aria-label="Agregar por sección">
-              {orderedSectionCategories.map((item) => (
-                <Link
-                  className="admin-add-link"
-                  href={`/admin/productos/nuevo?category=${item.slug}`}
-                  key={item.slug}
-                >
-                  Agregar producto en {item.name}
-                </Link>
-              ))}
-            </div>
-          ) : null}
         </>
       ) : null}
       {showSubcategoryCards ? (
@@ -138,14 +111,6 @@ export async function CategoryView({ slug }: CategoryViewProps) {
                 <p>{item.description}</p>
                 <span>{sectionProductCounts.get(item.slug) ?? 0} productos</span>
               </Link>
-              {isAdmin ? (
-                <Link
-                  className="admin-add-link"
-                  href={`/admin/productos/nuevo?category=jugueteria&subcategory=${item.slug}`}
-                >
-                  Agregar producto
-                </Link>
-              ) : null}
             </article>
           ))}
         </div>

@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { formatPrice, type Product } from "@/lib/catalog";
-import { Icon } from "@/components/ui/icon";
+import { AddToCartButton } from "@/components/product/add-to-cart-button";
 
 type ProductCardProps = {
   product: Product;
@@ -29,9 +29,7 @@ export function ProductCard({ product }: ProductCardProps) {
       </div>
       <div className="product-footer">
         <strong>{formatPrice(product.price)}</strong>
-        <Link className="add-button" href="/carrito" aria-label={`Agregar ${product.name}`}>
-          <Icon name="plus" />
-        </Link>
+        <AddToCartButton productId={product.id} compact />
       </div>
     </article>
   );
