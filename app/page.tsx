@@ -11,7 +11,7 @@ import {
 } from "@/lib/catalog";
 import {
   getCategoryProductCountsFromDb,
-  getFeaturedProductsFromDb,
+  getProducts,
 } from "@/lib/catalog-db";
 
 const guarantees = [
@@ -35,11 +35,13 @@ const reviews = [
 ];
 
 export default async function Home() {
-  const featuredProducts = await getFeaturedProductsFromDb();
+  // Every available product joins the home carousel. Alternating rows keeps
+  // adjacent cards varied while ensuring each product is shown once per loop.
+  const featuredProducts = (await getProducts()).filter((product) => product.stock > 0);
   const featuredRows = [
     featuredProducts.filter((_, index) => index % 2 === 0),
     featuredProducts.filter((_, index) => index % 2 === 1),
-  ];
+  ].filter((row) => row.length > 0);
   const orderedSectionCategories = sortCategoriesByDisplayOrder(sectionCategories);
   const categoryCounts = await getCategoryProductCountsFromDb(
     orderedSectionCategories.map((category) => category.slug),
@@ -164,7 +166,7 @@ export default async function Home() {
 
         <section className="section">
           <div className="section-title-row">
-            <h2>Productos destacados</h2>
+            <h2>Productos para descubrir</h2>
           </div>
           <FeaturedCarousel rows={featuredRows} />
         </section>

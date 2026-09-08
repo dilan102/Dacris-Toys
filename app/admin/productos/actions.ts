@@ -137,7 +137,8 @@ export async function saveProductAction(formData: FormData) {
     stock,
     ageRange: "",
     tags: parseTags(getString(formData, "tags")),
-    featured: formData.get("featured") === "on",
+    // New products always join the carousel; this is no longer a manual step.
+    featured: true,
   };
 
   try {

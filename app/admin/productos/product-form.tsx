@@ -176,10 +176,7 @@ export function ProductForm({
           required
         />
       </label>
-      <label className="checkbox-field">
-        <input type="checkbox" name="featured" defaultChecked={product?.featured} />
-        Mostrar en destacados
-      </label>
+      <p className="form-help">Este producto aparecerá automáticamente en el carrusel de inicio.</p>
       <SaveButton />
     </form>
   );
