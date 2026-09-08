@@ -71,6 +71,33 @@ alter table public.login_attempts enable row level security;
 alter table public.orders enable row level security;
 alter table public.order_items enable row level security;
 
+-- One database transaction claims the pending order, checks stock and discounts it.
+-- This makes repeated Wompi events harmless even when they arrive concurrently.
+create or replace function public.confirm_paid_order(order_reference text)
+returns boolean
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  current_order public.orders%rowtype;
+  line public.order_items%rowtype;
+  current_stock integer;
+begin
+  select * into current_order from public.orders where reference = order_reference for update;
+  if not found or current_order.status <> 'pending' then return false; end if;
+  for line in select * from public.order_items where order_id = current_order.id loop
+    select stock into current_stock from public.products where id = line.product_id for update;
+    if current_stock is null or current_stock < line.quantity then
+      raise exception 'Insufficient stock for product %', line.product_id;
+    end if;
+    update public.products set stock = stock - line.quantity, updated_at = now() where id = line.product_id;
+  end loop;
+  update public.orders set status = 'paid' where id = current_order.id;
+  return true;
+end;
+$$;
+
 insert into storage.buckets (id, name, public)
 values ('product-media', 'product-media', true)
 on conflict (id) do update set public = true;
