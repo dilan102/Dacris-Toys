@@ -6,6 +6,7 @@ import { requireAdminSession, requireOwnerSession } from "@/lib/auth";
 import { categories, toySubcategories } from "@/lib/catalog";
 import {
   deleteProduct,
+  getProductById,
   saveProduct,
   uploadProductMedia,
   type ProductInput,
@@ -83,7 +84,9 @@ async function uploadOptionalProductMedia(
 
 export async function saveProductAction(formData: FormData) {
   const name = getString(formData, "name");
-  const id = getString(formData, "id") || buildSlug(name);
+  const requestedId = getString(formData, "id");
+  const originalId = getString(formData, "originalId");
+  let id = requestedId || buildSlug(name);
 
   try {
     await requireAdminSession();
@@ -115,6 +118,30 @@ export async function saveProductAction(formData: FormData) {
     !Number.isFinite(stock)
   ) {
     redirectToEditor(id || "nuevo", "datos-invalidos");
+  }
+
+  // A new product must never silently replace another one with the same slug.
+  // When the slug is automatic, add a number instead; explicit duplicates ask
+  // the administrator to choose a different ID.
+  if (!originalId) {
+    const existing = await getProductById(id);
+
+    if (existing && requestedId) {
+      redirectToEditor("nuevo", "slug-duplicado");
+    }
+
+    if (existing) {
+      const baseId = id;
+      let suffix = 2;
+
+      while (await getProductById(`${baseId}-${suffix}`)) {
+        suffix += 1;
+      }
+
+      id = `${baseId}-${suffix}`;
+    }
+  } else if (originalId !== id) {
+    redirectToEditor(originalId, "slug-no-editable");
   }
 
   const imageFile = formData.get("imageFile");

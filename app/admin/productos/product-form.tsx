@@ -53,13 +53,15 @@ export function ProductForm({
       }}
     >
       {formError ? <p className="form-status">{formError}</p> : null}
+      <input type="hidden" name="originalId" value={product?.id ?? ""} />
       <label>
-        ID / slug
+        ID / slug {product ? "(no se puede cambiar al editar)" : "(opcional)"}
         <input
           type="text"
           name="id"
           defaultValue={product?.id}
           placeholder="bloques-madera"
+          readOnly={Boolean(product)}
         />
       </label>
       <label>
