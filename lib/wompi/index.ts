@@ -17,5 +17,6 @@ export function verifyWompiEvent(payload: Record<string, unknown>, checksum?: st
   const base = signature.properties.map((path) => String(atPath(payload.data, path) ?? "")).join("");
   const expected = createHash("sha256").update(`${base}${payload.timestamp}${secret}`).digest("hex");
   const received = checksum ?? signature.checksum;
-  return Boolean(received) && received.length === expected.length && timingSafeEqual(Buffer.from(received), Buffer.from(expected));
+  if (typeof received !== "string" || received.length !== expected.length) return false;
+  return timingSafeEqual(Buffer.from(received), Buffer.from(expected));
 }
