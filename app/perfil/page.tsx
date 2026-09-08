@@ -78,8 +78,8 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
           </article>
         </section>
 
-        {!session || session.role === "admin" ? (
-          <Link className="admin-link" href={session ? "/admin" : "/acceso?estado=admin-requerido"}>
+        {session?.role === "admin" ? (
+          <Link className="admin-link" href="/admin">
             Entrar al panel administrativo
           </Link>
         ) : null}

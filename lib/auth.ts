@@ -19,9 +19,7 @@ type AdminUserRow = { username: string; password_hash: string; role: "owner" | "
 type LoginAttemptRow = { failed_count: number; last_failed_at: string };
 
 function getSessionSecret() {
-  const secret = process.env.AUTH_SESSION_SECRET;
-  if (!secret) throw new Error("Falta AUTH_SESSION_SECRET para firmar sesiones.");
-  return secret;
+  return process.env.AUTH_SESSION_SECRET;
 }
 
 function safeCompare(left: string, right: string) {
@@ -32,8 +30,9 @@ function safeCompare(left: string, right: string) {
   return timingSafeEqual(leftBuffer, rightBuffer);
 }
 
-function sign(payload: string) {
-  return createHmac("sha256", getSessionSecret()).update(payload).digest("hex");
+function sign(payload: string, secret = getSessionSecret()) {
+  if (!secret) throw new Error("Falta AUTH_SESSION_SECRET para firmar sesiones.");
+  return createHmac("sha256", secret).update(payload).digest("hex");
 }
 
 function encodeSession(session: SessionUser) {
@@ -43,10 +42,13 @@ function encodeSession(session: SessionUser) {
 
 function decodeSession(value?: string): SessionUser | null {
   if (!value) return null;
+  const secret = getSessionSecret();
+  // A missing deployment variable must not make public pages fail to render.
+  if (!secret) return null;
 
   const [payload, signature] = value.split(".");
 
-  if (!payload || !signature || !safeCompare(signature, sign(payload))) return null;
+  if (!payload || !signature || !safeCompare(signature, sign(payload, secret))) return null;
 
   try {
     const parsed = JSON.parse(Buffer.from(payload, "base64url").toString("utf8"));

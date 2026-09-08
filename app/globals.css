@@ -995,6 +995,52 @@ svg {
   transform: translateY(0) scale(0.98);
 }
 
+.cart-link {
+  position: relative;
+}
+
+.cart-count {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  display: grid;
+  min-width: 18px;
+  height: 18px;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--coral);
+  color: white;
+  font-size: 10px;
+  font-weight: 800;
+  animation: cart-count-pop 350ms ease-out;
+}
+
+.cart-card-quantity {
+  min-width: 94px;
+  justify-content: center;
+  animation: cart-count-pop 380ms ease-out;
+}
+
+.cart-card-added {
+  animation: cart-count-pop 700ms ease-out;
+}
+
+.cart-button-sent {
+  animation: cart-send 700ms ease-out;
+}
+
+@keyframes cart-count-pop {
+  0% { transform: scale(.65); opacity: .35; }
+  55% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+@keyframes cart-send {
+  0% { transform: scale(1); }
+  35% { transform: translateX(9px) translateY(-7px) scale(.92); }
+  100% { transform: scale(1); }
+}
+
 .pending-button {
   position: relative;
   overflow: hidden;
