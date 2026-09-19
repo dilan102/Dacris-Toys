@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { CategoryView } from "@/components/catalog/category-view";
+import { CategoryView, type CatalogSearchParams } from "@/components/catalog/category-view";
 import { AppHeader } from "@/components/ui/app-header";
 import { BottomNav } from "@/components/ui/bottom-nav";
 import { categories, getCategory } from "@/lib/catalog";
 
 type CategoryPageProps = {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<CatalogSearchParams>;
 };
 
 export function generateStaticParams() {
@@ -33,7 +34,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function CategoryPage({ params }: CategoryPageProps) {
+export default async function CategoryPage({ params, searchParams }: CategoryPageProps) {
   const { slug } = await params;
   const category = getCategory(slug);
 
@@ -44,7 +45,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   return (
     <main className="site-shell inner-page">
       <AppHeader title={category?.name ?? "Catálogo"} backHref="/#catalogo" />
-      <CategoryView slug={slug} />
+      <CategoryView searchParams={searchParams} slug={slug} />
       <BottomNav active="categorias" alwaysVisible />
     </main>
   );

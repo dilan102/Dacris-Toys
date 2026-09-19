@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { CategoryView } from "@/components/catalog/category-view";
+import { CategoryView, type CatalogSearchParams } from "@/components/catalog/category-view";
 import { AppHeader } from "@/components/ui/app-header";
 import { BottomNav } from "@/components/ui/bottom-nav";
 import { getCategory } from "@/lib/catalog";
@@ -11,11 +11,15 @@ export const metadata: Metadata = {
   description: category?.description,
 };
 
-export default function TecnologiaPage() {
+type TecnologiaPageProps = {
+  searchParams: Promise<CatalogSearchParams>;
+};
+
+export default function TecnologiaPage({ searchParams }: TecnologiaPageProps) {
   return (
     <main className="site-shell inner-page">
       <AppHeader title="Tecnología" backHref="/categorias/jugueteria" />
-      <CategoryView slug="tecnologia" />
+      <CategoryView searchParams={searchParams} slug="tecnologia" />
       <BottomNav active="categorias" alwaysVisible />
     </main>
   );

@@ -1,6 +1,7 @@
 import { createHmac, timingSafeEqual } from "crypto";
 import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
+import { createSupabaseAuthServerClient } from "@/lib/supabase/auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 const sessionCookieName = "dacris_session";
@@ -10,12 +11,9 @@ export type SessionUser = {
   adminRole?: "owner" | "staff";
 };
 
-type UserRow = {
-  username: string;
-  password_hash: string;
-};
-
 type AdminUserRow = { username: string; password_hash: string; role: "owner" | "staff" };
+type GoogleAdminUserRow = { username: string; role: "owner" | "staff" };
+type CustomerUserRow = { username: string };
 type LoginAttemptRow = { failed_count: number; last_failed_at: string };
 
 function getSessionSecret() {
@@ -69,7 +67,45 @@ function decodeSession(value?: string): SessionUser | null {
 
 export async function getSessionUser() {
   const cookieStore = await cookies();
-  return decodeSession(cookieStore.get(sessionCookieName)?.value);
+  const passwordSession = decodeSession(cookieStore.get(sessionCookieName)?.value);
+
+  if (passwordSession) return passwordSession;
+
+  const authClient = await createSupabaseAuthServerClient();
+  if (!authClient) return null;
+
+  const { data, error } = await authClient.auth.getUser();
+  const authUser = data.user;
+  if (error || !authUser) return null;
+
+  const email = authUser.email?.trim().toLowerCase();
+
+  const supabase = createSupabaseServerClient();
+  if (!supabase) return null;
+
+  if (email) {
+    const { data: adminData, error: adminError } = await supabase
+      .from("admin_google_users")
+      .select("username,role")
+      .eq("email", email)
+      .maybeSingle();
+
+    if (!adminError && adminData) {
+      const admin = adminData as GoogleAdminUserRow;
+      return { username: admin.username, role: "admin", adminRole: admin.role };
+    }
+  }
+
+  const { data: customerData, error: customerError } = await supabase
+    .from("app_users")
+    .select("username")
+    .eq("auth_user_id", authUser.id)
+    .maybeSingle();
+
+  if (customerError || !customerData) return null;
+
+  const customer = customerData as CustomerUserRow;
+  return { username: customer.username, role: "customer" };
 }
 
 export async function setSessionUser(session: SessionUser) {
@@ -86,6 +122,9 @@ export async function setSessionUser(session: SessionUser) {
 export async function clearSessionUser() {
   const cookieStore = await cookies();
   cookieStore.delete(sessionCookieName);
+
+  const authClient = await createSupabaseAuthServerClient();
+  if (authClient) await authClient.auth.signOut();
 }
 
 export async function requireAdminSession() {
@@ -104,22 +143,7 @@ export async function requireOwnerSession() {
   return session;
 }
 
-export async function registerCustomer(username: string, password: string) {
-  const supabase = createSupabaseServerClient();
-
-  if (!supabase) {
-    throw new Error("Faltan variables de Supabase para crear usuarios.");
-  }
-
-  const { error } = await supabase.from("app_users").insert({
-    username,
-    password_hash: await bcrypt.hash(password, 12),
-  });
-
-  if (error) throw new Error(error.message);
-}
-
-export async function validateLogin(username: string, password: string): Promise<SessionUser | null> {
+export async function validateAdminLogin(username: string, password: string): Promise<SessionUser | null> {
   const supabase = createSupabaseServerClient();
 
   if (!supabase) {
@@ -140,19 +164,7 @@ export async function validateLogin(username: string, password: string): Promise
     return null;
   }
 
-  const { data, error } = await supabase
-    .from("app_users")
-    .select("username,password_hash")
-    .eq("username", username)
-    .maybeSingle();
-
-  if (error) throw new Error(error.message);
-  if (!data) return null;
-
-  const user = data as UserRow;
-  if (!(await bcrypt.compare(password, user.password_hash))) return null;
-
-  return { username: user.username, role: "customer" };
+  return null;
 }
 
 const LOGIN_LIMIT = 5;

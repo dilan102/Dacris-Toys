@@ -7,7 +7,7 @@ Esta guía distingue entre valores públicos y secretos. Nunca copies claves sec
 1. Abre tu proyecto en [Supabase](https://supabase.com/dashboard).
 2. Ve a **SQL Editor** → **New query**.
 3. Abre el archivo `supabase-schema.sql` de este proyecto, copia todo su contenido y ejecútalo con **Run**.
-4. Confirma que aparecen las tablas `products`, `app_users`, `admin_users`, `login_attempts`, `orders` y `order_items` en **Table Editor**.
+4. Confirma que aparecen las tablas `products`, `app_users`, `admin_users`, `admin_google_users`, `login_attempts`, `orders`, `order_items` y `favorites` en **Table Editor**.
 
 El SQL activa las reglas de seguridad. No agregues políticas de `insert`, `update`, `delete` o `select` para `anon` en `admin_users`, `app_users`, `orders` u `order_items`.
 
@@ -29,12 +29,32 @@ Escribe un usuario, una contraseña de mínimo 12 caracteres y el rol `owner`. E
 
 `owner` puede crear, editar y borrar productos. `staff` puede crear y editar, pero no borrar.
 
-## 3. Variables locales para desarrollo
+## 3. Autorizar administradores con Google
+
+1. En **Supabase → Authentication → Providers**, habilita **Google** y pega el Client ID y Client Secret de Google Cloud.
+2. En **Authentication → URL Configuration**, agrega estas Redirect URLs:
+
+```text
+http://localhost:3000/auth/callback
+https://tu-dominio/auth/callback
+```
+
+3. En **SQL Editor**, autoriza únicamente los correos administrativos que correspondan. El `username` es el nombre que aparecerá en el panel y `role` puede ser `owner` o `staff`.
+
+```sql
+insert into public.admin_google_users (email, username, role)
+values ('admin@tu-dominio.com', 'admin-google', 'owner');
+```
+
+Una cuenta de Google que no esté en esta tabla no puede entrar a `/admin`.
+
+## 4. Variables locales para desarrollo
 
 Crea un archivo `.env.local` —no lo subas a Git— con estas tres variables:
 
 ```env
 NEXT_PUBLIC_SUPABASE_URL=la-url-de-tu-proyecto-supabase
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=la-clave-publica-de-supabase
 SUPABASE_SERVICE_ROLE_KEY=la-clave-service_role-de-supabase
 AUTH_SESSION_SECRET=un-secreto-largo-generado-con-openssl
 ```
@@ -47,13 +67,14 @@ openssl rand -base64 48
 
 Tu archivo `.env` actual tiene la URL y una clave pública. Déjalo fuera de Git, pero añade las dos variables privadas anteriores en `.env.local` para que el login y el panel funcionen localmente.
 
-## 4. Variables en Vercel
+## 5. Variables en Vercel
 
 En Vercel abre el proyecto → **Settings** → **Environment Variables**. Agrega las siguientes variables para **Production**, **Preview** y **Development**:
 
 | Variable | Dónde obtenerla | Pública |
 | --- | --- | --- |
 | `NEXT_PUBLIC_SUPABASE_URL` | Supabase → Project Settings → API → Project URL | Sí |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Supabase → Project Settings → API → Publishable key | Sí |
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase → Project Settings → API → `service_role` | No |
 | `AUTH_SESSION_SECRET` | El comando `openssl rand -base64 48` | No |
 | `NEXT_PUBLIC_WOMPI_PUBLIC_KEY` | Panel Wompi → Desarrolladores | Sí |
@@ -62,7 +83,7 @@ En Vercel abre el proyecto → **Settings** → **Environment Variables**. Agreg
 
 Tras guardar las variables, ejecuta **Deployments** → último despliegue → **Redeploy**. Vercel no aplica variables nuevas a un despliegue que ya estaba creado.
 
-## 5. Entrar y verificar el panel
+## 6. Entrar y verificar el panel
 
 1. Abre `https://tu-dominio/acceso`.
 2. Inicia sesión con el usuario y contraseña creados en el paso 2.
@@ -71,7 +92,7 @@ Tras guardar las variables, ejecuta **Deployments** → último despliegue → *
 
 Si `/perfil` carga como invitado, es normal cuando no hay sesión. Si el login muestra un error de base de datos, revisa primero que `SUPABASE_SERVICE_ROLE_KEY` esté configurada en Vercel y que ejecutaste el esquema completo.
 
-## 6. Configurar Wompi cuando vayas a cobrar
+## 7. Configurar Wompi cuando vayas a cobrar
 
 Antes de habilitar pagos reales, configura en Wompi una URL de eventos apuntando a:
 

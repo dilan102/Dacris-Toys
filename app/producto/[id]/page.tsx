@@ -7,11 +7,13 @@ import { BottomNav } from "@/components/ui/bottom-nav";
 import { Icon } from "@/components/ui/icon";
 import { ProductCard } from "@/components/product/product-card";
 import { AddToCartButton } from "@/components/product/add-to-cart-button";
+import { FavoriteButton } from "@/components/product/favorite-button";
 import {
   formatPrice,
   getCategory,
 } from "@/lib/catalog";
 import { getProductById, getProductDetailsFromDb } from "@/lib/catalog-db";
+import { getFavoriteProductIds } from "@/lib/favorites";
 
 type ProductPageProps = {
   params: Promise<{ id: string }>;
@@ -49,6 +51,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const productCategoryLabel = subcategory
     ? `${category?.name}: ${subcategory.name}`
     : category?.name;
+  const favoriteProductIds = new Set(await getFavoriteProductIds());
   return (
     <main className="site-shell inner-page">
       <AppHeader title="Detalle" backHref="/categorias/todos" />
@@ -89,7 +92,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 <Icon name="plus" />
               </button>
             </div>
-            <AddToCartButton productId={product.id} />
+            <div className="detail-actions">
+              <FavoriteButton initialFavorite={favoriteProductIds.has(product.id)} productId={product.id} />
+              <AddToCartButton productId={product.id} />
+            </div>
           </div>
         </section>
 
@@ -101,7 +107,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </div>
             <div className="product-grid related-grid">
               {relatedProducts.map((item) => (
-                <ProductCard product={item} key={item.id} />
+                <ProductCard
+                  isFavorite={favoriteProductIds.has(item.id)}
+                  product={item}
+                  key={item.id}
+                />
               ))}
             </div>
           </section>

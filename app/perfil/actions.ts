@@ -7,10 +7,9 @@ import {
   clearLoginFailures,
   isLoginBlocked,
   recordLoginFailure,
-  registerCustomer,
   setSessionUser,
   type SessionUser,
-  validateLogin,
+  validateAdminLogin,
 } from "@/lib/auth";
 
 function getString(formData: FormData, key: string) {
@@ -21,7 +20,7 @@ function profileRedirect(status: string): never {
   redirect(`/acceso?estado=${encodeURIComponent(status)}`);
 }
 
-export async function loginAction(formData: FormData) {
+export async function adminLoginAction(formData: FormData) {
   const username = getString(formData, "username");
   const password = getString(formData, "password");
 
@@ -31,7 +30,7 @@ export async function loginAction(formData: FormData) {
   let session: SessionUser | null = null;
 
   try {
-    session = await validateLogin(username, password);
+    session = await validateAdminLogin(username, password);
   } catch {
     profileRedirect("db-error");
   }
@@ -45,25 +44,7 @@ export async function loginAction(formData: FormData) {
   await setSessionUser(session);
   revalidatePath("/perfil");
   revalidatePath("/admin");
-  redirect(session.role === "admin" ? "/admin" : "/perfil");
-}
-
-export async function registerAction(formData: FormData) {
-  const username = getString(formData, "username");
-  const password = getString(formData, "password");
-
-  if (username.length < 3 || password.length < 6) profileRedirect("registro-corto");
-
-  try {
-    await registerCustomer(username, password);
-  } catch (error) {
-    const message = error instanceof Error ? error.message.toLowerCase() : "";
-    profileRedirect(message.includes("duplicate") ? "usuario-existe" : "db-error");
-  }
-
-  await setSessionUser({ username, role: "customer" });
-  revalidatePath("/perfil");
-  redirect("/perfil?estado=cuenta-creada");
+  redirect("/admin");
 }
 
 export async function logoutAction() {

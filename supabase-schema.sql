@@ -18,18 +18,59 @@ create table if not exists public.products (
 
 create table if not exists public.app_users (
   username text primary key,
-  password_hash text not null,
+  password_hash text,
+  auth_user_id uuid unique references auth.users(id) on delete cascade,
   created_at timestamptz not null default now()
 );
 
 -- Safe to re-run after upgrading an existing project from SHA-256 + salt.
 alter table public.app_users drop column if exists password_salt;
+alter table public.app_users add column if not exists auth_user_id uuid unique references auth.users(id) on delete cascade;
+alter table public.app_users alter column password_hash drop not null;
+
+-- Customer profiles are created only after Supabase Auth has verified the identity.
+create or replace function public.create_customer_profile()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  profile_username text;
+begin
+  profile_username := coalesce(
+    nullif(new.raw_user_meta_data ->> 'username', ''),
+    nullif(lower(new.email), ''),
+    nullif(new.phone, ''),
+    new.id::text
+  );
+
+  insert into public.app_users (username, auth_user_id)
+  values (profile_username, new.id);
+
+  return new;
+end;
+$$;
+
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created
+after insert on auth.users
+for each row execute procedure public.create_customer_profile();
 
 -- Administrators are kept separate from customer accounts.
 create table if not exists public.admin_users (
   id uuid primary key default gen_random_uuid(),
   username text not null unique,
   password_hash text not null,
+  role text not null check (role in ('owner', 'staff')),
+  created_at timestamptz not null default now()
+);
+
+-- Google administrators are explicitly allow-listed; signing in with an
+-- arbitrary Google account never grants access to the admin panel.
+create table if not exists public.admin_google_users (
+  email text primary key,
+  username text not null unique,
   role text not null check (role in ('owner', 'staff')),
   created_at timestamptz not null default now()
 );
@@ -55,6 +96,10 @@ create table if not exists public.orders (
   created_at timestamptz not null default now()
 );
 
+-- Customer accounts are optional so guest checkout remains available.
+alter table public.orders
+add column if not exists customer_username text references public.app_users(username);
+
 create table if not exists public.order_items (
   id uuid primary key default gen_random_uuid(),
   order_id uuid not null references public.orders(id) on delete cascade,
@@ -64,12 +109,24 @@ create table if not exists public.order_items (
   quantity integer not null check (quantity > 0)
 );
 
+create table if not exists public.favorites (
+  user_username text not null references public.app_users(username) on delete cascade,
+  product_id text not null references public.products(id) on delete cascade,
+  primary key (user_username, product_id)
+);
+
 alter table public.products enable row level security;
 alter table public.app_users enable row level security;
 alter table public.admin_users enable row level security;
+alter table public.admin_google_users enable row level security;
 alter table public.login_attempts enable row level security;
 alter table public.orders enable row level security;
 alter table public.order_items enable row level security;
+alter table public.favorites enable row level security;
+
+-- Favorites are only accessed through authenticated server actions using service_role.
+revoke all on table public.favorites from anon, authenticated;
+revoke all on table public.admin_google_users from anon, authenticated;
 
 -- One database transaction claims the pending order, checks stock and discounts it.
 -- This makes repeated Wompi events harmless even when they arrive concurrently.

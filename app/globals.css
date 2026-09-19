@@ -90,7 +90,7 @@ svg {
 .hero {
   position: relative;
   overflow: hidden;
-  min-height: 806px;
+  min-height: 784px;
   padding: 20px 20px 32px;
   background-image: url("/Dacris-Hero-Fondo.png");
   background-position: center top;
@@ -236,7 +236,7 @@ svg {
   position: relative;
   z-index: 1;
   width: min(100%, 650px);
-  margin: 42px auto 0;
+  margin: 34px auto 0;
   text-align: center;
 }
 
@@ -244,32 +244,31 @@ svg {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 30px;
-  padding: 6px 22px;
+  min-height: 28px;
+  padding: 6px 15px;
   border-radius: 999px;
   background: #074a82;
   color: white;
   text-transform: uppercase;
-  font-size: 13px;
+  font-size: 10px;
   font-weight: 900;
-  letter-spacing: 5px;
+  letter-spacing: 1.5px;
   box-shadow: 0 6px 0 rgba(0, 0, 0, 0.08);
 }
 
 .hero h1 {
   margin: 12px auto 0;
   color: #0f4a85;
-  text-transform: uppercase;
-  font-size: clamp(31px, 8vw, 55px);
+  font-size: clamp(32px, 8.5vw, 56px);
   font-weight: 950;
   line-height: 0.97;
 }
 
 .hero h1 span {
   display: block;
-  margin-top: 6px;
+  margin-top: 4px;
   color: var(--orange);
-  font-size: clamp(45px, 13vw, 82px);
+  font-size: clamp(42px, 12vw, 76px);
   letter-spacing: 0;
   text-shadow:
     0 7px 0 rgba(255, 255, 255, 0.95),
@@ -277,10 +276,10 @@ svg {
 }
 
 .hero-copy > p:last-child {
-  max-width: 360px;
-  margin: 17px auto 0;
+  max-width: 325px;
+  margin: 14px auto 0;
   color: #244b78;
-  font-size: 19px;
+  font-size: 16px;
   font-weight: 800;
   line-height: 1.2;
 }
@@ -289,9 +288,9 @@ svg {
   position: relative;
   z-index: 1;
   display: block;
-  width: min(96%, 565px);
+  width: min(89%, 500px);
   height: auto;
-  margin: 18px auto 0;
+  margin: 16px auto 0;
   filter: drop-shadow(0 10px 14px rgba(21, 109, 64, 0.15));
 }
 
@@ -300,8 +299,8 @@ svg {
   z-index: 1;
   display: grid;
   justify-items: center;
-  gap: 14px;
-  margin: 10px auto 0;
+  gap: 10px;
+  margin: 14px auto 0;
   text-align: center;
 }
 
@@ -327,7 +326,7 @@ svg {
 }
 
 .primary-button {
-  min-width: 218px;
+  min-width: 196px;
   padding: 0 26px;
   color: white;
   background: var(--orange);
@@ -349,9 +348,9 @@ svg {
   grid-template-columns: repeat(3, 1fr);
   gap: 8px;
   width: min(100%, 535px);
-  min-height: 72px;
-  margin: 58px auto 0;
-  padding: 12px 14px;
+  min-height: 64px;
+  margin: 30px auto 0;
+  padding: 10px 12px;
   border-radius: 14px;
   background: white;
   box-shadow: 0 10px 22px rgba(26, 89, 133, 0.13);
@@ -366,9 +365,9 @@ svg {
 }
 
 .trust-bar svg {
-  flex: 0 0 34px;
-  width: 34px;
-  height: 34px;
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
 }
 
 .trust-bar div:nth-child(1) svg {
@@ -386,7 +385,7 @@ svg {
 .trust-bar span {
   color: #355069;
   text-transform: uppercase;
-  font-size: 9px;
+  font-size: 8px;
   font-weight: 950;
   line-height: 1.1;
 }
@@ -411,6 +410,14 @@ svg {
   font-size: 21px;
   font-weight: 950;
   line-height: 1.1;
+}
+
+.section-description {
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.35;
 }
 
 .chips {
@@ -521,6 +528,69 @@ svg {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 17px 16px;
   margin-top: 18px;
+}
+
+.catalog-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.catalog-filters label {
+  display: grid;
+  gap: 5px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.catalog-filters input[type="number"] {
+  width: 128px;
+  min-height: 40px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--ink);
+  background: white;
+  font: inherit;
+}
+
+.catalog-filters .catalog-stock-filter {
+  display: flex;
+  min-height: 40px;
+  align-items: center;
+  gap: 7px;
+}
+
+.catalog-filters button {
+  min-height: 40px;
+  padding: 0 15px;
+  border: 0;
+  border-radius: 10px;
+  color: white;
+  background: var(--purple);
+  font: inherit;
+  font-weight: 900;
+}
+
+.auth-method-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 14px;
+}
+
+.auth-method-links button {
+  padding: 0;
+  border: 0;
+  color: var(--purple);
+  background: transparent;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 850;
+  text-decoration: underline;
 }
 
 .featured-carousel {
@@ -709,6 +779,52 @@ svg {
   margin-top: 9px;
 }
 
+.product-card-actions,
+.detail-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.favorite-button {
+  display: grid;
+  width: 39px;
+  height: 39px;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--purple);
+  background: white;
+}
+
+.favorite-button svg {
+  width: 20px;
+  height: 20px;
+}
+
+.favorite-button.active {
+  color: #d83f72;
+  border-color: #ffd1df;
+  background: #fff0f5;
+}
+
+.product-footer .favorite-button {
+  border: 1px solid var(--line);
+  color: var(--purple);
+  background: white;
+  box-shadow: none;
+}
+
+.product-footer .favorite-button.active {
+  color: #d83f72;
+  border-color: #ffd1df;
+  background: #fff0f5;
+}
+
+.detail-actions {
+  margin-top: 18px;
+}
+
 .product-footer strong {
   color: var(--purple);
   font-size: 19px;
@@ -839,8 +955,8 @@ svg {
 .home-category-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 6px;
-  margin-top: 12px;
+  gap: 8px;
+  margin-top: 14px;
 }
 
 .compact-section-grid {
@@ -1650,6 +1766,30 @@ svg {
   font-weight: 900;
 }
 
+.simple-info-list {
+  display: grid;
+  gap: 13px;
+  margin-bottom: 18px;
+}
+
+.simple-info-card {
+  padding: 20px;
+}
+
+.simple-info-card h2 {
+  color: #26324a;
+  font-size: 18px;
+  font-weight: 950;
+}
+
+.simple-info-card p {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
 .loading-page {
   min-height: 62vh;
   align-content: center;
@@ -1735,8 +1875,8 @@ svg {
 
 .guarantee-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 13px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 9px;
   margin-top: 17px;
 }
 
@@ -1745,11 +1885,12 @@ svg {
 }
 
 .info-card.compact {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-height: 78px;
-  padding: 16px 14px;
+  display: grid;
+  align-content: start;
+  justify-items: start;
+  gap: 9px;
+  min-height: 116px;
+  padding: 13px 11px;
 }
 
 .soft-icon {
@@ -1775,7 +1916,7 @@ svg {
 
 .info-card h3 {
   color: #344057;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 950;
   line-height: 1.15;
 }
@@ -1783,7 +1924,7 @@ svg {
 .info-card p,
 .info-card small {
   color: var(--muted);
-  font-size: 12.5px;
+  font-size: 11px;
   font-weight: 700;
   line-height: 1.35;
 }
@@ -1966,39 +2107,32 @@ svg {
   height: 20px;
 }
 
-.footer-links {
+.footer-columns {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+  gap: 20px 16px;
 }
 
-.footer-links a {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  min-height: 40px;
-  padding: 0 12px;
-  border: 1px solid rgba(255, 255, 255, 0.34);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.13);
-  color: white;
+.footer-column {
+  display: grid;
+  align-content: start;
+  gap: 4px;
+}
+
+.footer-column h3 {
+  margin-bottom: 4px;
+}
+
+.footer-column a {
+  color: rgba(255, 255, 255, 0.9);
   font-size: 12px;
-  font-weight: 900;
-  line-height: 1.1;
-  text-align: center;
+  font-weight: 800;
 }
 
-.footer-links a:hover,
-.footer-links a:focus-visible {
-  background: rgba(255, 255, 255, 0.24);
-  outline: none;
-}
-
-.footer-links svg {
-  flex: 0 0 17px;
-  width: 17px;
-  height: 17px;
+.footer-column a:hover,
+.footer-column a:focus-visible {
+  color: white;
+  text-decoration: underline;
 }
 
 .footer-contact {
@@ -2185,9 +2319,9 @@ svg {
     border-radius: 28px 28px 0 0;
   }
 
-  .footer-links {
+  .footer-columns {
     justify-self: center;
-    width: min(100%, 330px);
+    width: 100%;
   }
 
   .footer-contact {
@@ -2258,11 +2392,11 @@ svg {
   }
 
   .guarantee-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .guarantee-grid .compact {
-    grid-column: span 2;
+    grid-column: auto;
   }
 
   .home-category-grid {

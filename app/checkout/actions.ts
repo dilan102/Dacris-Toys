@@ -1,6 +1,8 @@
 "use server";
 
 import { randomUUID } from "crypto";
+import { revalidatePath } from "next/cache";
+import { getSessionUser } from "@/lib/auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { wompiIntegrity } from "@/lib/wompi";
 
@@ -20,9 +22,12 @@ export async function createOrderAction(input: { name: string; phone: string; ad
   const shipping = 8000;
   const total = subtotal + shipping;
   const reference = `DAC-${randomUUID().replaceAll("-", "").slice(0, 18).toUpperCase()}`;
-  const { data: order, error } = await supabase.from("orders").insert({ reference, customer_name: input.name.trim(), customer_phone: input.phone.trim(), customer_address: input.address.trim(), delivery_note: input.note?.trim() || null, subtotal, shipping, total }).select("id").single();
+  const session = await getSessionUser();
+  const customerUsername = session?.role === "customer" ? session.username : null;
+  const { data: order, error } = await supabase.from("orders").insert({ reference, customer_name: input.name.trim(), customer_phone: input.phone.trim(), customer_address: input.address.trim(), delivery_note: input.note?.trim() || null, customer_username: customerUsername, subtotal, shipping, total }).select("id").single();
   if (error || !order) throw new Error("No se pudo crear el pedido.");
   const { error: itemError } = await supabase.from("order_items").insert(items.map((item) => ({ order_id: order.id, product_id: item.product.id, product_name: item.product.name, unit_price: item.product.price, quantity: item.quantity })));
   if (itemError) throw new Error("No se pudo guardar el pedido.");
+  revalidatePath("/perfil");
   return { reference, amountInCents: Math.round(total * 100), signature: wompiIntegrity(reference, Math.round(total * 100)) };
 }

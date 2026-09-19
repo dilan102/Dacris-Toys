@@ -14,17 +14,41 @@ import {
   getCategoryProductCountsFromDb,
   getProductsByCategoryFromDb,
 } from "@/lib/catalog-db";
+import { getFavoriteProductIds } from "@/lib/favorites";
 
 type CategoryViewProps = {
   slug: string;
+  searchParams?: Promise<CatalogSearchParams>;
 };
 
-export async function CategoryView({ slug }: CategoryViewProps) {
+export type CatalogSearchParams = {
+  minPrice?: string;
+  maxPrice?: string;
+  onlyInStock?: string;
+};
+
+function parsePrice(value?: string) {
+  if (!value) return undefined;
+  const price = Number(value);
+  return Number.isFinite(price) && price >= 0 ? price : undefined;
+}
+
+export async function CategoryView({ slug, searchParams }: CategoryViewProps) {
   const category = getCategory(slug);
 
   if (!category) notFound();
 
-  const visibleProducts = await getProductsByCategoryFromDb(slug);
+  const filters = searchParams ? await searchParams : {};
+  const minPrice = parsePrice(filters.minPrice);
+  const maxPrice = parsePrice(filters.maxPrice);
+  const onlyInStock = filters.onlyInStock === "true";
+  const visibleProducts = await getProductsByCategoryFromDb(
+    slug,
+    minPrice,
+    maxPrice,
+    onlyInStock,
+  );
+  const favoriteProductIds = new Set(await getFavoriteProductIds());
   const parentCategory = category.parentSlug ? getCategory(category.parentSlug) : null;
   const subcategories = getSubcategories(category.parentSlug ?? category.slug);
   const showSectionCards = category.slug === "todos";
@@ -115,10 +139,31 @@ export async function CategoryView({ slug }: CategoryViewProps) {
           ))}
         </div>
       ) : null}
+      {showProducts ? (
+        <form className="catalog-filters" method="get">
+          <label>
+            Precio mínimo
+            <input defaultValue={minPrice} min="0" name="minPrice" type="number" />
+          </label>
+          <label>
+            Precio máximo
+            <input defaultValue={maxPrice} min="0" name="maxPrice" type="number" />
+          </label>
+          <label className="catalog-stock-filter">
+            <input defaultChecked={onlyInStock} name="onlyInStock" type="checkbox" value="true" />
+            Solo con stock
+          </label>
+          <button type="submit">Filtrar</button>
+        </form>
+      ) : null}
       {showProducts && visibleProducts.length > 0 ? (
         <div className="product-grid">
           {visibleProducts.map((product) => (
-            <ProductCard product={product} key={product.id} />
+            <ProductCard
+              isFavorite={favoriteProductIds.has(product.id)}
+              product={product}
+              key={product.id}
+            />
           ))}
         </div>
       ) : showProducts ? (

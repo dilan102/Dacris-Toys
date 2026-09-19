@@ -8,44 +8,42 @@ import {
   sectionCategories,
   sortCategoriesByDisplayOrder,
   categoryCardDesign,
+  type Product,
 } from "@/lib/catalog";
 import {
   getCategoryProductCountsFromDb,
+  getFeaturedProductsFromDb,
   getProducts,
 } from "@/lib/catalog-db";
+import { getFavoriteProductIds } from "@/lib/favorites";
 
 const guarantees = [
-  { icon: "truck", title: "Envío rápido", text: "Entrega en 2-3 días" },
-  { icon: "refresh", title: "Cambios fáciles", text: "Devoluciones en 7 días" },
+  { icon: "truck", title: "Envíos", text: "Coordinamos la entrega de tu pedido." },
+  { icon: "shield", title: "Compra segura", text: "Acompañamos tu compra de principio a fin." },
+  { icon: "box", title: "Selección cuidada", text: "Juguetes elegidos para cada momento." },
 ];
 
-const reviews = [
-  {
-    name: "María G.",
-    role: "Mamá de 4 años",
-    initial: "M",
-    text: '"Los juguetes son hermosos y muy bien hechos. Mi hijo no se despega."',
-  },
-  {
-    name: "Andrés R.",
-    role: "Papá de 2 años",
-    initial: "A",
-    text: '"La atención al cliente es excelente. Todo llegó muy bien empaquetado."',
-  },
-];
+function makeCarouselRows(products: Product[]) {
+  const availableProducts = products.filter((product) => product.stock > 0);
+
+  return [
+    availableProducts.filter((_, index) => index % 2 === 0),
+    availableProducts.filter((_, index) => index % 2 === 1),
+  ].filter((row) => row.length > 0);
+}
 
 export default async function Home() {
-  // Every available product joins the home carousel. Alternating rows keeps
-  // adjacent cards varied while ensuring each product is shown once per loop.
-  const featuredProducts = (await getProducts()).filter((product) => product.stock > 0);
-  const featuredRows = [
-    featuredProducts.filter((_, index) => index % 2 === 0),
-    featuredProducts.filter((_, index) => index % 2 === 1),
-  ].filter((row) => row.length > 0);
+  const [recentProducts, featuredProducts] = await Promise.all([
+    getProducts("created_at"),
+    getFeaturedProductsFromDb(),
+  ]);
+  const recentRows = makeCarouselRows(recentProducts);
+  const featuredRows = makeCarouselRows(featuredProducts);
   const orderedSectionCategories = sortCategoriesByDisplayOrder(sectionCategories);
   const categoryCounts = await getCategoryProductCountsFromDb(
     orderedSectionCategories.map((category) => category.slug),
   );
+  const favoriteProductIds = await getFavoriteProductIds();
 
   return (
     <main className="site-shell">
@@ -71,11 +69,11 @@ export default async function Home() {
         </div>
 
         <div className="hero-copy">
-          <p className="eyebrow">Bienvenidos a</p>
+          <p className="eyebrow">Juguetes para crecer jugando</p>
           <h1>
-            Un mundo de <span>Diversión</span>
+            El juego empieza con <span>imaginación</span>
           </h1>
-          <p>Juguetes para imaginar, jugar y crear recuerdos</p>
+          <p>Una selección especial para descubrir, aprender y divertirse.</p>
         </div>
 
         <Image
@@ -88,48 +86,33 @@ export default async function Home() {
         />
 
         <div className="hero-cta">
-          <p>Explora nuestro catálogo y encuentra el juguete perfecto</p>
           <Link href="#catalogo" className="primary-button">
             Ver catálogo <Icon name="arrow" />
           </Link>
         </div>
 
-        <div className="trust-bar" aria-label="Beneficios">
+        <div className="trust-bar" aria-label="Beneficios de comprar en Dacri's Toys">
+          <div>
+            <Icon name="truck" />
+            <span>Envíos<br />coordinados</span>
+          </div>
           <div>
             <Icon name="shield" />
-            <span>Juguetes seguros</span>
+            <span>Compra<br />segura</span>
           </div>
           <div>
-            <Icon name="badge" />
-            <span>Calidad garantizada</span>
-          </div>
-          <div>
-            <Icon name="heart" />
-            <span>Hechos para durar</span>
+            <Icon name="phone" />
+            <span>Atención<br />cercana</span>
           </div>
         </div>
       </section>
       <div className="content-wrap" id="catalogo">
         <section className="section">
-          <h2>Garantías</h2>
-          <div className="guarantee-grid">
-            {guarantees.map((item) => (
-              <article className="info-card compact" key={item.title}>
-                <div className="soft-icon">
-                  <Icon name={item.icon} />
-                </div>
-                <div>
-                  <h3>{item.title}</h3>
-                  <p>{item.text}</p>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="section">
           <div className="section-title-row">
-            <h2>Categorías</h2>
+            <div>
+              <h2>Explorá por categoría</h2>
+              <p className="section-description">Encontrá juguetes pensados para cada interés.</p>
+            </div>
           </div>
           <div
             className="section-card-grid home-category-grid"
@@ -166,26 +149,43 @@ export default async function Home() {
 
         <section className="section">
           <div className="section-title-row">
-            <h2>Productos para descubrir</h2>
+            <div>
+              <h2>Recién llegados</h2>
+              <p className="section-description">Novedades que acabamos de sumar.</p>
+            </div>
           </div>
-          <FeaturedCarousel rows={featuredRows} />
+          {recentRows.length > 0 ? (
+            <FeaturedCarousel favoriteProductIds={favoriteProductIds} rows={recentRows} />
+          ) : (
+            <div className="empty-media">Pronto encontrarás novedades aquí.</div>
+          )}
         </section>
 
         <section className="section">
-          <h2>Opiniones</h2>
-          <div className="review-grid">
-            {reviews.map((review) => (
-              <article className="info-card review" key={review.name}>
-                <div className="stars" aria-label="5 estrellas">
-                  ☆ ☆ ☆ ☆ ☆
+          <div className="section-title-row">
+            <div>
+              <h2>Más para descubrir</h2>
+              <p className="section-description">Ideas para seguir jugando.</p>
+            </div>
+          </div>
+          {featuredRows.length > 0 ? (
+            <FeaturedCarousel favoriteProductIds={favoriteProductIds} rows={featuredRows} />
+          ) : (
+            <div className="empty-media">Pronto encontrarás más productos aquí.</div>
+          )}
+        </section>
+
+        <section className="section">
+          <h2>Compra con confianza</h2>
+          <div className="guarantee-grid">
+            {guarantees.map((item) => (
+              <article className="info-card compact" key={item.title}>
+                <div className="soft-icon">
+                  <Icon name={item.icon} />
                 </div>
-                <p>{review.text}</p>
-                <div className="person">
-                  <span>{review.initial}</span>
-                  <div>
-                    <h3>{review.name}</h3>
-                    <small>{review.role}</small>
-                  </div>
+                <div>
+                  <h3>{item.title}</h3>
+                  <p>{item.text}</p>
                 </div>
               </article>
             ))}
@@ -264,19 +264,31 @@ export default async function Home() {
             </a>
           </div>
         </div>
-        <nav className="footer-links" aria-label="Enlaces del pie de página">
-          <Link href="/categorias/todos">
-            <Icon name="grid" /> Tienda
-          </Link>
-          <Link href="/checkout">
-            <Icon name="truck" /> Envíos
-          </Link>
-          <Link href="/perfil">
-            <Icon name="refresh" /> Devoluciones
-          </Link>
-          <Link href="/perfil">
-            <Icon name="phone" /> Contacto
-          </Link>
+        <nav className="footer-columns" aria-label="Enlaces del pie de página">
+          <div className="footer-column">
+            <h3>Tienda</h3>
+            <Link href="/categorias/todos">Catálogo</Link>
+            <Link href="/categorias/todos">Categorías</Link>
+            <Link href="/ofertas">Ofertas</Link>
+          </div>
+          <div className="footer-column">
+            <h3>Ayuda</h3>
+            <a href="mailto:dacristoys@gmail.com">Contacto</a>
+            <Link href="/faq">Preguntas frecuentes</Link>
+            <Link href="/envios-y-devoluciones">Envíos y devoluciones</Link>
+          </div>
+          <div className="footer-column">
+            <h3>Mi cuenta</h3>
+            <Link href="/perfil">Perfil</Link>
+            <Link href="/perfil">Mis pedidos</Link>
+            <Link href="/perfil">Favoritos</Link>
+            <Link href="/carrito">Carrito</Link>
+          </div>
+          <div className="footer-column">
+            <h3>Legal</h3>
+            <Link href="/terminos">Términos y condiciones</Link>
+            <Link href="/privacidad">Privacidad</Link>
+          </div>
         </nav>
         <div className="footer-contact">
           <h3>Contacto</h3>

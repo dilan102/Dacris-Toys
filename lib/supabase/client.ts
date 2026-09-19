@@ -1,3 +1,5 @@
+import { createBrowserClient } from "@supabase/ssr";
+
 export type SupabaseBrowserConfig = {
   url: string;
   anonKey: string;
@@ -11,4 +13,10 @@ export function getSupabaseBrowserConfig(): SupabaseBrowserConfig {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ??
       "",
   };
+}
+
+export function createSupabaseBrowserClient() {
+  const { url, anonKey } = getSupabaseBrowserConfig();
+  if (!url || !anonKey) return null;
+  return createBrowserClient(url, anonKey);
 }

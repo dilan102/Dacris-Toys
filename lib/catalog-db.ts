@@ -18,7 +18,10 @@ type ProductRow = {
   ageRange?: string | null;
   tags?: string[] | string | null;
   featured?: boolean | null;
+  created_at?: string | null;
 };
+
+export type ProductOrder = "name" | "created_at";
 
 export type ProductInput = Omit<Product, "subcategory" | "featured"> & {
   subcategory?: string;
@@ -114,7 +117,7 @@ function withTextTags(row: ProductWriteRow, product: ProductInput): ProductWrite
   };
 }
 
-export const getProducts = cache(async function getProducts() {
+export const getProducts = cache(async function getProducts(orderBy: ProductOrder = "name") {
   const supabase = createSupabaseServerClient();
 
   if (!supabase) return fallbackProducts;
@@ -122,7 +125,7 @@ export const getProducts = cache(async function getProducts() {
   const { data, error } = await supabase
     .from("products")
     .select("*")
-    .order("name", { ascending: true });
+    .order(orderBy, { ascending: orderBy === "name" });
 
   if (error) {
     console.error("No se pudieron leer productos de Supabase:", error.message);
@@ -221,14 +224,26 @@ export async function uploadProductMedia(file: File, productId: string, kind: "i
   return data.publicUrl;
 }
 
-export async function getProductsByCategoryFromDb(slug: string) {
+export async function getProductsByCategoryFromDb(
+  slug: string,
+  minPrice?: number,
+  maxPrice?: number,
+  onlyInStock = false,
+) {
   const allProducts = await getProducts();
 
-  if (slug === "todos") return allProducts;
+  const categoryProducts =
+    slug === "todos"
+      ? allProducts
+      : allProducts.filter((product) => {
+          if (product.subcategory === slug) return true;
+          return product.category === slug && !product.subcategory;
+        });
 
-  return allProducts.filter((product) => {
-    if (product.subcategory === slug) return true;
-    return product.category === slug && !product.subcategory;
+  return categoryProducts.filter((product) => {
+    if (minPrice !== undefined && product.price < minPrice) return false;
+    if (maxPrice !== undefined && product.price > maxPrice) return false;
+    return !onlyInStock || product.stock > 0;
   });
 }
 
