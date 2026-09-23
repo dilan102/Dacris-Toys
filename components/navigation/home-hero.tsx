@@ -2,27 +2,38 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { HomeMenu } from "@/components/navigation/home-menu";
 import { Icon } from "@/components/ui/icon";
 
 export function HomeHero() {
+  const heroRef = useRef<HTMLElement>(null);
   const [isCompact, setIsCompact] = useState(false);
+  const [isPastHero, setIsPastHero] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setIsCompact(window.scrollY > 80);
+    const handleScroll = () => {
+      setIsCompact(window.scrollY > 80);
+      setIsPastHero((heroRef.current?.getBoundingClientRect().bottom ?? Infinity) <= 76);
+    };
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
-    <section className="hero">
-      <div className={`hero-top ${isCompact ? "hero-top-compact" : ""}`} aria-label="Navegación principal">
+    <section className="hero" ref={heroRef}>
+      <div className={`hero-top ${isCompact ? "hero-top-compact" : ""} ${isPastHero ? "hero-top-past-hero" : ""}`} aria-label="Navegación principal">
         <HomeMenu />
-        <Link className="brand-pill" href="/" aria-label="Ir al inicio">
-          <Image src="/Dacris-Logo.png" alt="Dacri's Toys" width={1536} height={1024} priority />
-        </Link>
+        {isPastHero ? (
+          <Link className="brand-pill login-pill" href="/acceso">
+            Iniciar sesión <Icon name="user" />
+          </Link>
+        ) : (
+          <Link className="brand-pill" href="/" aria-label="Ir al inicio">
+            <Image src="/Dacris-Logo.png" alt="Dacri's Toys" width={1536} height={1024} priority />
+          </Link>
+        )}
         <Link className="icon-button light" href="/carrito" aria-label="Abrir carrito">
           <Icon name="cart" />
         </Link>
