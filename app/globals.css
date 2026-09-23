@@ -607,7 +607,6 @@ svg {
   font-weight: 800;
 }
 
-.catalog-filters input[type="number"],
 .catalog-filters input[type="search"],
 .catalog-filters select {
   width: 128px;
@@ -626,13 +625,6 @@ svg {
 
 .catalog-filters select {
   width: min(100%, 210px);
-}
-
-.catalog-filters .catalog-stock-filter {
-  display: flex;
-  min-height: 40px;
-  align-items: center;
-  gap: 7px;
 }
 
 .catalog-filters button {

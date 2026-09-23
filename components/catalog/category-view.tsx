@@ -25,18 +25,9 @@ type CategoryViewProps = {
 };
 
 export type CatalogSearchParams = {
-  minPrice?: string;
-  maxPrice?: string;
-  onlyInStock?: string;
   search?: string;
   sortBy?: string;
 };
-
-function parsePrice(value?: string) {
-  if (!value) return undefined;
-  const price = Number(value);
-  return Number.isFinite(price) && price >= 0 ? price : undefined;
-}
 
 function parseSort(value?: string): ProductSort {
   return value === "price_asc" || value === "price_desc" || value === "newest"
@@ -50,9 +41,6 @@ export async function CategoryView({ slug, searchParams }: CategoryViewProps) {
   if (!category) notFound();
 
   const filters = searchParams ? await searchParams : {};
-  const minPrice = parsePrice(filters.minPrice);
-  const maxPrice = parsePrice(filters.maxPrice);
-  const onlyInStock = filters.onlyInStock === "true";
   const search = filters.search?.trim() ?? "";
   const sortBy = parseSort(filters.sortBy);
   const parentCategory = category.parentSlug ? getCategory(category.parentSlug) : null;
@@ -64,16 +52,13 @@ export async function CategoryView({ slug, searchParams }: CategoryViewProps) {
   const visibleProducts = showProducts
     ? await getProductsByCategoryFromDb(
         slug,
-        minPrice,
-        maxPrice,
-        onlyInStock,
         search,
         sortBy,
       )
     : showSectionCards
       ? filterAndSortProducts(
           await getProducts(sortBy === "newest" ? "created_at" : "name"),
-          { search, minPrice, maxPrice, onlyInStock, sortBy },
+          { search, sortBy },
         )
       : [];
   const favoriteProductIds = new Set(
@@ -152,9 +137,6 @@ export async function CategoryView({ slug, searchParams }: CategoryViewProps) {
       ) : null}
       {showProductGrid ? (
         <CatalogFilters
-          maxPrice={maxPrice}
-          minPrice={minPrice}
-          onlyInStock={onlyInStock}
           search={search}
           sortBy={sortBy}
         />

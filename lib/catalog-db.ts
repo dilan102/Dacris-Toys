@@ -152,15 +152,9 @@ export function filterAndSortProducts(
   products: Product[],
   {
     search = "",
-    minPrice,
-    maxPrice,
-    onlyInStock = false,
     sortBy = "alpha",
   }: {
     search?: string;
-    minPrice?: number;
-    maxPrice?: number;
-    onlyInStock?: boolean;
     sortBy?: ProductSort;
   },
 ) {
@@ -169,9 +163,7 @@ export function filterAndSortProducts(
     if (normalizedSearch && !product.name.toLocaleLowerCase("es-CO").includes(normalizedSearch)) {
       return false;
     }
-    if (minPrice !== undefined && product.price < minPrice) return false;
-    if (maxPrice !== undefined && product.price > maxPrice) return false;
-    return !onlyInStock || product.stock > 0;
+    return true;
   });
 
   if (sortBy === "price_asc") return filteredProducts.sort((a, b) => a.price - b.price);
@@ -273,9 +265,6 @@ export async function uploadProductMedia(file: File, productId: string, kind: "i
 
 export async function getProductsByCategoryFromDb(
   slug: string,
-  minPrice?: number,
-  maxPrice?: number,
-  onlyInStock = false,
   search = "",
   sortBy: ProductSort = "alpha",
 ) {
@@ -291,9 +280,6 @@ export async function getProductsByCategoryFromDb(
 
   return filterAndSortProducts(categoryProducts, {
     search,
-    minPrice,
-    maxPrice,
-    onlyInStock,
     sortBy,
   });
 }
