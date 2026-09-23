@@ -92,6 +92,7 @@ export function FeaturedCarousel({ rows, favoriteProductIds = [] }: FeaturedCaro
     track: HTMLDivElement,
   ) {
     if (event.pointerType === "mouse" && event.button !== 0) return;
+    if (event.target instanceof Element && event.target.closest("button, a, input, label")) return;
 
     if (resumeTimer.current) {
       window.clearTimeout(resumeTimer.current);
@@ -151,6 +152,7 @@ export function FeaturedCarousel({ rows, favoriteProductIds = [] }: FeaturedCaro
   }
 
   function handleClickCapture(event: MouseEvent<HTMLDivElement>) {
+    if (event.target instanceof Element && event.target.closest("button, a, input, label")) return;
     if (!didDrag.current) return;
 
     event.preventDefault();

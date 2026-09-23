@@ -17,6 +17,14 @@ export function AddToCartButton({ productId, quantity = 1, compact = false }: { 
   }
 
   if (cartQuantity > 0) {
+    if (compact) {
+      return (
+        <Link className="cart-link-button cart-link-button-in-cart" href="/carrito" aria-label="Ir al carrito">
+          <Icon name="cart" />
+        </Link>
+      );
+    }
+
     return (
       <div className="cart-card-controls">
         <div className={`quantity-row cart-card-quantity ${justAdded ? "cart-card-added" : ""}`} aria-label="Cantidad en el carrito">

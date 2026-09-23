@@ -1431,8 +1431,8 @@ svg {
 
 .cart-link-button {
   display: grid;
-  width: 36px;
-  height: 36px;
+  width: 39px;
+  height: 39px;
   place-items: center;
   border: 1px solid var(--line);
   border-radius: 999px;
@@ -1442,9 +1442,9 @@ svg {
 
 .cart-link-button-in-cart {
   color: white;
-  border-color: #168857;
-  background: #168857;
-  box-shadow: 0 6px 14px rgba(22, 136, 87, 0.22);
+  border-color: #1769e0;
+  background: #1769e0;
+  box-shadow: 0 6px 14px rgba(23, 105, 224, 0.24);
 }
 
 .cart-link-button svg {
@@ -1457,10 +1457,10 @@ svg {
   width: 39px;
   height: 39px;
   place-items: center;
-  border: 1px solid #ffd1df;
+  border: 1px solid #d9293c;
   border-radius: 999px;
-  color: #d83f72;
-  background: #fff0f5;
+  color: white;
+  background: #d9293c;
 }
 
 .remove-from-cart-button svg {
