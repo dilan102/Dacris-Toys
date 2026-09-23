@@ -91,7 +91,7 @@ svg {
   position: relative;
   overflow: clip;
   min-height: max(100svh, 784px);
-  padding: 20px 20px 32px;
+  padding: 96px 20px 32px;
   background-image: url("/Dacris-Hero-Fondo.png");
   background-position: center top;
   background-repeat: no-repeat;
@@ -162,6 +162,25 @@ svg {
   object-fit: contain;
 }
 
+.hero-center {
+  position: relative;
+  display: grid;
+  width: 198px;
+  height: 54px;
+  place-items: center;
+}
+
+.hero-center .brand-pill {
+  position: absolute;
+  transition: opacity 240ms ease, transform 240ms ease, box-shadow 240ms ease;
+}
+
+.hero-brand-hidden {
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(-8px) scale(0.94);
+}
+
 .login-pill {
   display: inline-flex;
   align-items: center;
@@ -175,6 +194,15 @@ svg {
   font-size: 14px;
   font-weight: 900;
   text-decoration: none;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(8px) scale(0.94);
+}
+
+.login-pill-visible {
+  pointer-events: auto;
+  opacity: 1;
+  transform: translateY(0) scale(1);
 }
 
 .login-pill svg {
