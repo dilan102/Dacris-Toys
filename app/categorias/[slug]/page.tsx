@@ -42,9 +42,11 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
     redirect(`/categorias/jugueteria/${category.slug}`);
   }
 
-  const backHref = category?.parentSlug
-    ? `/categorias/${category.parentSlug}`
-    : "/categorias/todos";
+  const backHref = category?.slug === "todos"
+    ? "/#catalogo"
+    : category?.parentSlug
+      ? `/categorias/${category.parentSlug}`
+      : "/categorias/todos";
 
   return (
     <main className="site-shell inner-page">

@@ -163,11 +163,13 @@ svg {
 }
 
 .hero-center {
-  position: relative;
+  position: absolute;
+  left: 50%;
   display: grid;
   width: 198px;
   height: 54px;
   place-items: center;
+  transform: translateX(-50%);
 }
 
 .hero-center .brand-pill {
