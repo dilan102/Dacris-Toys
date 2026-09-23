@@ -42,9 +42,13 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
     redirect(`/categorias/jugueteria/${category.slug}`);
   }
 
+  const backHref = category?.parentSlug
+    ? `/categorias/${category.parentSlug}`
+    : "/categorias/todos";
+
   return (
     <main className="site-shell inner-page">
-      <AppHeader title={category?.name ?? "Catálogo"} backHref="/#catalogo" />
+      <AppHeader title={category?.name ?? "Catálogo"} backHref={backHref} />
       <CategoryView searchParams={searchParams} slug={slug} />
       <BottomNav active="categorias" alwaysVisible />
     </main>

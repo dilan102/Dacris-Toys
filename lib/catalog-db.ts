@@ -23,6 +23,7 @@ type ProductRow = {
 };
 
 export type ProductOrder = "name" | "created_at";
+export type ProductSort = "alpha" | "price_asc" | "price_desc" | "newest";
 
 export type ProductInput = Omit<Product, "subcategory" | "featured"> & {
   subcategory?: string;
@@ -147,6 +148,40 @@ export const getProducts = cache(async function getProducts(orderBy: ProductOrde
   return getCachedProducts(orderBy);
 });
 
+export function filterAndSortProducts(
+  products: Product[],
+  {
+    search = "",
+    minPrice,
+    maxPrice,
+    onlyInStock = false,
+    sortBy = "alpha",
+  }: {
+    search?: string;
+    minPrice?: number;
+    maxPrice?: number;
+    onlyInStock?: boolean;
+    sortBy?: ProductSort;
+  },
+) {
+  const normalizedSearch = search.trim().toLocaleLowerCase("es-CO");
+  const filteredProducts = products.filter((product) => {
+    if (normalizedSearch && !product.name.toLocaleLowerCase("es-CO").includes(normalizedSearch)) {
+      return false;
+    }
+    if (minPrice !== undefined && product.price < minPrice) return false;
+    if (maxPrice !== undefined && product.price > maxPrice) return false;
+    return !onlyInStock || product.stock > 0;
+  });
+
+  if (sortBy === "price_asc") return filteredProducts.sort((a, b) => a.price - b.price);
+  if (sortBy === "price_desc") return filteredProducts.sort((a, b) => b.price - a.price);
+  if (sortBy === "alpha") return filteredProducts.sort((a, b) => a.name.localeCompare(b.name, "es-CO"));
+
+  // The query is already ordered by created_at for this option.
+  return filteredProducts;
+}
+
 export const getProductById = cache(async function getProductById(id: string) {
   const supabase = createSupabaseServerClient();
 
@@ -241,8 +276,10 @@ export async function getProductsByCategoryFromDb(
   minPrice?: number,
   maxPrice?: number,
   onlyInStock = false,
+  search = "",
+  sortBy: ProductSort = "alpha",
 ) {
-  const allProducts = await getProducts();
+  const allProducts = await getProducts(sortBy === "newest" ? "created_at" : "name");
 
   const categoryProducts =
     slug === "todos"
@@ -252,10 +289,12 @@ export async function getProductsByCategoryFromDb(
           return product.category === slug && !product.subcategory;
         });
 
-  return categoryProducts.filter((product) => {
-    if (minPrice !== undefined && product.price < minPrice) return false;
-    if (maxPrice !== undefined && product.price > maxPrice) return false;
-    return !onlyInStock || product.stock > 0;
+  return filterAndSortProducts(categoryProducts, {
+    search,
+    minPrice,
+    maxPrice,
+    onlyInStock,
+    sortBy,
   });
 }
 

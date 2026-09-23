@@ -1,18 +1,21 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { CatalogFilters } from "@/components/catalog/catalog-filters";
 import { ProductCard } from "@/components/product/product-card";
 import {
   categoryCardDesign,
-  formatPrice,
   getCategory,
   getSubcategories,
   sectionCategories,
   sortCategoriesByDisplayOrder,
 } from "@/lib/catalog";
 import {
+  filterAndSortProducts,
   getCategoryProductCountsFromDb,
+  getProducts,
   getProductsByCategoryFromDb,
+  type ProductSort,
 } from "@/lib/catalog-db";
 import { getFavoriteProductIds } from "@/lib/favorites";
 
@@ -25,12 +28,20 @@ export type CatalogSearchParams = {
   minPrice?: string;
   maxPrice?: string;
   onlyInStock?: string;
+  search?: string;
+  sortBy?: string;
 };
 
 function parsePrice(value?: string) {
   if (!value) return undefined;
   const price = Number(value);
   return Number.isFinite(price) && price >= 0 ? price : undefined;
+}
+
+function parseSort(value?: string): ProductSort {
+  return value === "price_asc" || value === "price_desc" || value === "newest"
+    ? value
+    : "alpha";
 }
 
 export async function CategoryView({ slug, searchParams }: CategoryViewProps) {
@@ -42,29 +53,33 @@ export async function CategoryView({ slug, searchParams }: CategoryViewProps) {
   const minPrice = parsePrice(filters.minPrice);
   const maxPrice = parsePrice(filters.maxPrice);
   const onlyInStock = filters.onlyInStock === "true";
-  const visibleProducts = await getProductsByCategoryFromDb(
-    slug,
-    minPrice,
-    maxPrice,
-    onlyInStock,
-  );
-  const favoriteProductIds = new Set(await getFavoriteProductIds());
+  const search = filters.search?.trim() ?? "";
+  const sortBy = parseSort(filters.sortBy);
   const parentCategory = category.parentSlug ? getCategory(category.parentSlug) : null;
   const subcategories = getSubcategories(category.parentSlug ?? category.slug);
   const showSectionCards = category.slug === "todos";
   const showSubcategoryCards = category.slug === "jugueteria";
   const showProducts = !showSectionCards && !showSubcategoryCards;
+  const showProductGrid = showSectionCards || showProducts;
+  const visibleProducts = showProducts
+    ? await getProductsByCategoryFromDb(
+        slug,
+        minPrice,
+        maxPrice,
+        onlyInStock,
+        search,
+        sortBy,
+      )
+    : showSectionCards
+      ? filterAndSortProducts(
+          await getProducts(sortBy === "newest" ? "created_at" : "name"),
+          { search, minPrice, maxPrice, onlyInStock, sortBy },
+        )
+      : [];
+  const favoriteProductIds = new Set(
+    showProductGrid ? await getFavoriteProductIds() : [],
+  );
   const orderedSectionCategories = sortCategoriesByDisplayOrder(sectionCategories);
-  const prices = visibleProducts.map((product) => product.price);
-  const priceRange =
-    prices.length > 0
-      ? `${formatPrice(Math.min(...prices))} - ${formatPrice(Math.max(...prices))}`
-      : "Próximamente";
-  const summaryCount = showSectionCards
-    ? `${sectionCategories.length} categorías`
-    : showSubcategoryCards
-      ? `${subcategories.length} subsecciones`
-    : `${visibleProducts.length} productos`;
   const sectionProductCounts = await getCategoryProductCountsFromDb(
     [...orderedSectionCategories, ...subcategories].map((item) => item.slug),
   );
@@ -81,10 +96,6 @@ export async function CategoryView({ slug, searchParams }: CategoryViewProps) {
                 : category.name}
           </h1>
           <p>{category.description}</p>
-        </div>
-        <div className="catalog-summary" aria-label="Resumen del catálogo">
-          <span>{summaryCount}</span>
-          {showProducts ? <span>{priceRange}</span> : null}
         </div>
       </div>
       {showSectionCards ? (
@@ -139,24 +150,16 @@ export async function CategoryView({ slug, searchParams }: CategoryViewProps) {
           ))}
         </div>
       ) : null}
-      {showProducts ? (
-        <form className="catalog-filters" method="get">
-          <label>
-            Precio mínimo
-            <input defaultValue={minPrice} min="0" name="minPrice" type="number" />
-          </label>
-          <label>
-            Precio máximo
-            <input defaultValue={maxPrice} min="0" name="maxPrice" type="number" />
-          </label>
-          <label className="catalog-stock-filter">
-            <input defaultChecked={onlyInStock} name="onlyInStock" type="checkbox" value="true" />
-            Solo con stock
-          </label>
-          <button type="submit">Filtrar</button>
-        </form>
+      {showProductGrid ? (
+        <CatalogFilters
+          maxPrice={maxPrice}
+          minPrice={minPrice}
+          onlyInStock={onlyInStock}
+          search={search}
+          sortBy={sortBy}
+        />
       ) : null}
-      {showProducts && visibleProducts.length > 0 ? (
+      {showProductGrid && visibleProducts.length > 0 ? (
         <div className="product-grid">
           {visibleProducts.map((product) => (
             <ProductCard
@@ -166,8 +169,8 @@ export async function CategoryView({ slug, searchParams }: CategoryViewProps) {
             />
           ))}
         </div>
-      ) : showProducts ? (
-        <div className="empty-media">Muy pronto tendremos productos aquí</div>
+      ) : showProductGrid ? (
+        <div className="empty-media">No encontramos productos con esos filtros.</div>
       ) : null}
     </section>
   );

@@ -607,7 +607,9 @@ svg {
   font-weight: 800;
 }
 
-.catalog-filters input[type="number"] {
+.catalog-filters input[type="number"],
+.catalog-filters input[type="search"],
+.catalog-filters select {
   width: 128px;
   min-height: 40px;
   padding: 0 10px;
@@ -616,6 +618,14 @@ svg {
   color: var(--ink);
   background: white;
   font: inherit;
+}
+
+.catalog-filters .catalog-search-filter input {
+  width: min(100%, 240px);
+}
+
+.catalog-filters select {
+  width: min(100%, 210px);
 }
 
 .catalog-filters .catalog-stock-filter {
@@ -1573,13 +1583,21 @@ svg {
 }
 
 .quantity-row.small {
-  grid-template-columns: 34px 34px 34px;
+  grid-template-columns: 34px 34px 34px auto;
   margin-top: 10px;
 }
 
 .quantity-row.small button {
   width: 34px;
   height: 34px;
+}
+
+.quantity-row.small .remove-button {
+  width: auto;
+  padding: 0 11px;
+  color: #d9293c;
+  font-size: 12px;
+  font-weight: 900;
 }
 
 .wide {

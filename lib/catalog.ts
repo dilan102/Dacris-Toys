@@ -25,7 +25,7 @@ export const categories: Category[] = [
   {
     name: "Todos",
     slug: "todos",
-    description: "Todo el catálogo disponible para elegir por edad, juego y presupuesto.",
+    description: "Explora todo el catálogo organizado por categoría, precio y disponibilidad.",
   },
   {
     name: "Ferretería",
