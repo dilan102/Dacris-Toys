@@ -105,7 +105,8 @@ svg {
   left: 50%;
   z-index: 40;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  grid-template-columns: 48px 1fr 48px;
+  grid-template-rows: 1fr;
   align-items: center;
   gap: 12px;
   width: min(calc(100% - 40px), 1120px);
@@ -120,11 +121,11 @@ svg {
 }
 
 .hero-top > :first-child {
-  justify-self: start;
+  grid-column: 1;
 }
 
 .hero-top > :last-child {
-  justify-self: end;
+  grid-column: 3;
 }
 
 .hero-top-compact {
@@ -937,21 +938,13 @@ svg {
   top: 0;
   z-index: 15;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  grid-template-columns: 48px minmax(0, 1fr) 48px;
   align-items: center;
   gap: 12px;
   width: min(100%, 1160px);
   margin: 0 auto;
   padding: 0 20px 12px;
   background: rgba(248, 247, 255, 0.96);
-}
-
-.app-header > :first-child {
-  justify-self: start;
-}
-
-.app-header > :last-child {
-  justify-self: end;
 }
 
 .app-header > strong {
