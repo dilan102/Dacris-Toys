@@ -89,8 +89,8 @@ svg {
 
 .hero {
   position: relative;
-  overflow: hidden;
-  min-height: 784px;
+  overflow: clip;
+  min-height: max(100svh, 784px);
   padding: 20px 20px 32px;
   background-image: url("/Dacris-Hero-Fondo.png");
   background-position: center top;
@@ -100,7 +100,8 @@ svg {
 }
 
 .hero-top {
-  position: relative;
+  position: sticky;
+  top: 0;
   z-index: 2;
   display: grid;
   grid-template-columns: 48px minmax(0, 1fr) 48px;
@@ -108,6 +109,16 @@ svg {
   gap: 12px;
   width: min(100%, 1120px);
   margin: 0 auto;
+  padding: 8px 0;
+  border-radius: 999px;
+  transition: padding 180ms ease, background 180ms ease, box-shadow 180ms ease;
+}
+
+.hero-top-compact {
+  padding: 4px 10px;
+  background: rgba(236, 250, 255, 0.78);
+  box-shadow: 0 8px 22px rgba(20, 86, 133, 0.16);
+  backdrop-filter: blur(12px);
 }
 
 .icon-button {
@@ -952,6 +963,32 @@ svg {
   margin: 0 0 22px;
 }
 
+.featured-product-grid {
+  margin-top: 16px;
+}
+
+.section-link {
+  color: var(--purple);
+  font-size: 14px;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.featured-grid-tools {
+  margin-top: 14px;
+}
+
+.featured-search input {
+  width: min(100%, 360px);
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: #26324a;
+  background: white;
+  font: inherit;
+}
+
 .home-category-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1379,6 +1416,28 @@ svg {
   border: 1px solid var(--line);
   border-radius: 999px;
   background: #fbfaff;
+}
+
+.cart-card-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cart-link-button {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--purple);
+  background: white;
+}
+
+.cart-link-button svg {
+  width: 18px;
+  height: 18px;
 }
 
 .product-specs {
@@ -2213,7 +2272,7 @@ svg {
   }
 
   .hero {
-    min-height: 780px;
+    min-height: max(100svh, 780px);
     padding-inline: 34px;
     background-size: min(100%, 853px) auto;
     background-color: #8ed2f5;
@@ -2353,7 +2412,7 @@ svg {
     grid-template-columns: minmax(0, 1fr) minmax(360px, 520px);
     grid-template-rows: auto 1fr auto;
     column-gap: 44px;
-    min-height: 690px;
+    min-height: max(100svh, 690px);
     background-position: right top;
     background-size: auto 100%;
   }

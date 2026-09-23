@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAdminSession, requireOwnerSession } from "@/lib/auth";
 import { categories, toySubcategories } from "@/lib/catalog";
@@ -37,6 +37,8 @@ function redirectToEditor(id: string, status: string): never {
 }
 
 function revalidateCatalogPaths(productId?: string) {
+  revalidateTag("catalog-products", "max");
+
   const paths = [
     "/",
     "/admin",

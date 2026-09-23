@@ -167,6 +167,17 @@ export function Icon({ name }: IconProps) {
     );
   }
 
+  if (name === "tiktok") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path
+          {...common}
+          d="M14 4v9.2a4.2 4.2 0 1 1-3.2-4.1M14 4c.7 2.4 2.2 3.8 4.5 4.2"
+        />
+      </svg>
+    );
+  }
+
   if (name === "lock") {
     return (
       <svg viewBox="0 0 24 24" aria-hidden="true">

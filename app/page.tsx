@@ -2,13 +2,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { BottomNav } from "@/components/ui/bottom-nav";
 import { Icon } from "@/components/ui/icon";
-import { HomeMenu } from "@/components/navigation/home-menu";
-import { FeaturedCarousel } from "@/components/product/featured-carousel";
+import { HomeHero } from "@/components/navigation/home-hero";
+import { ProductCard } from "@/components/product/product-card";
+import { FeaturedProductGrid } from "@/components/product/featured-product-grid";
 import {
   sectionCategories,
   sortCategoriesByDisplayOrder,
   categoryCardDesign,
-  type Product,
 } from "@/lib/catalog";
 import {
   getCategoryProductCountsFromDb,
@@ -23,22 +23,13 @@ const guarantees = [
   { icon: "box", title: "Selección cuidada", text: "Juguetes elegidos para cada momento." },
 ];
 
-function makeCarouselRows(products: Product[]) {
-  const availableProducts = products.filter((product) => product.stock > 0);
-
-  return [
-    availableProducts.filter((_, index) => index % 2 === 0),
-    availableProducts.filter((_, index) => index % 2 === 1),
-  ].filter((row) => row.length > 0);
-}
-
 export default async function Home() {
   const [recentProducts, featuredProducts] = await Promise.all([
     getProducts("created_at"),
     getFeaturedProductsFromDb(),
   ]);
-  const recentRows = makeCarouselRows(recentProducts);
-  const featuredRows = makeCarouselRows(featuredProducts);
+  const availableRecentProducts = recentProducts.filter((product) => product.stock > 0);
+  const availableFeaturedProducts = featuredProducts.filter((product) => product.stock > 0);
   const orderedSectionCategories = sortCategoriesByDisplayOrder(sectionCategories);
   const categoryCounts = await getCategoryProductCountsFromDb(
     orderedSectionCategories.map((category) => category.slug),
@@ -47,65 +38,7 @@ export default async function Home() {
 
   return (
     <main className="site-shell">
-      <section className="hero">
-        <div className="hero-top" aria-label="Navegación principal">
-          <HomeMenu />
-          <Link className="brand-pill" href="/" aria-label="Ir al inicio">
-            <Image
-              src="/Dacris-Logo.png"
-              alt="Dacri's Toys"
-              width={1536}
-              height={1024}
-              priority
-            />
-          </Link>
-          <Link
-            className="icon-button light"
-            href="/carrito"
-            aria-label="Abrir carrito"
-          >
-            <Icon name="cart" />
-          </Link>
-        </div>
-
-        <div className="hero-copy">
-          <p className="eyebrow">Juguetes para crecer jugando</p>
-          <h1>
-            El juego empieza con <span>imaginación</span>
-          </h1>
-          <p>Una selección especial para descubrir, aprender y divertirse.</p>
-        </div>
-
-        <Image
-          className="hero-logo"
-          src="/Dacris-Logo.png"
-          alt="Dacri's Toys catálogo"
-          width={1536}
-          height={1024}
-          priority
-        />
-
-        <div className="hero-cta">
-          <Link href="#catalogo" className="primary-button">
-            Ver catálogo <Icon name="arrow" />
-          </Link>
-        </div>
-
-        <div className="trust-bar" aria-label="Beneficios de comprar en Dacri's Toys">
-          <div>
-            <Icon name="truck" />
-            <span>Envíos<br />coordinados</span>
-          </div>
-          <div>
-            <Icon name="shield" />
-            <span>Compra<br />segura</span>
-          </div>
-          <div>
-            <Icon name="phone" />
-            <span>Atención<br />cercana</span>
-          </div>
-        </div>
-      </section>
+      <HomeHero />
       <div className="content-wrap" id="catalogo">
         <section className="section">
           <div className="section-title-row">
@@ -154,8 +87,16 @@ export default async function Home() {
               <p className="section-description">Novedades que acabamos de sumar.</p>
             </div>
           </div>
-          {recentRows.length > 0 ? (
-            <FeaturedCarousel favoriteProductIds={favoriteProductIds} rows={recentRows} />
+          {availableRecentProducts.length > 0 ? (
+            <div className="section-card-grid featured-product-grid" aria-label="Productos recién llegados">
+              {availableRecentProducts.map((product) => (
+                <ProductCard
+                  isFavorite={favoriteProductIds.includes(product.id)}
+                  key={product.id}
+                  product={product}
+                />
+              ))}
+            </div>
           ) : (
             <div className="empty-media">Pronto encontrarás novedades aquí.</div>
           )}
@@ -167,9 +108,13 @@ export default async function Home() {
               <h2>Más para descubrir</h2>
               <p className="section-description">Ideas para seguir jugando.</p>
             </div>
+            <Link className="section-link" href="/categorias/todos">Ver todos los productos</Link>
           </div>
-          {featuredRows.length > 0 ? (
-            <FeaturedCarousel favoriteProductIds={favoriteProductIds} rows={featuredRows} />
+          {availableFeaturedProducts.length > 0 ? (
+            <FeaturedProductGrid
+              favoriteProductIds={favoriteProductIds}
+              products={availableFeaturedProducts}
+            />
           ) : (
             <div className="empty-media">Pronto encontrarás más productos aquí.</div>
           )}
@@ -212,11 +157,11 @@ export default async function Home() {
             <div className="about-actions">
               <Link
                 className="secondary-button filled"
-                href="/categorias/todos"
+                href="/nosotros"
               >
                 Conocer más <Icon name="arrow" />
               </Link>
-              <a className="secondary-button outline" href="tel:+573001234567">
+              <a className="secondary-button outline" href="tel:+573122180298">
                 <Icon name="phone" /> Llamar
               </a>
             </div>
@@ -273,7 +218,6 @@ export default async function Home() {
           </div>
           <div className="footer-column">
             <h3>Ayuda</h3>
-            <a href="mailto:dacristoys@gmail.com">Contacto</a>
             <Link href="/faq">Preguntas frecuentes</Link>
             <Link href="/envios-y-devoluciones">Envíos y devoluciones</Link>
           </div>

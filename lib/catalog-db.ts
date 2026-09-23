@@ -1,4 +1,5 @@
 import { cache } from "react";
+import { unstable_cache } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { products as fallbackProducts, type Product } from "@/lib/catalog";
 
@@ -117,7 +118,7 @@ function withTextTags(row: ProductWriteRow, product: ProductInput): ProductWrite
   };
 }
 
-export const getProducts = cache(async function getProducts(orderBy: ProductOrder = "name") {
+async function fetchProducts(orderBy: ProductOrder = "name") {
   const supabase = createSupabaseServerClient();
 
   if (!supabase) return fallbackProducts;
@@ -133,6 +134,17 @@ export const getProducts = cache(async function getProducts(orderBy: ProductOrde
   }
 
   return (data ?? []).map((item) => mapProduct(item as ProductRow));
+}
+
+// React's cache only deduplicates calls during one render. This cache survives
+// requests so returning to the public catalogue does not repeat the database query.
+const getCachedProducts = unstable_cache(fetchProducts, ["catalog-products"], {
+  revalidate: 60,
+  tags: ["catalog-products"],
+});
+
+export const getProducts = cache(async function getProducts(orderBy: ProductOrder = "name") {
+  return getCachedProducts(orderBy);
 });
 
 export const getProductById = cache(async function getProductById(id: string) {
