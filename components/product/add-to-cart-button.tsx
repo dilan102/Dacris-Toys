@@ -24,7 +24,7 @@ export function AddToCartButton({ productId, quantity = 1, compact = false }: { 
           <span aria-live="polite">{cartQuantity}</span>
           <button type="button" onClick={() => changeQuantity(productId, cartQuantity + 1)} aria-label="Sumar uno"><Icon name="plus" /></button>
         </div>
-        <Link className="cart-link-button" href="/carrito" aria-label="Ir al carrito">
+        <Link className="cart-link-button cart-link-button-in-cart" href="/carrito" aria-label="Ir al carrito">
           <Icon name="cart" />
         </Link>
       </div>

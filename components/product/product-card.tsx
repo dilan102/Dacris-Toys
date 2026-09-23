@@ -1,8 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { formatPrice, type Product } from "@/lib/catalog";
-import { AddToCartButton } from "@/components/product/add-to-cart-button";
-import { FavoriteButton } from "@/components/product/favorite-button";
+import { ProductCardActions } from "@/components/product/product-card-actions";
 
 type ProductCardProps = {
   product: Product;
@@ -31,10 +30,7 @@ export function ProductCard({ product, isFavorite = false }: ProductCardProps) {
       </div>
       <div className="product-footer">
         <strong>{formatPrice(product.price)}</strong>
-        <div className="product-card-actions">
-          <FavoriteButton initialFavorite={isFavorite} productId={product.id} />
-          <AddToCartButton productId={product.id} compact />
-        </div>
+        <ProductCardActions initialFavorite={isFavorite} productId={product.id} />
       </div>
     </article>
   );

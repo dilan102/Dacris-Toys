@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/lib/store/cart-context";
+import { ScrollPositionRestorer } from "@/components/ui/scroll-position-restorer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,7 +25,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="es"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col"><CartProvider>{children}</CartProvider></body>
+      <body className="min-h-full flex flex-col">
+        <CartProvider>
+          <ScrollPositionRestorer />
+          {children}
+        </CartProvider>
+      </body>
     </html>
   );
 }

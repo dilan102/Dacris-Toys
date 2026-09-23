@@ -5,10 +5,12 @@ import { Icon } from "@/components/ui/icon";
 import { HomeHero } from "@/components/navigation/home-hero";
 import { ProductCard } from "@/components/product/product-card";
 import { FeaturedProductGrid } from "@/components/product/featured-product-grid";
+import { FeaturedCarousel } from "@/components/product/featured-carousel";
 import {
   sectionCategories,
   sortCategoriesByDisplayOrder,
   categoryCardDesign,
+  type Product,
 } from "@/lib/catalog";
 import {
   getCategoryProductCountsFromDb,
@@ -23,12 +25,21 @@ const guarantees = [
   { icon: "box", title: "Selección cuidada", text: "Juguetes elegidos para cada momento." },
 ];
 
+function makeCarouselRows(products: Product[]) {
+  const availableProducts = products.filter((product) => product.stock > 0);
+
+  return [
+    availableProducts.filter((_, index) => index % 2 === 0),
+    availableProducts.filter((_, index) => index % 2 === 1),
+  ].filter((row) => row.length > 0);
+}
+
 export default async function Home() {
   const [recentProducts, featuredProducts] = await Promise.all([
     getProducts("created_at"),
     getFeaturedProductsFromDb(),
   ]);
-  const availableRecentProducts = recentProducts.filter((product) => product.stock > 0);
+  const recentRows = makeCarouselRows(recentProducts);
   const availableFeaturedProducts = featuredProducts.filter((product) => product.stock > 0);
   const orderedSectionCategories = sortCategoriesByDisplayOrder(sectionCategories);
   const categoryCounts = await getCategoryProductCountsFromDb(
@@ -87,16 +98,8 @@ export default async function Home() {
               <p className="section-description">Novedades que acabamos de sumar.</p>
             </div>
           </div>
-          {availableRecentProducts.length > 0 ? (
-            <div className="section-card-grid featured-product-grid" aria-label="Productos recién llegados">
-              {availableRecentProducts.map((product) => (
-                <ProductCard
-                  isFavorite={favoriteProductIds.includes(product.id)}
-                  key={product.id}
-                  product={product}
-                />
-              ))}
-            </div>
+          {recentRows.length > 0 ? (
+            <FeaturedCarousel favoriteProductIds={favoriteProductIds} rows={recentRows} />
           ) : (
             <div className="empty-media">Pronto encontrarás novedades aquí.</div>
           )}

@@ -797,6 +797,11 @@ svg {
   gap: 8px;
 }
 
+.product-card-actions {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
 .favorite-button {
   display: grid;
   width: 39px;
@@ -1435,9 +1440,32 @@ svg {
   background: white;
 }
 
+.cart-link-button-in-cart {
+  color: white;
+  border-color: #168857;
+  background: #168857;
+  box-shadow: 0 6px 14px rgba(22, 136, 87, 0.22);
+}
+
 .cart-link-button svg {
   width: 18px;
   height: 18px;
+}
+
+.remove-from-cart-button {
+  display: grid;
+  width: 39px;
+  height: 39px;
+  place-items: center;
+  border: 1px solid #ffd1df;
+  border-radius: 999px;
+  color: #d83f72;
+  background: #fff0f5;
+}
+
+.remove-from-cart-button svg {
+  width: 19px;
+  height: 19px;
 }
 
 .product-specs {
