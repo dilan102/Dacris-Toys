@@ -1,6 +1,5 @@
 import { AppHeader } from "@/components/ui/app-header";
 import { BottomNav } from "@/components/ui/bottom-nav";
-import { Icon } from "@/components/ui/icon";
 import { CheckoutClient } from "@/app/checkout/checkout-client";
 
 export default function CheckoutPage() {
@@ -17,10 +16,6 @@ export default function CheckoutPage() {
         </div>
 
         <aside className="summary-card payment-card">
-          <div className="secure-line">
-            <Icon name="lock" />
-            Pago protegido con Wompi
-          </div>
           <h2>Total a pagar</h2>
           <strong className="checkout-total">El total se calcula con el carrito actual</strong>
           <p>

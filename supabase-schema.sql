@@ -87,18 +87,41 @@ create table if not exists public.orders (
   reference text not null unique,
   customer_name text not null,
   customer_phone text not null,
+  customer_email text,
+  delivery_city text,
+  delivery_department text,
+  delivery_lat double precision,
+  delivery_lng double precision,
+  client_request_id text unique,
+  wompi_transaction_id text,
   customer_address text not null,
   delivery_note text,
   subtotal numeric not null check (subtotal >= 0),
   shipping numeric not null check (shipping >= 0),
   total numeric not null check (total >= 0),
-  status text not null default 'pending' check (status in ('pending', 'paid', 'failed', 'cancelled')),
+  status text not null default 'pending' check (status in ('pending', 'paid', 'failed', 'cancelled', 'expired')),
   created_at timestamptz not null default now()
 );
 
 -- Customer accounts are optional so guest checkout remains available.
 alter table public.orders
 add column if not exists customer_username text references public.app_users(username);
+
+alter table public.orders
+  add column if not exists customer_email text,
+  add column if not exists delivery_city text,
+  add column if not exists delivery_department text,
+  add column if not exists delivery_lat double precision,
+  add column if not exists delivery_lng double precision,
+  add column if not exists client_request_id text,
+  add column if not exists wompi_transaction_id text;
+
+create unique index if not exists orders_client_request_id_key
+on public.orders (client_request_id) where client_request_id is not null;
+
+alter table public.orders drop constraint if exists orders_status_check;
+alter table public.orders add constraint orders_status_check
+check (status in ('pending', 'paid', 'failed', 'cancelled', 'expired'));
 
 create table if not exists public.order_items (
   id uuid primary key default gen_random_uuid(),
