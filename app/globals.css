@@ -1725,6 +1725,9 @@ svg {
   color: var(--muted);
   font-size: 15px;
   font-weight: 700;
+  border-radius: 50px;
+  background-color: #43d7c8;
+  border-color: #000;
 }
 
 .empty-cart-products {
