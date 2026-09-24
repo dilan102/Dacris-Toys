@@ -1674,6 +1674,11 @@ svg {
   margin-top: 18px;
 }
 
+.cart-page-layout {
+  display: grid;
+  gap: 18px;
+}
+
 .cart-list {
   display: grid;
   gap: 13px;
@@ -1685,7 +1690,10 @@ svg {
   gap: 14px;
   align-items: center;
   padding: 12px;
+  border: 0;
   border-radius: 18px;
+  background: transparent;
+  box-shadow: none;
 }
 
 .cart-item img {
@@ -1693,6 +1701,40 @@ svg {
   height: 78px;
   border-radius: 12px;
   object-fit: cover;
+}
+
+.empty-cart-page {
+  display: grid;
+  gap: 18px;
+}
+
+.empty-cart-message {
+  display: grid;
+  gap: 8px;
+  padding: 8px 0 0;
+}
+
+.empty-cart-message h2,
+.empty-cart-products h2 {
+  color: #26324a;
+  font-size: 22px;
+  font-weight: 950;
+}
+
+.empty-cart-message p {
+  color: var(--muted);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.empty-cart-products {
+  display: grid;
+  gap: 12px;
+}
+
+.cart-catalog-button {
+  margin-top: 8px;
+  justify-self: center;
 }
 
 .cart-item h2,
