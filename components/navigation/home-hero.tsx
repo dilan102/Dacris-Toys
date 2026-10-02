@@ -30,7 +30,7 @@ export function HomeHero() {
           <Link className={`brand-pill hero-brand ${showLogin ? "hero-brand-hidden" : ""}`} href="/" aria-label="Ir al inicio">
             <Image src="/Dacris-Logo.png" alt="Dacri's Toys" width={1536} height={1024} priority />
           </Link>
-          <Link className={`brand-pill login-pill ${showLogin ? "login-pill-visible" : ""}`} href="/acceso">
+          <Link className={`brand-pill login-pill ${showLogin ? "login-pill-visible" : ""}`} href="/perfil">
             Iniciar sesión <Icon name="user" />
           </Link>
         </div>

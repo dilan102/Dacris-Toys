@@ -9,7 +9,7 @@ export async function toggleFavoriteAction(productId: string) {
   const session = await getSessionUser();
 
   if (session?.role !== "customer") {
-    redirect("/acceso");
+    redirect("/perfil");
   }
 
   const supabase = createSupabaseServerClient();
