@@ -6,9 +6,10 @@ import { CartLink } from "@/components/ui/cart-link";
 type AppHeaderProps = {
   title?: string;
   backHref?: string;
+  cartAsHome?: boolean;
 };
 
-export function AppHeader({ title, backHref = "/" }: AppHeaderProps) {
+export function AppHeader({ title, backHref = "/", cartAsHome = false }: AppHeaderProps) {
   return (
     <header className="app-header">
       <Link className="icon-button light" href={backHref} aria-label="Volver">
@@ -27,7 +28,7 @@ export function AppHeader({ title, backHref = "/" }: AppHeaderProps) {
           />
         </Link>
       )}
-      <CartLink />
+      <CartLink home={cartAsHome} />
     </header>
   );
 }

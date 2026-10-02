@@ -7,7 +7,7 @@ export default async function CartPage() {
   const products = await getProducts();
   return (
     <main className="site-shell inner-page">
-      <AppHeader title="Carrito" />
+      <AppHeader title="Carrito" cartAsHome />
       <section className="content-wrap cart-layout">
         <div className="page-intro">
           <h1>Tu carrito</h1>
