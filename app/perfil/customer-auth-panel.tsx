@@ -6,11 +6,12 @@ import Link from "next/link";
 import { Icon } from "@/components/ui/icon";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
-type AuthMode = "login" | "register";
+type AuthMode = "login" | "register" | "recovery";
 
 export function CustomerAuthPanel() {
   const [mode, setMode] = useState<AuthMode>("login");
   const [message, setMessage] = useState("");
+  const [isGooglePending, setIsGooglePending] = useState(false);
   const [transitionDirection, setTransitionDirection] = useState<"to-register" | "to-login" | null>(null);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -82,7 +83,51 @@ export function CustomerAuthPanel() {
     setMode(nextMode);
   }
 
+  async function signInWithGoogle() {
+    const supabase = createSupabaseBrowserClient();
+
+    if (!supabase) {
+      setMessage("Falta configurar la clave pública de Supabase.");
+      return;
+    }
+
+    setIsGooglePending(true);
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback?next=/perfil`,
+      },
+    });
+
+    if (error) {
+      setMessage("No fue posible iniciar sesión con Google. Inténtalo de nuevo.");
+      setIsGooglePending(false);
+    }
+  }
+
+  async function sendPasswordRecovery(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const supabase = createSupabaseBrowserClient();
+
+    if (!supabase) {
+      setMessage("Falta configurar la clave pública de Supabase.");
+      return;
+    }
+
+    const email = String(new FormData(event.currentTarget).get("email") ?? "").trim();
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/callback?next=/restablecer-contrasena`,
+    });
+
+    setMessage(
+      error
+        ? "No fue posible enviar el correo de recuperación. Inténtalo más tarde."
+        : "Si existe una cuenta con ese correo, recibirás las instrucciones para restablecer tu contraseña.",
+    );
+  }
+
   const registering = mode === "register";
+  const recovering = mode === "recovery";
 
   return (
     <section className="profile-auth-stage" aria-label="Acceso a tu cuenta">
@@ -97,9 +142,19 @@ export function CustomerAuthPanel() {
         />
         <div key={mode} className="profile-auth-content">
           <p className="profile-auth-eyebrow">Dacri&apos;s Toys</p>
-          <h1>{registering ? "Crea tu cuenta" : "Inicia sesión"}</h1>
-          <p>{registering ? "Crea tu perfil para comprar más rápido, guardar favoritos y seguir tus pedidos." : "Ingresa para ver tus pedidos y favoritos."}</p>
-          <form className="checkout-form profile-auth-form" onSubmit={handleSubmit}>
+          <h1>{registering ? "Crea tu cuenta" : recovering ? "Recupera tu acceso" : "Inicia sesión"}</h1>
+          <p>{registering ? "Crea tu perfil para comprar más rápido, guardar favoritos y seguir tus pedidos." : recovering ? "Escribe tu correo y te enviaremos un enlace seguro para crear una nueva contraseña." : "Ingresa para ver tus pedidos y favoritos."}</p>
+          {recovering ? (
+            <form className="checkout-form profile-auth-form" onSubmit={sendPasswordRecovery}>
+              <label>
+                Correo electrónico
+                <input autoComplete="email" name="email" required type="email" />
+              </label>
+              <button className="primary-button wide" type="submit">
+                Enviar enlace <Icon name="arrow" />
+              </button>
+            </form>
+          ) : <form className="checkout-form profile-auth-form" onSubmit={handleSubmit}>
             {registering ? (
               <div className="profile-auth-fields">
                 <label>
@@ -126,12 +181,12 @@ export function CustomerAuthPanel() {
             </label>
             <label>
               Contraseña
-              <input autoComplete={registering ? "new-password" : "current-password"} minLength={6} name="password" required type="password" />
+              <input autoComplete={registering ? "new-password" : "current-password"} minLength={registering ? 12 : 1} name="password" required type="password" />
             </label>
             {registering ? (
               <label>
                 Confirma tu contraseña
-                <input autoComplete="new-password" minLength={6} name="passwordConfirmation" required type="password" />
+                <input autoComplete="new-password" minLength={12} name="passwordConfirmation" required type="password" />
               </label>
             ) : null}
             {registering ? (
@@ -145,14 +200,21 @@ export function CustomerAuthPanel() {
             <button className="primary-button wide" type="submit">
               {registering ? "Crear cuenta" : "Entrar"} <Icon name="arrow" />
             </button>
-          </form>
+          </form>}
           {message ? <p className="form-status">{message}</p> : null}
+          {!recovering ? (
+            <>
+              <div className="profile-auth-divider"><span>o</span></div>
+              <button className="profile-google-button" disabled={isGooglePending} onClick={signInWithGoogle} type="button">
+                <span aria-hidden="true">G</span>
+                {isGooglePending ? "Redirigiendo a Google..." : "Continuar con Google"}
+              </button>
+            </>
+          ) : null}
           <p className="profile-auth-switch">
-            {registering ? "¿Ya tienes una cuenta?" : "¿Aún no tienes una cuenta?"}{" "}
-            <button onClick={() => changeMode(registering ? "login" : "register")} type="button">
-              {registering ? "Inicia sesión" : "Regístrate"}
-            </button>
+            {recovering ? <>¿Ya recuerdas tu contraseña? <button onClick={() => changeMode("login")} type="button">Inicia sesión</button></> : <>{registering ? "¿Ya tienes una cuenta?" : "¿Aún no tienes una cuenta?"}{" "}<button onClick={() => changeMode(registering ? "login" : "register")} type="button">{registering ? "Inicia sesión" : "Regístrate"}</button></>}
           </p>
+          {!registering && !recovering ? <button className="profile-auth-recovery" onClick={() => changeMode("recovery")} type="button">¿Olvidaste tu contraseña?</button> : null}
         </div>
       </article>
     </section>

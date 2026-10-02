@@ -29,17 +29,30 @@ Escribe un usuario, una contraseña de mínimo 12 caracteres y el rol `owner`. E
 
 `owner` puede crear, editar y borrar productos. `staff` puede crear y editar, pero no borrar.
 
-## 3. Autorizar administradores con Google
+## 3. Activar inicio de sesión con Google
 
-1. En **Supabase → Authentication → Providers**, habilita **Google** y pega el Client ID y Client Secret de Google Cloud.
-2. En **Authentication → URL Configuration**, agrega estas Redirect URLs:
+1. En [Google Auth Platform](https://console.cloud.google.com/auth/overview), crea un cliente OAuth de tipo **Web application**. En **Authorized JavaScript origins** agrega el dominio de la tienda, por ejemplo `https://tu-dominio` y, para desarrollo, `http://localhost:3000`.
+2. En **Authorized redirect URIs** de Google agrega exactamente la URL de callback que muestra **Supabase → Authentication → Providers → Google**. Normalmente es:
+
+```text
+https://<project-ref>.supabase.co/auth/v1/callback
+```
+
+3. En **Supabase → Authentication → Providers**, habilita **Google** y pega el Client ID y Client Secret creados en Google. Esas credenciales solo se guardan en los paneles de Google y Supabase; nunca en este repositorio.
+4. En **Supabase → Authentication → URL Configuration**, define tu dominio público como **Site URL** y agrega estas Redirect URLs:
 
 ```text
 http://localhost:3000/auth/callback
 https://tu-dominio/auth/callback
+http://localhost:3000/auth/callback?next=/restablecer-contrasena
+https://tu-dominio/auth/callback?next=/restablecer-contrasena
 ```
 
-3. En **SQL Editor**, autoriza únicamente los correos administrativos que correspondan. El `username` es el nombre que aparecerá en el panel y `role` puede ser `owner` o `staff`.
+Para producción usa las URLs exactas de tu dominio. La aplicación intercambia el código OAuth únicamente en `/auth/callback` y después envía al usuario a una ruta interna permitida.
+
+## 4. Autorizar administradores con Google
+
+En **SQL Editor**, autoriza únicamente los correos administrativos que correspondan. El `username` es el nombre que aparecerá en el panel y `role` puede ser `owner` o `staff`.
 
 ```sql
 insert into public.admin_google_users (email, username, role)
@@ -48,7 +61,20 @@ values ('admin@tu-dominio.com', 'admin-google', 'owner');
 
 Una cuenta de Google que no esté en esta tabla no puede entrar a `/admin`.
 
-## 4. Variables locales para desarrollo
+## 5. Reforzar autenticación antes de producción
+
+En **Supabase → Authentication → Settings**, antes de publicar:
+
+1. Mantén activa la confirmación de correo electrónico.
+2. Define una contraseña mínima de **12 caracteres**, con mayúscula, minúscula, número y símbolo.
+3. Activa la protección de contraseñas filtradas, si tu plan la incluye.
+4. Activa CAPTCHA con Cloudflare Turnstile o hCaptcha para registro, inicio de sesión y recuperación.
+5. Configura SMTP propio: el servicio de correo predeterminado de Supabase es solo para pruebas y tiene límites estrictos.
+6. Revisa los límites de tasa de Auth y, para administradores, considera MFA.
+
+La interfaz exige 12 caracteres al registrar o restablecer una contraseña, pero estas reglas del panel son las que las hacen obligatorias también para peticiones directas a Auth.
+
+## 6. Variables locales para desarrollo
 
 Crea un archivo `.env.local` —no lo subas a Git— con estas tres variables:
 
@@ -67,7 +93,7 @@ openssl rand -base64 48
 
 Tu archivo `.env` actual tiene la URL y una clave pública. Déjalo fuera de Git, pero añade las dos variables privadas anteriores en `.env.local` para que el login y el panel funcionen localmente.
 
-## 5. Variables en Vercel
+## 7. Variables en Vercel
 
 En Vercel abre el proyecto → **Settings** → **Environment Variables**. Agrega las siguientes variables para **Production**, **Preview** y **Development**:
 
@@ -83,7 +109,7 @@ En Vercel abre el proyecto → **Settings** → **Environment Variables**. Agreg
 
 Tras guardar las variables, ejecuta **Deployments** → último despliegue → **Redeploy**. Vercel no aplica variables nuevas a un despliegue que ya estaba creado.
 
-## 6. Entrar y verificar el panel
+## 8. Entrar y verificar el panel
 
 1. Abre `https://tu-dominio/acceso`.
 2. Inicia sesión con el usuario y contraseña creados en el paso 2.
@@ -92,7 +118,7 @@ Tras guardar las variables, ejecuta **Deployments** → último despliegue → *
 
 Si `/perfil` carga como invitado, es normal cuando no hay sesión. Si el login muestra un error de base de datos, revisa primero que `SUPABASE_SERVICE_ROLE_KEY` esté configurada en Vercel y que ejecutaste el esquema completo.
 
-## 7. Configurar Wompi cuando vayas a cobrar
+## 9. Configurar Wompi cuando vayas a cobrar
 
 Antes de habilitar pagos reales, configura en Wompi una URL de eventos apuntando a:
 

@@ -12,6 +12,8 @@ import { CustomerAuthPanel } from "@/app/perfil/customer-auth-panel";
 
 const statusMessages: Record<string, string> = {
   "cuenta-creada": "Cuenta creada correctamente.",
+  "contrasena-actualizada": "Tu contraseña se actualizó correctamente.",
+  "autenticacion-error": "No fue posible completar la autenticación. Inténtalo de nuevo.",
 };
 
 type ProfilePageProps = {
