@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Icon } from "@/components/ui/icon";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
@@ -48,6 +49,9 @@ export function CustomerAuthPanel() {
             full_name: `${firstName} ${lastName}`,
             phone,
             city,
+            terms_accepted_at: new Date().toISOString(),
+            terms_version: "2026-10-01",
+            privacy_policy_version: "2026-10-01",
           },
           emailRedirectTo: `${window.location.origin}/auth/callback?next=/perfil`,
         },
@@ -133,7 +137,9 @@ export function CustomerAuthPanel() {
             {registering ? (
               <label className="profile-auth-consent">
                 <input name="terms" required type="checkbox" />
-                <span>Acepto los términos y la política de privacidad.</span>
+                <span>
+                  Acepto los <Link href="/terminos">términos</Link> y la <Link href="/privacidad">política de privacidad</Link>.
+                </span>
               </label>
             ) : null}
             <button className="primary-button wide" type="submit">

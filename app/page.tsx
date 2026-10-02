@@ -242,6 +242,21 @@ export default async function Home() {
           <a href="tel:+573122180298">+57 312 218 0298</a>
           <a href="mailto:dacristoys@gmail.com">dacristoys@gmail.com</a>
         </div>
+        <details className="footer-legal-disclosure">
+          <summary>Información legal y atención al consumidor</summary>
+          <div>
+            <Link href="/informacion-del-proveedor">Información del proveedor</Link>
+            <Link href="/derecho-de-retracto">Derecho de retracto</Link>
+            <Link href="/pqr">Peticiones, quejas y reclamos (PQR)</Link>
+            <a
+              href="https://www.sic.gov.co/temas/proteccion-al-consumidor"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Derechos del consumidor — SIC
+            </a>
+          </div>
+        </details>
         <p className="tagline">
           &quot;Juguetes que hacen sonreír. Para cada edad, con amor.&quot;
         </p>

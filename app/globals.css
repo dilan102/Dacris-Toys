@@ -2060,6 +2060,13 @@ svg {
   accent-color: var(--purple);
 }
 
+.profile-auth-consent a {
+  color: var(--purple);
+  font-weight: 950;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .profile-auth-switch {
   margin-top: 19px;
   color: var(--muted);
@@ -2640,6 +2647,42 @@ svg {
 
 .footer-contact a {
   overflow-wrap: anywhere;
+}
+
+.footer-legal-disclosure {
+  grid-column: 1 / -1;
+  margin-top: -4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.26);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.26);
+}
+
+.footer-legal-disclosure summary {
+  padding: 12px 0;
+  color: rgba(255, 255, 255, 0.82);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 800;
+  list-style-position: inside;
+}
+
+.footer-legal-disclosure > div {
+  display: grid;
+  gap: 7px;
+  padding: 0 0 14px;
+}
+
+.footer-legal-disclosure a {
+  width: fit-content;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 12px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.footer-legal-disclosure a:hover,
+.footer-legal-disclosure a:focus-visible {
+  color: white;
+  text-decoration: underline;
 }
 
 .tagline {

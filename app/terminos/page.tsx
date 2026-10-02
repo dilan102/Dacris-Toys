@@ -12,16 +12,20 @@ export default function TermsPage() {
       description="Información general sobre el uso de la tienda y las compras."
       sections={[
         {
-          title: "Pedidos y disponibilidad",
-          text: "Los productos y su disponibilidad se muestran en el catálogo. Un pedido queda sujeto a la confirmación de pago correspondiente.",
+          title: "Información de compra",
+          text: "Antes de pagar puedes consultar la descripción, precio, disponibilidad y condiciones de cada producto. El total y cualquier costo de envío aplicable se presentan antes de iniciar el pago.",
         },
         {
-          title: "Datos de compra",
-          text: "Al comprar, debes proporcionar datos de contacto y entrega correctos para que podamos gestionar el pedido.",
+          title: "Pedidos, pagos y entrega",
+          text: "El pedido se confirma tras la validación del pago por nuestro proveedor. Debes proporcionar datos de contacto y entrega correctos; revisaremos la información para coordinar el despacho y te contactaremos si necesitamos una aclaración.",
         },
         {
-          title: "Consultas",
-          text: "Si necesitas aclarar una condición de compra, contáctanos antes de realizar el pago.",
+          title: "Cambios, devoluciones y retracto",
+          text: "Consulta las políticas de envíos, devoluciones y derecho de retracto antes de comprar. Los derechos del consumidor se aplican conforme a la normativa colombiana y a las condiciones particulares de cada caso.",
+        },
+        {
+          title: "Atención al consumidor",
+          text: "Para solicitudes, quejas, reclamos o consultas, usa el canal PQR de Dacri's Toys. También puedes escribirnos antes de realizar el pago si necesitas aclarar alguna condición.",
         },
       ]}
     />
