@@ -1909,26 +1909,15 @@ svg {
   overflow: hidden;
   isolation: isolate;
   border-radius: 28px;
-  background:
-    radial-gradient(circle at 12% 12%, rgba(253, 192, 225, 0.72) 0 7%, transparent 18%),
-    radial-gradient(circle at 86% 84%, rgba(170, 224, 255, 0.78) 0 9%, transparent 23%),
-    linear-gradient(145deg, #dff4ff 0%, #f7eaff 49%, #dff9ee 100%);
+  background: #c5efff url("/Fondo_Login_dacris.png") center / cover no-repeat;
 }
 
 .profile-auth-stage::before {
   position: absolute;
-  z-index: -2;
+  z-index: 0;
   inset: 0;
   content: "";
-  opacity: 0.56;
-  background-image:
-    radial-gradient(ellipse at center, rgba(255, 255, 255, 0.95) 0 19%, transparent 20%),
-    radial-gradient(ellipse at center, rgba(255, 255, 255, 0.95) 0 19%, transparent 20%),
-    radial-gradient(ellipse at center, rgba(255, 255, 255, 0.95) 0 19%, transparent 20%),
-    radial-gradient(ellipse at center, rgba(255, 255, 255, 0.95) 0 19%, transparent 20%);
-  background-position: 13% 13%, 87% 15%, 18% 86%, 82% 78%;
-  background-size: 150px 150px, 130px 130px, 180px 180px, 170px 170px;
-  background-repeat: no-repeat;
+  background: linear-gradient(180deg, rgba(207, 246, 255, 0.06), rgba(212, 246, 255, 0.2));
 }
 
 .profile-auth-card {
@@ -1945,55 +1934,6 @@ svg {
   -webkit-backdrop-filter: blur(22px) saturate(1.15);
 }
 
-.profile-auth-flower,
-.profile-auth-leaf {
-  position: absolute;
-  z-index: -1;
-  display: block;
-  pointer-events: none;
-}
-
-.profile-auth-flower {
-  width: 126px;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  opacity: 0.82;
-  background:
-    radial-gradient(ellipse 29% 47% at 50% 14%, #fff8fc 0 57%, transparent 59%),
-    radial-gradient(ellipse 29% 47% at 86% 50%, #eab7dd 0 57%, transparent 59%),
-    radial-gradient(ellipse 29% 47% at 50% 86%, #fff8fc 0 57%, transparent 59%),
-    radial-gradient(ellipse 29% 47% at 14% 50%, #eab7dd 0 57%, transparent 59%),
-    radial-gradient(circle at center, #f7bc50 0 13%, #c57d3d 14% 19%, transparent 20%);
-  filter: blur(1px);
-}
-
-.flower-one {
-  top: 38px;
-  right: -45px;
-  transform: rotate(23deg);
-}
-
-.flower-two {
-  bottom: 22px;
-  left: -42px;
-  transform: scale(0.8) rotate(-25deg);
-}
-
-.profile-auth-leaf {
-  width: 180px;
-  height: 82px;
-  border-radius: 100% 0 100% 0;
-  opacity: 0.4;
-  background: linear-gradient(135deg, #58b98b, #b4ebbb);
-  filter: blur(1px);
-}
-
-.leaf-one {
-  top: 43%;
-  left: -105px;
-  transform: rotate(23deg);
-}
-
 .profile-auth-card::after {
   position: absolute;
   z-index: 2;
@@ -2004,25 +1944,21 @@ svg {
   background: linear-gradient(100deg, transparent, rgba(138, 89, 246, 0.25), rgba(255, 255, 255, 0.9), transparent);
 }
 
-.profile-auth-card.is-registering::after {
-  animation: auth-sweep 560ms ease-in-out;
+.profile-auth-card.auth-sweep-to-register::after {
+  animation: auth-sweep-forward 560ms ease-in-out;
 }
 
-.profile-auth-icon {
-  display: grid;
-  width: 48px;
-  height: 48px;
-  place-items: center;
-  margin-bottom: 18px;
-  border-radius: 15px;
-  color: white;
-  background: var(--purple);
-  box-shadow: 0 8px 18px rgba(123, 63, 241, 0.25);
+.profile-auth-card.auth-sweep-to-login::after {
+  inset-inline: auto -130%;
+  animation: auth-sweep-backward 560ms ease-in-out;
 }
 
-.profile-auth-icon svg {
-  width: 24px;
-  height: 24px;
+.profile-auth-logo {
+  display: block;
+  width: min(100%, 225px);
+  height: auto;
+  margin: 0 auto 10px;
+  object-fit: contain;
 }
 
 .profile-auth-content {
@@ -2105,9 +2041,14 @@ svg {
   text-underline-offset: 3px;
 }
 
-@keyframes auth-sweep {
+@keyframes auth-sweep-forward {
   from { transform: translateX(0) skewX(-12deg); }
   to { transform: translateX(330%) skewX(-12deg); }
+}
+
+@keyframes auth-sweep-backward {
+  from { transform: translateX(0) skewX(12deg); }
+  to { transform: translateX(-330%) skewX(12deg); }
 }
 
 @keyframes auth-content-in {
@@ -2116,7 +2057,7 @@ svg {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .profile-auth-card.is-registering::after,
+  .profile-auth-card::after,
   .profile-auth-content {
     animation: none;
   }

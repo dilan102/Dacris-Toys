@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import Image from "next/image";
 import { Icon } from "@/components/ui/icon";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
@@ -9,6 +10,7 @@ type AuthMode = "login" | "register";
 export function CustomerAuthPanel() {
   const [mode, setMode] = useState<AuthMode>("login");
   const [message, setMessage] = useState("");
+  const [transitionDirection, setTransitionDirection] = useState<"to-register" | "to-login" | null>(null);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -70,7 +72,9 @@ export function CustomerAuthPanel() {
   }
 
   function changeMode(nextMode: AuthMode) {
+    if (nextMode === mode) return;
     setMessage("");
+    setTransitionDirection(nextMode === "register" ? "to-register" : "to-login");
     setMode(nextMode);
   }
 
@@ -78,13 +82,15 @@ export function CustomerAuthPanel() {
 
   return (
     <section className="profile-auth-stage" aria-label="Acceso a tu cuenta">
-      <span className="profile-auth-flower flower-one" aria-hidden="true" />
-      <span className="profile-auth-flower flower-two" aria-hidden="true" />
-      <span className="profile-auth-leaf leaf-one" aria-hidden="true" />
-      <article className={`profile-auth-card ${registering ? "is-registering" : ""}`}>
-        <div className="profile-auth-icon" aria-hidden="true">
-          <Icon name={registering ? "user" : "lock"} />
-        </div>
+      <article className={`profile-auth-card ${registering ? "is-registering" : ""} ${transitionDirection ? `auth-sweep-${transitionDirection}` : ""}`}>
+        <Image
+          className="profile-auth-logo"
+          src="/Dacris-Logo.png"
+          alt="Dacri's Toys"
+          width={1536}
+          height={1024}
+          loading="eager"
+        />
         <div key={mode} className="profile-auth-content">
           <p className="profile-auth-eyebrow">Dacri&apos;s Toys</p>
           <h1>{registering ? "Crea tu cuenta" : "Inicia sesión"}</h1>
