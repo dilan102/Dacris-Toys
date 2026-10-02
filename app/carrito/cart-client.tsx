@@ -6,14 +6,11 @@ import { Icon } from "@/components/ui/icon";
 import { formatPrice, type Product } from "@/lib/catalog";
 import { useCart } from "@/lib/store/cart-context";
 import { calculateCartQuantity } from "@/lib/store/cart-store";
-import { ProductCard } from "@/components/product/product-card";
 
 export function CartClient({
   products,
-  newestProducts,
 }: {
   products: Product[];
-  newestProducts: Product[];
 }) {
   const { items, changeQuantity, removeItem } = useCart();
   const rows = items
@@ -34,28 +31,16 @@ export function CartClient({
   if (!rows.length) {
     return (
       <div className="empty-cart-page">
-        <div className="empty-cart-message">
+        <div className="empty-cart-message" role="status">
+          <div className="empty-cart-icon" aria-hidden="true">
+            <Icon name="cart" />
+          </div>
           <h2>Tu carrito está vacío</h2>
-          <p>Elige algo especial para empezar.</p>
+          <p>Aún no agregaste productos. Cuando encuentres algo que te guste, aparecerá aquí.</p>
+          <Link className="primary-button" href="/categorias/todos">
+            Ver productos <Icon name="arrow" />
+          </Link>
         </div>
-
-        {newestProducts.length > 0 && (
-          <section className="empty-cart-products">
-            <h2>Descubre más productos para tu carrito</h2>
-            <div className="product-grid">
-              {newestProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
-          </section>
-        )}
-
-        <Link
-          className="primary-button cart-catalog-button"
-          href="/categorias/todos"
-        >
-          Ver catálogo
-        </Link>
       </div>
     );
   }

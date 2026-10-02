@@ -8,6 +8,7 @@ import { formatPrice } from "@/lib/catalog";
 import { getFavoriteProducts } from "@/lib/favorites";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { ProductCard } from "@/components/product/product-card";
+import { CustomerAuthPanel } from "@/app/perfil/customer-auth-panel";
 
 const statusMessages: Record<string, string> = {
   "cuenta-creada": "Cuenta creada correctamente.",
@@ -61,10 +62,12 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
     <main className="site-shell inner-page">
       <AppHeader title="Perfil" />
       <section className="content-wrap profile-layout">
-        <div className="page-intro">
-          <h1>Tu perfil</h1>
-          <p>Consulta tu cuenta, pedidos y acceso administrativo.</p>
-        </div>
+        {session ? (
+          <div className="page-intro">
+            <h1>Tu perfil</h1>
+            <p>Consulta tu cuenta, pedidos y acceso administrativo.</p>
+          </div>
+        ) : null}
 
         {statusMessage ? <p className="form-status">{statusMessage}</p> : null}
 
@@ -87,24 +90,10 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
             </form>
           </article>
         ) : (
-          <article className="info-card login-card">
-            <div className="soft-icon heart">
-              <Icon name="user" />
-            </div>
-            <h2>Invitado</h2>
-            <p>Estás navegando sin iniciar sesión.</p>
-            <div className="login-actions">
-              <Link className="secondary-button filled" href="/acceso">
-                Iniciar sesión
-              </Link>
-              <Link className="secondary-button outline" href="/acceso">
-                Crear cuenta
-              </Link>
-            </div>
-          </article>
+          <CustomerAuthPanel />
         )}
 
-        <section className="profile-grid">
+        {session ? <section className="profile-grid">
           {session?.role === "customer" ? (
             <article className="info-card profile-box">
               <Icon name="box" />
@@ -142,7 +131,7 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
               )}
             </article>
           ) : null}
-        </section>
+        </section> : null}
 
         {session?.role === "admin" ? (
           <Link className="admin-link" href="/admin">

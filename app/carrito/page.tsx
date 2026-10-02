@@ -5,7 +5,6 @@ import { CartClient } from "@/app/carrito/cart-client";
 
 export default async function CartPage() {
   const products = await getProducts();
-  const newestProducts = (await getProducts("created_at")).slice(0, 4);
   return (
     <main className="site-shell inner-page">
       <AppHeader title="Carrito" />
@@ -15,7 +14,7 @@ export default async function CartPage() {
           <p>Revisa tus juguetes antes de continuar.</p>
         </div>
 
-        <CartClient products={products} newestProducts={newestProducts} />
+        <CartClient products={products} />
       </section>
       <BottomNav active="carrito" alwaysVisible />
     </main>

@@ -4,7 +4,6 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { AppHeader } from "@/components/ui/app-header";
 import { BottomNav } from "@/components/ui/bottom-nav";
-import { Icon } from "@/components/ui/icon";
 import { ProductCard } from "@/components/product/product-card";
 import { AddToCartButton } from "@/components/product/add-to-cart-button";
 import { FavoriteButton } from "@/components/product/favorite-button";
@@ -59,9 +58,16 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <section className="product-detail">
           <div className="detail-media">
             {product.videoUrl ? (
-              <video src={product.videoUrl} poster={product.image} controls playsInline />
+              <video src={product.videoUrl} poster={product.image} controls playsInline preload="metadata" />
             ) : (
-              <Image src={product.image} alt={product.name} width={1152} height={896} priority />
+              <Image
+                src={product.image}
+                alt={product.name}
+                width={1152}
+                height={896}
+                preload
+                sizes="(max-width: 767px) 100vw, (max-width: 1119px) 60vw, 680px"
+              />
             )}
           </div>
           <div className="detail-panel">
@@ -82,15 +88,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
               {product.tags.map((tag) => (
                 <span key={tag}>{tag}</span>
               ))}
-            </div>
-            <div className="quantity-row" aria-label="Cantidad">
-              <button aria-label="Disminuir cantidad">
-                <Icon name="minus" />
-              </button>
-              <span>1</span>
-              <button aria-label="Aumentar cantidad">
-                <Icon name="plus" />
-              </button>
             </div>
             <div className="detail-actions">
               <FavoriteButton initialFavorite={favoriteProductIds.has(product.id)} productId={product.id} />
