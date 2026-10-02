@@ -1900,6 +1900,44 @@ svg {
   max-width: 900px;
 }
 
+.profile-page-auth {
+  min-height: 100svh;
+  padding-top: 0;
+  padding-bottom: 0;
+  background: #c5efff url("/Fondo_Login_dacris.png") center / cover fixed no-repeat;
+}
+
+.profile-page-auth .app-header {
+  width: 100%;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.44);
+  background: rgba(220, 246, 255, 0.48);
+  box-shadow: 0 7px 20px rgba(38, 104, 145, 0.09);
+  backdrop-filter: blur(16px) saturate(1.18);
+  -webkit-backdrop-filter: blur(16px) saturate(1.18);
+}
+
+.profile-page-auth .content-wrap.profile-layout {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+.profile-page-auth .profile-auth-stage {
+  min-height: calc(100svh - 78px);
+  padding: 28px 20px 92px;
+  border-radius: 0;
+  background: transparent;
+}
+
+.profile-page-auth .bottom-nav {
+  border-top-color: rgba(255, 255, 255, 0.5);
+  background: rgba(225, 247, 255, 0.58);
+  box-shadow: 0 -8px 24px rgba(38, 104, 145, 0.12);
+  backdrop-filter: blur(16px) saturate(1.18);
+  -webkit-backdrop-filter: blur(16px) saturate(1.18);
+}
+
 .profile-auth-stage {
   position: relative;
   display: grid;

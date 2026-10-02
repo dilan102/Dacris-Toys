@@ -59,7 +59,7 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
   }
 
   return (
-    <main className="site-shell inner-page">
+    <main className={`site-shell inner-page profile-page ${session ? "" : "profile-page-auth"}`}>
       <AppHeader title="Perfil" />
       <section className="content-wrap profile-layout">
         {session ? (
