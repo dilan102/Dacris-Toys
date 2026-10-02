@@ -73,15 +73,7 @@ async function uploadOptionalProductMedia(
 ) {
   if (!(file instanceof File) || file.size <= 0) return "";
 
-  try {
-    return await uploadProductMedia(file, productId, kind);
-  } catch (error) {
-    console.error(
-      `No se pudo subir ${kind === "image" ? "la imagen" : "el video"} del producto:`,
-      error instanceof Error ? error.message : error,
-    );
-    return "";
-  }
+  return uploadProductMedia(file, productId, kind);
 }
 
 export async function saveProductAction(formData: FormData) {
@@ -148,10 +140,21 @@ export async function saveProductAction(formData: FormData) {
 
   const imageFile = formData.get("imageFile");
   const videoFile = formData.get("videoFile");
-  const [uploadedImage, uploadedVideo] = await Promise.all([
-    uploadOptionalProductMedia(imageFile, id, "image"),
-    uploadOptionalProductMedia(videoFile, id, "video"),
-  ]);
+  let uploadedImage = "";
+  let uploadedVideo = "";
+
+  try {
+    [uploadedImage, uploadedVideo] = await Promise.all([
+      uploadOptionalProductMedia(imageFile, id, "image"),
+      uploadOptionalProductMedia(videoFile, id, "video"),
+    ]);
+  } catch (error) {
+    console.error(
+      "No se pudo subir el archivo del producto:",
+      error instanceof Error ? error.message : error,
+    );
+    redirectToEditor(id, "archivo-invalido");
+  }
 
   const product: ProductInput = {
     id,

@@ -15,6 +15,7 @@ type AdminProductPageProps = {
 const statusMessages: Record<string, string> = {
   "borrar-error": "No se pudo borrar el producto. Revisa permisos de Supabase.",
   "datos-invalidos": "Revisa nombre, categoría, precio y stock antes de guardar.",
+  "archivo-invalido": "No se pudo subir el archivo. Usa una imagen JPG, PNG, WebP o AVIF, o un video MP4, WebM o MOV de máximo 24 MB.",
   "slug-duplicado": "Ese ID ya pertenece a otro producto. Usa uno diferente o déjalo vacío para generarlo automáticamente.",
   "slug-no-editable": "El ID no se puede cambiar después de crear el producto.",
   "guardar-error": "No se pudo guardar. Revisa que la tabla products exista y tenga permisos de escritura.",

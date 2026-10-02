@@ -1,4 +1,5 @@
 import { cache } from "react";
+import { randomUUID } from "crypto";
 import { unstable_cache } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { products as fallbackProducts, type Product } from "@/lib/catalog";
@@ -239,6 +240,50 @@ export async function deleteProduct(id: string) {
   if (error) throw new Error(error.message);
 }
 
+const MAX_PRODUCT_MEDIA_BYTES = 24 * 1024 * 1024;
+
+const mediaFormats: Record<"image" | "video", Record<string, string>> = {
+  image: {
+    "image/avif": "avif",
+    "image/jpeg": "jpg",
+    "image/png": "png",
+    "image/webp": "webp",
+  },
+  video: {
+    "video/mp4": "mp4",
+    "video/quicktime": "mov",
+    "video/webm": "webm",
+  },
+} as const;
+
+function safeMediaFolder(productId: string) {
+  const folder = productId
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9-]/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+
+  if (!folder) throw new Error("El producto no tiene un identificador válido para guardar archivos.");
+  return folder;
+}
+
+function validateProductMedia(file: File, kind: "image" | "video") {
+  if (file.size <= 0) throw new Error("El archivo está vacío.");
+  if (file.size > MAX_PRODUCT_MEDIA_BYTES) {
+    throw new Error("El archivo supera el límite de 24 MB.");
+  }
+
+  const extension = mediaFormats[kind][file.type];
+  if (!extension) {
+    const accepted = kind === "image" ? "JPG, PNG, WebP o AVIF" : "MP4, WebM o MOV";
+    throw new Error(`Formato no permitido. Usa ${accepted}.`);
+  }
+
+  return extension;
+}
+
 export async function uploadProductMedia(file: File, productId: string, kind: "image" | "video") {
   const supabase = createSupabaseServerClient();
 
@@ -246,15 +291,15 @@ export async function uploadProductMedia(file: File, productId: string, kind: "i
     throw new Error("Faltan variables de Supabase para subir archivos.");
   }
 
-  const extension = file.name.split(".").pop()?.toLowerCase() || (kind === "image" ? "jpg" : "mp4");
-  const path = `${productId}/${kind}-${Date.now()}.${extension}`;
+  const extension = validateProductMedia(file, kind);
+  const path = `${safeMediaFolder(productId)}/${kind}/${randomUUID()}.${extension}`;
 
   const { error } = await supabase.storage
     .from("product-media")
     .upload(path, file, {
-      cacheControl: "3600",
+      cacheControl: "31536000",
       contentType: file.type || undefined,
-      upsert: true,
+      upsert: false,
     });
 
   if (error) throw new Error(error.message);
