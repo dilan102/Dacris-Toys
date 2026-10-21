@@ -1,7 +1,10 @@
 import { cache } from "react";
 import { randomUUID } from "crypto";
 import { unstable_cache } from "next/cache";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import {
+  createSupabasePublicServerClient,
+  createSupabaseServerClient,
+} from "@/lib/supabase/server";
 import { products as fallbackProducts, type Product } from "@/lib/catalog";
 
 type ProductRow = {
@@ -121,8 +124,11 @@ function withTextTags(row: ProductWriteRow, product: ProductInput): ProductWrite
 }
 
 async function fetchProducts(orderBy: ProductOrder = "name") {
-  const supabase = createSupabaseServerClient();
+  const supabase = createSupabaseServerClient() ?? createSupabasePublicServerClient();
 
+  // The static list exists only for a local preview with no Supabase settings.
+  // Never show it when a configured catalogue cannot be queried: it is sample
+  // data and makes deleted products appear to come back.
   if (!supabase) return fallbackProducts;
 
   const { data, error } = await supabase
@@ -132,7 +138,7 @@ async function fetchProducts(orderBy: ProductOrder = "name") {
 
   if (error) {
     console.error("No se pudieron leer productos de Supabase:", error.message);
-    return fallbackProducts;
+    return [];
   }
 
   return (data ?? []).map((item) => mapProduct(item as ProductRow));
@@ -176,7 +182,7 @@ export function filterAndSortProducts(
 }
 
 export const getProductById = cache(async function getProductById(id: string) {
-  const supabase = createSupabaseServerClient();
+  const supabase = createSupabaseServerClient() ?? createSupabasePublicServerClient();
 
   if (!supabase) return fallbackProducts.find((product) => product.id === id);
 
@@ -188,7 +194,7 @@ export const getProductById = cache(async function getProductById(id: string) {
 
   if (error) {
     console.error("No se pudo leer el producto de Supabase:", error.message);
-    return fallbackProducts.find((product) => product.id === id);
+    return undefined;
   }
 
   return data ? mapProduct(data as ProductRow) : undefined;

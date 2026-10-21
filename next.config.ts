@@ -11,7 +11,14 @@ const nextConfig: NextConfig = {
     },
   },
   images: {
-    remotePatterns: supabaseImagePattern ? [supabaseImagePattern] : [],
+    remotePatterns: [
+      ...(supabaseImagePattern ? [supabaseImagePattern] : []),
+      {
+        protocol: "https",
+        hostname: "*.googleusercontent.com",
+        pathname: "/**",
+      },
+    ],
   },
 };
 

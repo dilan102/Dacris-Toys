@@ -5,10 +5,14 @@ import { createSupabaseAuthServerClient } from "@/lib/supabase/auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 const sessionCookieName = "dacris_session";
+const OWNER_GOOGLE_EMAIL = "dilanmunos91@gmail.com";
 export type SessionUser = {
   username: string;
   role: "admin" | "customer";
   adminRole?: "owner" | "staff";
+  displayName?: string;
+  email?: string;
+  avatarUrl?: string;
 };
 
 type AdminUserRow = { username: string; password_hash: string; role: "owner" | "staff" };
@@ -54,7 +58,10 @@ function decodeSession(value?: string): SessionUser | null {
     if (
       typeof parsed.username === "string" &&
       (parsed.role === "admin" || parsed.role === "customer") &&
-      (parsed.adminRole === undefined || parsed.adminRole === "owner" || parsed.adminRole === "staff")
+      (parsed.adminRole === undefined || parsed.adminRole === "owner" || parsed.adminRole === "staff") &&
+      (parsed.displayName === undefined || typeof parsed.displayName === "string") &&
+      (parsed.email === undefined || typeof parsed.email === "string") &&
+      (parsed.avatarUrl === undefined || typeof parsed.avatarUrl === "string")
     ) {
       return parsed;
     }
@@ -65,7 +72,27 @@ function decodeSession(value?: string): SessionUser | null {
   return null;
 }
 
-export async function getSessionUser() {
+function getAuthProfile(authUser: { email?: string | null; user_metadata?: unknown }) {
+  const metadata = authUser.user_metadata && typeof authUser.user_metadata === "object"
+    ? authUser.user_metadata as Record<string, unknown>
+    : {};
+  const getMetadataString = (...keys: string[]) => {
+    for (const key of keys) {
+      const value = metadata[key];
+      if (typeof value === "string" && value.trim()) return value.trim();
+    }
+    return undefined;
+  };
+  const email = authUser.email?.trim().toLowerCase();
+
+  return {
+    email,
+    displayName: getMetadataString("full_name", "name", "user_name") ?? email,
+    avatarUrl: getMetadataString("avatar_url", "picture"),
+  };
+}
+
+export async function getSessionUser(): Promise<SessionUser | null> {
   const cookieStore = await cookies();
   const passwordSession = decodeSession(cookieStore.get(sessionCookieName)?.value);
 
@@ -78,12 +105,24 @@ export async function getSessionUser() {
   const authUser = data.user;
   if (error || !authUser) return null;
 
-  const email = authUser.email?.trim().toLowerCase();
+  const profile = getAuthProfile(authUser);
+  const { email } = profile;
 
   const supabase = createSupabaseServerClient();
-  if (!supabase) return null;
 
-  if (email) {
+  // The store owner is explicitly pinned to this verified OAuth identity. This
+  // is checked server-side after Supabase validates the Google session, so a
+  // client cannot promote another account by changing a browser value.
+  if (email === OWNER_GOOGLE_EMAIL) {
+    return {
+      username: email,
+      role: "admin",
+      adminRole: "owner",
+      ...profile,
+    };
+  }
+
+  if (email && supabase) {
     const { data: adminData, error: adminError } = await supabase
       .from("admin_google_users")
       .select("username,role")
@@ -92,20 +131,49 @@ export async function getSessionUser() {
 
     if (!adminError && adminData) {
       const admin = adminData as GoogleAdminUserRow;
-      return { username: admin.username, role: "admin", adminRole: admin.role };
+      return {
+        username: admin.username,
+        role: "admin",
+        adminRole: admin.role,
+        ...profile,
+      };
     }
   }
 
-  const { data: customerData, error: customerError } = await supabase
-    .from("app_users")
-    .select("username")
-    .eq("auth_user_id", authUser.id)
-    .maybeSingle();
+  const customerResult = supabase
+    ? await supabase
+      .from("app_users")
+      .select("username")
+      .eq("auth_user_id", authUser.id)
+      .maybeSingle()
+    : null;
+  const customerData = customerResult?.data;
+  const customerError = customerResult?.error;
 
-  if (customerError || !customerData) return null;
+  if (customerData) {
+    const customer = customerData as CustomerUserRow;
+    return { username: customer.username, role: "customer", ...profile };
+  }
 
-  const customer = customerData as CustomerUserRow;
-  return { username: customer.username, role: "customer" };
+  // An OAuth identity is valid even if the database trigger was added after the
+  // account was created. Restore its local profile so orders and favorites work.
+  const fallbackUsername = email ?? authUser.phone ?? authUser.id;
+  if (supabase && !customerError) {
+    const { data: restoredCustomer } = await supabase
+      .from("app_users")
+      .upsert({ username: fallbackUsername, auth_user_id: authUser.id }, { onConflict: "auth_user_id" })
+      .select("username")
+      .maybeSingle();
+
+    if (restoredCustomer) {
+      const customer = restoredCustomer as CustomerUserRow;
+      return { username: customer.username, role: "customer", ...profile };
+    }
+  }
+
+  // Do not throw a real Google user back to the login screen when the optional
+  // application profile table is temporarily unavailable.
+  return { username: fallbackUsername, role: "customer", ...profile };
 }
 
 export async function setSessionUser(session: SessionUser) {

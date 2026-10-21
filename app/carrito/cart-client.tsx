@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Icon } from "@/components/ui/icon";
 import { formatPrice, type Product } from "@/lib/catalog";
+import { useEffect, useMemo } from "react";
 import { useCart } from "@/lib/store/cart-context";
 import { calculateCartQuantity } from "@/lib/store/cart-store";
 
@@ -13,6 +14,19 @@ export function CartClient({
   products: Product[];
 }) {
   const { items, changeQuantity, removeItem } = useCart();
+  const productIds = useMemo(
+    () => new Set(products.map((product) => product.id)),
+    [products],
+  );
+
+  // The cart lives in localStorage. Remove entries for products that an
+  // administrator has deleted so the badge, checkout and list stay in sync.
+  useEffect(() => {
+    items
+      .filter((item) => !productIds.has(item.productId))
+      .forEach((item) => removeItem(item.productId));
+  }, [items, productIds, removeItem]);
+
   const rows = items
     .map((item) => ({
       item,

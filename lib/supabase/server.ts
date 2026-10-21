@@ -15,3 +15,19 @@ export function createSupabaseServerClient() {
     },
   });
 }
+
+// Product reads are deliberately public in the database.  Keep those reads
+// working in deployments that only have the browser key configured; privileged
+// mutations must continue to require the service-role key above.
+export function createSupabasePublicServerClient() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+
+  if (!supabaseUrl || !supabaseKey) return null;
+
+  return createClient(supabaseUrl, supabaseKey, {
+    auth: {
+      persistSession: false,
+    },
+  });
+}

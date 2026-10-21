@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { logoutAction } from "@/app/perfil/actions";
 import { AppHeader } from "@/components/ui/app-header";
 import { BottomNav } from "@/components/ui/bottom-nav";
@@ -41,6 +42,8 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
   const statusMessage = estado ? statusMessages[estado] : null;
   let orders: CustomerOrder[] = [];
   const favoriteProducts = session?.role === "customer" ? await getFavoriteProducts() : [];
+  const displayName = session?.displayName || session?.username;
+  const profileInitial = displayName?.trim().charAt(0).toUpperCase() || "U";
 
   if (session?.role === "customer") {
     const supabase = createSupabaseServerClient();
@@ -66,7 +69,7 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
       <section className="content-wrap profile-layout">
         {session ? (
           <div className="page-intro">
-            <h1>Tu perfil</h1>
+            <h1>Hola, {displayName}</h1>
             <p>Consulta tu cuenta, pedidos y acceso administrativo.</p>
           </div>
         ) : null}
@@ -75,10 +78,19 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
 
         {session ? (
           <article className="info-card login-card">
-            <div className="soft-icon heart">
-              <Icon name="user" />
+            <div className="profile-identity">
+              <div className="profile-avatar" aria-label={`Foto de ${displayName}`}>
+                {session.avatarUrl ? (
+                  <Image alt="" fill sizes="72px" src={session.avatarUrl} />
+                ) : (
+                  <span>{profileInitial}</span>
+                )}
+              </div>
+              <div>
+                <h2>{displayName}</h2>
+                {session.email ? <p className="profile-email">{session.email}</p> : null}
+              </div>
             </div>
-            <h2>{session.username}</h2>
             <p>{session.role === "admin" ? "Modo administrador activo." : "Cuenta de cliente activa."}</p>
             <form action={logoutAction} className="login-actions">
               {session.role === "admin" ? (
