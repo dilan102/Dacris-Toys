@@ -18,6 +18,7 @@ const statusMessages: Record<string, string> = {
   "archivo-invalido": "No se pudo subir el archivo. Usa una imagen JPG, PNG, WebP o AVIF, o un video MP4, WebM o MOV de máximo 24 MB.",
   "slug-duplicado": "Ese ID ya pertenece a otro producto. Usa uno diferente o déjalo vacío para generarlo automáticamente.",
   "slug-no-editable": "El ID no se puede cambiar después de crear el producto.",
+  "configuracion-servidor": "No se pueden guardar productos todavía: falta configurar SUPABASE_SERVICE_ROLE_KEY en el servidor.",
   "guardar-error": "No se pudo guardar. Revisa que la tabla products exista y tenga permisos de escritura.",
 };
 

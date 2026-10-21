@@ -4,6 +4,7 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAdminSession, requireOwnerSession } from "@/lib/auth";
 import { categories, toySubcategories } from "@/lib/catalog";
+import { hasSupabaseServiceRole } from "@/lib/supabase/server";
 import {
   deleteProduct,
   getProductById,
@@ -90,6 +91,10 @@ export async function saveProductAction(formData: FormData) {
       error instanceof Error ? error.message : error,
     );
     redirect("/acceso?estado=admin-requerido");
+  }
+
+  if (!hasSupabaseServiceRole()) {
+    redirectToEditor(id || "nuevo", "configuracion-servidor");
   }
 
   const category = getString(formData, "category");
@@ -198,6 +203,10 @@ export async function deleteProductAction(formData: FormData) {
       error instanceof Error ? error.message : error,
     );
     redirect("/acceso?estado=admin-requerido");
+  }
+
+  if (!hasSupabaseServiceRole()) {
+    redirect("/admin/productos?estado=configuracion-servidor");
   }
 
   if (!id) redirect("/admin/productos");

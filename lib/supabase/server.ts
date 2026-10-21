@@ -1,5 +1,11 @@
 import { createClient } from "@supabase/supabase-js";
 
+export function hasSupabaseServiceRole() {
+  return Boolean(
+    process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY,
+  );
+}
+
 export function createSupabaseServerClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   // Private tables and writes must never silently fall back to a browser key.
