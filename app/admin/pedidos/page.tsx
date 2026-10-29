@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { AppHeader } from "@/components/ui/app-header";
-import { BottomNav } from "@/components/ui/bottom-nav";
 import { formatPrice } from "@/lib/catalog";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -89,7 +88,6 @@ export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageP
           {orders.length === 0 ? <div className="empty-media">No hay pedidos para mostrar.</div> : null}
         </div>
       </section>
-      <BottomNav active="categorias" alwaysVisible />
     </main>
   );
 }

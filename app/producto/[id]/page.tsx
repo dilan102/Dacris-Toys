@@ -2,7 +2,6 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { AppHeader } from "@/components/ui/app-header";
-import { BottomNav } from "@/components/ui/bottom-nav";
 import { ProductCard } from "@/components/product/product-card";
 import { ProductGallery } from "@/components/product/product-gallery";
 import {
@@ -98,7 +97,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
           </section>
         ) : null}
       </div>
-      <BottomNav active="categorias" alwaysVisible />
     </main>
   );
 }

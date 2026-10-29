@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { AppHeader } from "@/components/ui/app-header";
-import { BottomNav } from "@/components/ui/bottom-nav";
 import { Icon } from "@/components/ui/icon";
 import { getProducts } from "@/lib/catalog-db";
 
@@ -30,7 +29,6 @@ export default async function AdminPage() {
           </Link>
         </div>
       </section>
-      <BottomNav active="categorias" alwaysVisible />
     </main>
   );
 }

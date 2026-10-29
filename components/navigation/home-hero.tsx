@@ -2,20 +2,16 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { HomeMenu } from "@/components/navigation/home-menu";
 import { Icon } from "@/components/ui/icon";
 
 export function HomeHero() {
-  const heroRef = useRef<HTMLElement>(null);
   const [isCompact, setIsCompact] = useState(false);
-  const [showLogin, setShowLogin] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
       setIsCompact(window.scrollY > 80);
-      // Start the transition shortly before the hero leaves the viewport.
-      setShowLogin((heroRef.current?.getBoundingClientRect().bottom ?? Infinity) <= 220);
     };
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -23,12 +19,12 @@ export function HomeHero() {
   }, []);
 
   return (
-    <section className="hero" ref={heroRef}>
+    <section className="hero">
       <div className={`hero-top ${isCompact ? "hero-top-compact" : ""}`} aria-label="Navegación principal">
         <HomeMenu />
         <div className="hero-center">
-          <Link className={`brand-pill hero-brand ${showLogin ? "hero-brand-hidden" : ""}`} href="/" aria-label="Ir al inicio">
-            <Image src="/Dacris-Logo.png" alt="Dacri's Toys" width={1536} height={1024} priority />
+          <Link className="brand-pill brand-welcome hero-brand" href="/" aria-label="Ir al inicio">
+            Bienvenidos
           </Link>
         </div>
         <span className="hero-header-spacer" aria-hidden />

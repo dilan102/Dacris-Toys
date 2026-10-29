@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { AppHeader } from "@/components/ui/app-header";
-import { BottomNav } from "@/components/ui/bottom-nav";
 import { ResetPasswordForm } from "@/app/restablecer-contrasena/reset-password-form";
 
 export const metadata: Metadata = {
@@ -18,7 +17,6 @@ export default function ResetPasswordPage() {
         </div>
         <ResetPasswordForm />
       </section>
-      <BottomNav active="inicio" alwaysVisible />
     </main>
   );
 }

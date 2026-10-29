@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import { BottomNav } from "@/components/ui/bottom-nav";
 import { Icon } from "@/components/ui/icon";
 import { HomeHero } from "@/components/navigation/home-hero";
 import { ProductCard } from "@/components/product/product-card";
@@ -250,7 +249,6 @@ export default async function Home() {
         </p>
       </footer>
 
-      <BottomNav active="inicio" />
     </main>
   );
 }

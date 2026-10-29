@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { CategoryView, type CatalogSearchParams } from "@/components/catalog/category-view";
 import { AppHeader } from "@/components/ui/app-header";
-import { BottomNav } from "@/components/ui/bottom-nav";
 import { categories, getCategory } from "@/lib/catalog";
 
 type CategoryPageProps = {
@@ -52,7 +51,6 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
     <main className="site-shell inner-page">
       <AppHeader title={category?.name ?? "Catálogo"} backHref={backHref} />
       <CategoryView searchParams={searchParams} slug={slug} />
-      <BottomNav active="categorias" alwaysVisible />
     </main>
   );
 }

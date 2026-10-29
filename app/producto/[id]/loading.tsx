@@ -1,5 +1,4 @@
 import { AppHeader } from "@/components/ui/app-header";
-import { BottomNav } from "@/components/ui/bottom-nav";
 
 export default function ProductLoading() {
   return (
@@ -13,7 +12,6 @@ export default function ProductLoading() {
           <span />
         </div>
       </section>
-      <BottomNav active="categorias" alwaysVisible />
     </main>
   );
 }

@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { Icon } from "@/components/ui/icon";
 
@@ -17,14 +16,8 @@ export function AppHeader({ title, backHref = "/" }: AppHeaderProps) {
       {title ? (
         <strong>{title}</strong>
       ) : (
-        <Link className="brand-pill" href="/" aria-label="Ir al inicio">
-          <Image
-            src="/Dacris-Logo.png"
-            alt="Dacri's Toys"
-            width={1536}
-            height={1024}
-            priority
-          />
+        <Link className="brand-pill brand-welcome" href="/" aria-label="Ir al inicio">
+          Bienvenidos
         </Link>
       )}
       <span className="app-header-spacer" aria-hidden />

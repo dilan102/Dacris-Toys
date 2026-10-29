@@ -1,5 +1,4 @@
 import { AppHeader } from "@/components/ui/app-header";
-import { BottomNav } from "@/components/ui/bottom-nav";
 import { getProducts } from "@/lib/catalog-db";
 import { CartClient } from "@/app/carrito/cart-client";
 
@@ -16,7 +15,6 @@ export default async function CartPage() {
 
         <CartClient products={products} />
       </section>
-      <BottomNav active="categorias" alwaysVisible />
     </main>
   );
 }

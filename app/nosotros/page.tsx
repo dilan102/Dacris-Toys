@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { BottomNav } from "@/components/ui/bottom-nav";
 import { Icon } from "@/components/ui/icon";
 
 export default function AboutPage() {
@@ -33,7 +32,6 @@ export default function AboutPage() {
           </div>
         </article>
       </section>
-      <BottomNav active="inicio" alwaysVisible />
     </main>
   );
 }

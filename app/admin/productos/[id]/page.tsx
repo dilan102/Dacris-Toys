@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import { deleteProductAction } from "@/app/admin/productos/actions";
 import { ProductForm } from "@/app/admin/productos/product-form";
 import { AppHeader } from "@/components/ui/app-header";
-import { BottomNav } from "@/components/ui/bottom-nav";
 import { categories, toySubcategories } from "@/lib/catalog";
 import { getProductById } from "@/lib/catalog-db";
 
@@ -75,7 +74,6 @@ export default async function AdminProductPage({ params, searchParams }: AdminPr
           </form>
         ) : null}
       </section>
-      <BottomNav active="categorias" alwaysVisible />
     </main>
   );
 }

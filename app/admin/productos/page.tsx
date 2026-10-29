@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { AppHeader } from "@/components/ui/app-header";
-import { BottomNav } from "@/components/ui/bottom-nav";
 import { formatPrice } from "@/lib/catalog";
 import { getProducts } from "@/lib/catalog-db";
 
@@ -45,7 +44,6 @@ export default async function AdminProductsPage() {
           <div className="empty-media">Aún no hay productos</div>
         )}
       </section>
-      <BottomNav active="categorias" alwaysVisible />
     </main>
   );
 }

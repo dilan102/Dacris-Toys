@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { AppHeader } from "@/components/ui/app-header";
-import { BottomNav } from "@/components/ui/bottom-nav";
 
 type InfoSection = {
   title: string;
@@ -34,7 +33,6 @@ export function SimpleInfoPage({ title, description, sections }: SimpleInfoPageP
           Ver catálogo
         </Link>
       </section>
-      <BottomNav active="inicio" alwaysVisible />
     </main>
   );
 }

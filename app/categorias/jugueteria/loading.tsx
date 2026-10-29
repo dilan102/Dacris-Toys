@@ -1,5 +1,4 @@
 import { AppHeader } from "@/components/ui/app-header";
-import { BottomNav } from "@/components/ui/bottom-nav";
 
 export default function ToyCategoryLoading() {
   return (
@@ -12,7 +11,6 @@ export default function ToyCategoryLoading() {
           <span />
         </div>
       </section>
-      <BottomNav active="categorias" alwaysVisible />
     </main>
   );
 }

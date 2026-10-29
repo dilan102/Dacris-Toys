@@ -3,7 +3,6 @@ import { AccessSubmitButton } from "@/app/acceso/access-submit-button";
 import { GoogleAdminSignIn } from "@/app/acceso/google-admin-sign-in";
 import { adminLoginAction } from "@/app/perfil/actions";
 import { AppHeader } from "@/components/ui/app-header";
-import { BottomNav } from "@/components/ui/bottom-nav";
 import { Icon } from "@/components/ui/icon";
 import { getSessionUser } from "@/lib/auth";
 
@@ -48,7 +47,6 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
           <GoogleAdminSignIn />
         </article>
       </section>
-      <BottomNav active="inicio" alwaysVisible />
     </main>
   );
 }

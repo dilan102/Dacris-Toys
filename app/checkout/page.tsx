@@ -1,5 +1,4 @@
 import { AppHeader } from "@/components/ui/app-header";
-import { BottomNav } from "@/components/ui/bottom-nav";
 import { CheckoutClient } from "@/app/checkout/checkout-client";
 
 export default function CheckoutPage() {
@@ -24,7 +23,6 @@ export default function CheckoutPage() {
           </p>
         </aside>
       </section>
-      <BottomNav active="categorias" alwaysVisible />
     </main>
   );
 }
