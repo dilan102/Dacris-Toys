@@ -14,15 +14,7 @@ export function ProductGallery({ name, mainImage, images = [] }: ProductGalleryP
   const [selectedImage, setSelectedImage] = useState(galleryImages[0]);
 
   return (
-    <div className="detail-media product-gallery">
-      <Image
-        src={selectedImage}
-        alt={name}
-        width={1152}
-        height={896}
-        preload
-        sizes="(max-width: 767px) 100vw, (max-width: 1119px) 60vw, 680px"
-      />
+    <div className="product-gallery">
       {galleryImages.length > 1 ? (
         <div className="product-gallery-thumbnails" aria-label="Más imágenes del producto">
           {galleryImages.map((image, index) => (
@@ -38,6 +30,16 @@ export function ProductGallery({ name, mainImage, images = [] }: ProductGalleryP
           ))}
         </div>
       ) : null}
+      <div className="detail-media product-gallery-main">
+        <Image
+          src={selectedImage}
+          alt={name}
+          width={1152}
+          height={896}
+          preload
+          sizes="(max-width: 767px) 100vw, (max-width: 1119px) 60vw, 680px"
+        />
+      </div>
     </div>
   );
 }

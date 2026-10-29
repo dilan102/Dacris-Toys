@@ -51,21 +51,34 @@ export default async function ProductPage({ params }: ProductPageProps) {
     <main className="site-shell inner-page">
       <AppHeader title="Detalle" backHref="/categorias/todos" />
       <div className="content-wrap">
+        <nav className="product-breadcrumb" aria-label="Ruta de navegación">
+          <Link href="/">Inicio</Link>
+          <span>/</span>
+          <Link href="/categorias/todos">Catálogo</Link>
+          <span>/</span>
+          <Link href={productCategoryHref}>{productCategoryLabel}</Link>
+        </nav>
         <section className="product-detail">
           <ProductGallery name={product.name} mainImage={product.image} images={product.images} />
           <div className="detail-panel">
-            <div className="detail-kicker">
-              <Link href={productCategoryHref}>{productCategoryLabel}</Link>
-            </div>
+            <p className="detail-category">{productCategoryLabel}</p>
             <h1>{product.name}</h1>
+            <p className="product-reference">Referencia: {product.id}</p>
             <strong>{formatPrice(product.price)}</strong>
-            <p>{product.detail}</p>
-            <div className="product-tags large" aria-label="Características">
-              {product.tags.map((tag) => (
-                <span key={tag}>{tag}</span>
-              ))}
-            </div>
           </div>
+        </section>
+
+        <section className="product-information" aria-labelledby="product-information-title">
+          <div>
+            <p className="section-eyebrow">Conoce más</p>
+            <h2 id="product-information-title">Descripción del producto</h2>
+          </div>
+          <p>{product.detail}</p>
+          {product.tags.length > 0 ? (
+            <div className="product-tags large" aria-label="Características">
+              {product.tags.map((tag) => <span key={tag}>{tag}</span>)}
+            </div>
+          ) : null}
         </section>
 
         {relatedProducts.length > 0 ? (
