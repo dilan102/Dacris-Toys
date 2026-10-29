@@ -5,15 +5,13 @@ import { useEffect, useState } from "react";
 import { Icon } from "@/components/ui/icon";
 
 type BottomNavProps = {
-  active: "inicio" | "categorias" | "carrito" | "perfil";
+  active: "inicio" | "categorias";
   alwaysVisible?: boolean;
 };
 
 const items = [
   { key: "inicio", label: "Inicio", href: "/", icon: "home" },
   { key: "categorias", label: "Categorías", href: "/categorias/todos", icon: "grid" },
-  { key: "carrito", label: "Carrito", href: "/carrito", icon: "cart" },
-  { key: "perfil", label: "Perfil", href: "/perfil", icon: "user" },
 ] as const;
 
 export function BottomNav({ active, alwaysVisible = false }: BottomNavProps) {

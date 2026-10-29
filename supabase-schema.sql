@@ -5,6 +5,7 @@ create table if not exists public.products (
   detail text not null,
   price numeric not null default 0,
   image text not null,
+  images text[] not null default '{}',
   video_url text,
   category text not null,
   subcategory text,
@@ -15,6 +16,9 @@ create table if not exists public.products (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+-- Gallery images for catalogue mode. Safe for existing installations.
+alter table public.products add column if not exists images text[] not null default '{}';
 
 create table if not exists public.app_users (
   username text primary key,

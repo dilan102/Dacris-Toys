@@ -18,7 +18,7 @@ export default function ResetPasswordPage() {
         </div>
         <ResetPasswordForm />
       </section>
-      <BottomNav active="perfil" alwaysVisible />
+      <BottomNav active="inicio" alwaysVisible />
     </main>
   );
 }

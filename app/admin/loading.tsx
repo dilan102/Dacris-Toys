@@ -12,7 +12,7 @@ export default function AdminLoading() {
           <span />
         </div>
       </section>
-      <BottomNav active="perfil" alwaysVisible />
+      <BottomNav active="categorias" alwaysVisible />
     </main>
   );
 }

@@ -1,18 +1,15 @@
-import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { AppHeader } from "@/components/ui/app-header";
 import { BottomNav } from "@/components/ui/bottom-nav";
 import { ProductCard } from "@/components/product/product-card";
-import { AddToCartButton } from "@/components/product/add-to-cart-button";
-import { FavoriteButton } from "@/components/product/favorite-button";
+import { ProductGallery } from "@/components/product/product-gallery";
 import {
   formatPrice,
   getCategory,
 } from "@/lib/catalog";
 import { getProductById, getProductDetailsFromDb } from "@/lib/catalog-db";
-import { getFavoriteProductIds } from "@/lib/favorites";
 
 type ProductPageProps = {
   params: Promise<{ id: string }>;
@@ -50,48 +47,23 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const productCategoryLabel = subcategory
     ? `${category?.name}: ${subcategory.name}`
     : category?.name;
-  const favoriteProductIds = new Set(await getFavoriteProductIds());
   return (
     <main className="site-shell inner-page">
       <AppHeader title="Detalle" backHref="/categorias/todos" />
       <div className="content-wrap">
         <section className="product-detail">
-          <div className="detail-media">
-            {product.videoUrl ? (
-              <video src={product.videoUrl} poster={product.image} controls playsInline preload="metadata" />
-            ) : (
-              <Image
-                src={product.image}
-                alt={product.name}
-                width={1152}
-                height={896}
-                preload
-                sizes="(max-width: 767px) 100vw, (max-width: 1119px) 60vw, 680px"
-              />
-            )}
-          </div>
+          <ProductGallery name={product.name} mainImage={product.image} images={product.images} />
           <div className="detail-panel">
             <div className="detail-kicker">
-              <p className="stock-pill">{product.stock} disponibles</p>
               <Link href={productCategoryHref}>{productCategoryLabel}</Link>
             </div>
             <h1>{product.name}</h1>
             <strong>{formatPrice(product.price)}</strong>
             <p>{product.detail}</p>
-            <dl className="product-specs">
-              <div>
-                <dt>Disponibilidad</dt>
-                <dd>{product.stock > 5 ? "Entrega normal" : "Últimas unidades"}</dd>
-              </div>
-            </dl>
             <div className="product-tags large" aria-label="Características">
               {product.tags.map((tag) => (
                 <span key={tag}>{tag}</span>
               ))}
-            </div>
-            <div className="detail-actions">
-              <FavoriteButton initialFavorite={favoriteProductIds.has(product.id)} productId={product.id} />
-              <AddToCartButton productId={product.id} />
             </div>
           </div>
         </section>
@@ -105,7 +77,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
             <div className="product-grid related-grid">
               {relatedProducts.map((item) => (
                 <ProductCard
-                  isFavorite={favoriteProductIds.has(item.id)}
                   product={item}
                   key={item.id}
                 />

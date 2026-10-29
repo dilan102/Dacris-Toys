@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Icon } from "@/components/ui/icon";
-import { CartLink } from "@/components/ui/cart-link";
 
 type AppHeaderProps = {
   title?: string;
@@ -9,7 +8,7 @@ type AppHeaderProps = {
   cartAsHome?: boolean;
 };
 
-export function AppHeader({ title, backHref = "/", cartAsHome = false }: AppHeaderProps) {
+export function AppHeader({ title, backHref = "/" }: AppHeaderProps) {
   return (
     <header className="app-header">
       <Link className="icon-button light" href={backHref} aria-label="Volver">
@@ -28,7 +27,7 @@ export function AppHeader({ title, backHref = "/", cartAsHome = false }: AppHead
           />
         </Link>
       )}
-      <CartLink home={cartAsHome} />
+      <span className="app-header-spacer" aria-hidden />
     </header>
   );
 }

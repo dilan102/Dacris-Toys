@@ -17,7 +17,6 @@ import {
   getProductsByCategoryFromDb,
   type ProductSort,
 } from "@/lib/catalog-db";
-import { getFavoriteProductIds } from "@/lib/favorites";
 
 type CategoryViewProps = {
   slug: string;
@@ -61,9 +60,6 @@ export async function CategoryView({ slug, searchParams }: CategoryViewProps) {
           { search, sortBy },
         )
       : [];
-  const favoriteProductIds = new Set(
-    showProductGrid ? await getFavoriteProductIds() : [],
-  );
   const orderedSectionCategories = sortCategoriesByDisplayOrder(sectionCategories);
   const sectionProductCounts = await getCategoryProductCountsFromDb(
     [...orderedSectionCategories, ...subcategories].map((item) => item.slug),
@@ -144,11 +140,7 @@ export async function CategoryView({ slug, searchParams }: CategoryViewProps) {
       {showProductGrid && visibleProducts.length > 0 ? (
         <div className="product-grid">
           {visibleProducts.map((product) => (
-            <ProductCard
-              isFavorite={favoriteProductIds.has(product.id)}
-              product={product}
-              key={product.id}
-            />
+            <ProductCard product={product} key={product.id} />
           ))}
         </div>
       ) : showProductGrid ? (

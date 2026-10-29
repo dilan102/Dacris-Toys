@@ -7,8 +7,6 @@ import { Icon } from "@/components/ui/icon";
 const menuItems = [
   { label: "Inicio", href: "/", icon: "home" },
   { label: "Categorías", href: "/categorias/todos", icon: "grid" },
-  { label: "Carrito", href: "/carrito", icon: "cart" },
-  { label: "Perfil", href: "/perfil", icon: "user" },
 ];
 
 export function HomeMenu() {

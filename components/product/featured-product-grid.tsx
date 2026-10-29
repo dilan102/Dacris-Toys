@@ -6,13 +6,9 @@ import type { Product } from "@/lib/catalog";
 
 type FeaturedProductGridProps = {
   products: Product[];
-  favoriteProductIds?: string[];
 };
 
-export function FeaturedProductGrid({
-  products,
-  favoriteProductIds = [],
-}: FeaturedProductGridProps) {
+export function FeaturedProductGrid({ products }: FeaturedProductGridProps) {
   const [query, setQuery] = useState("");
   const normalizedQuery = query.trim().toLocaleLowerCase("es-CO");
   const filteredProducts = useMemo(
@@ -40,11 +36,7 @@ export function FeaturedProductGrid({
       {filteredProducts.length > 0 ? (
         <div className="section-card-grid featured-product-grid" aria-label="Más productos para descubrir">
           {filteredProducts.map((product) => (
-            <ProductCard
-              isFavorite={favoriteProductIds.includes(product.id)}
-              key={product.id}
-              product={product}
-            />
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
       ) : (

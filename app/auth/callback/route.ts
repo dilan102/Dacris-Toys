@@ -3,8 +3,8 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getSupabaseBrowserConfig } from "@/lib/supabase/client";
 
 function safeNextPath(value: string | null) {
-  const allowedPaths = new Set(["/perfil", "/admin", "/restablecer-contrasena"]);
-  return value && allowedPaths.has(value) ? value : "/perfil";
+  const allowedPaths = new Set(["/login", "/admin", "/restablecer-contrasena"]);
+  return value && allowedPaths.has(value) ? value : "/login";
 }
 
 export async function GET(request: NextRequest) {
@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
   const { url: supabaseUrl, anonKey } = getSupabaseBrowserConfig();
 
   if (!code || !supabaseUrl || !anonKey) {
-    return NextResponse.redirect(new URL("/perfil?estado=autenticacion-error", url.origin));
+    return NextResponse.redirect(new URL("/login?estado=autenticacion-error", url.origin));
   }
 
   const supabase = createServerClient(supabaseUrl, anonKey, {
@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
   const { error } = await supabase.auth.exchangeCodeForSession(code);
 
   if (error) {
-    return NextResponse.redirect(new URL("/perfil?estado=autenticacion-error", url.origin));
+    return NextResponse.redirect(new URL("/login?estado=autenticacion-error", url.origin));
   }
 
   return response;

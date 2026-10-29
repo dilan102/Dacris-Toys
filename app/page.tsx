@@ -17,7 +17,6 @@ import {
   getFeaturedProductsFromDb,
   getProducts,
 } from "@/lib/catalog-db";
-import { getFavoriteProductIds } from "@/lib/favorites";
 
 const guarantees = [
   { icon: "truck", title: "Envíos", text: "Coordinamos la entrega de tu pedido." },
@@ -26,11 +25,9 @@ const guarantees = [
 ];
 
 function makeCarouselRows(products: Product[]) {
-  const availableProducts = products.filter((product) => product.stock > 0);
-
   return [
-    availableProducts.filter((_, index) => index % 2 === 0),
-    availableProducts.filter((_, index) => index % 2 === 1),
+    products.filter((_, index) => index % 2 === 0),
+    products.filter((_, index) => index % 2 === 1),
   ].filter((row) => row.length > 0);
 }
 
@@ -40,12 +37,11 @@ export default async function Home() {
     getFeaturedProductsFromDb(),
   ]);
   const recentRows = makeCarouselRows(recentProducts);
-  const availableFeaturedProducts = featuredProducts.filter((product) => product.stock > 0);
+  const availableFeaturedProducts = featuredProducts;
   const orderedSectionCategories = sortCategoriesByDisplayOrder(sectionCategories);
   const categoryCounts = await getCategoryProductCountsFromDb(
     orderedSectionCategories.map((category) => category.slug),
   );
-  const favoriteProductIds = await getFavoriteProductIds();
 
   return (
     <main className="site-shell">
@@ -99,7 +95,7 @@ export default async function Home() {
             </div>
           </div>
           {recentRows.length > 0 ? (
-            <FeaturedCarousel favoriteProductIds={favoriteProductIds} rows={recentRows} />
+            <FeaturedCarousel rows={recentRows} />
           ) : (
             <div className="empty-media">Pronto encontrarás novedades aquí.</div>
           )}
@@ -115,7 +111,6 @@ export default async function Home() {
           </div>
           {availableFeaturedProducts.length > 0 ? (
             <FeaturedProductGrid
-              favoriteProductIds={favoriteProductIds}
               products={availableFeaturedProducts}
             />
           ) : (
@@ -223,13 +218,6 @@ export default async function Home() {
             <h3>Ayuda</h3>
             <Link href="/faq">Preguntas frecuentes</Link>
             <Link href="/envios-y-devoluciones">Envíos y devoluciones</Link>
-          </div>
-          <div className="footer-column">
-            <h3>Mi cuenta</h3>
-            <Link href="/perfil">Perfil</Link>
-            <Link href="/perfil">Mis pedidos</Link>
-            <Link href="/perfil">Favoritos</Link>
-            <Link href="/carrito">Carrito</Link>
           </div>
           <div className="footer-column">
             <h3>Legal</h3>

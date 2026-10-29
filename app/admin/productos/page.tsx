@@ -34,7 +34,7 @@ export default async function AdminProductsPage() {
                 <div>
                   <h2>{product.name}</h2>
                   <p>
-                    {product.category} - {product.stock} unidades
+                    {product.category}
                   </p>
                 </div>
                 <strong>{formatPrice(product.price)}</strong>
@@ -45,7 +45,7 @@ export default async function AdminProductsPage() {
           <div className="empty-media">Aún no hay productos</div>
         )}
       </section>
-      <BottomNav active="perfil" alwaysVisible />
+      <BottomNav active="categorias" alwaysVisible />
     </main>
   );
 }

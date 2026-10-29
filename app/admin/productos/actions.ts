@@ -77,6 +77,14 @@ async function uploadOptionalProductMedia(
   return uploadProductMedia(file, productId, kind);
 }
 
+async function uploadProductImages(files: FormDataEntryValue[], productId: string) {
+  return Promise.all(
+    files
+      .filter((file): file is File => file instanceof File && file.size > 0)
+      .map((file) => uploadProductMedia(file, productId, "image")),
+  );
+}
+
 export async function saveProductAction(formData: FormData) {
   const name = getString(formData, "name");
   const requestedId = getString(formData, "id");
@@ -90,7 +98,7 @@ export async function saveProductAction(formData: FormData) {
       "Sesión admin inválida al guardar producto:",
       error instanceof Error ? error.message : error,
     );
-    redirect("/acceso?estado=admin-requerido");
+    redirect("/login?estado=admin-requerido");
   }
 
   if (!hasSupabaseServiceRole()) {
@@ -100,7 +108,6 @@ export async function saveProductAction(formData: FormData) {
   const category = getString(formData, "category");
   const subcategory = category === "jugueteria" ? getString(formData, "subcategory") : "";
   const price = Number(getString(formData, "price"));
-  const stock = Number(getString(formData, "stock"));
 
   const validCategory = categories.some(
     (item) => !item.parentSlug && item.slug !== "todos" && item.slug === category,
@@ -113,8 +120,7 @@ export async function saveProductAction(formData: FormData) {
     !name ||
     !validCategory ||
     !validSubcategory ||
-    !Number.isFinite(price) ||
-    !Number.isFinite(stock)
+    !Number.isFinite(price)
   ) {
     redirectToEditor(id || "nuevo", "datos-invalidos");
   }
@@ -144,14 +150,14 @@ export async function saveProductAction(formData: FormData) {
   }
 
   const imageFile = formData.get("imageFile");
-  const videoFile = formData.get("videoFile");
+  const additionalImageFiles = formData.getAll("additionalImageFiles");
   let uploadedImage = "";
-  let uploadedVideo = "";
+  let uploadedImages: string[] = [];
 
   try {
-    [uploadedImage, uploadedVideo] = await Promise.all([
+    [uploadedImage, uploadedImages] = await Promise.all([
       uploadOptionalProductMedia(imageFile, id, "image"),
-      uploadOptionalProductMedia(videoFile, id, "video"),
+      uploadProductImages(additionalImageFiles, id),
     ]);
   } catch (error) {
     console.error(
@@ -161,17 +167,24 @@ export async function saveProductAction(formData: FormData) {
     redirectToEditor(id, "archivo-invalido");
   }
 
+  if (!originalId && !uploadedImage) {
+    redirectToEditor(id, "imagen-principal-requerida");
+  }
+
+  const existingImages = getString(formData, "currentImages").split(",").filter(Boolean);
+
   const product: ProductInput = {
     id,
     name,
     description: getString(formData, "description"),
     detail: getString(formData, "detail"),
     price,
-    image: uploadedImage || getString(formData, "image") || "/product-bloques.png",
-    videoUrl: uploadedVideo || getString(formData, "videoUrl") || undefined,
+    image: uploadedImage || getString(formData, "currentImage") || "/product-bloques.png",
+    images: [...existingImages, ...uploadedImages],
     category,
     subcategory: subcategory || undefined,
-    stock,
+    // Retained for the dormant checkout flow; inventory is not managed in catalogue mode.
+    stock: 0,
     ageRange: "",
     tags: parseTags(getString(formData, "tags")),
     // New products always join the carousel; this is no longer a manual step.
@@ -202,7 +215,7 @@ export async function deleteProductAction(formData: FormData) {
       "Sesión admin inválida al borrar producto:",
       error instanceof Error ? error.message : error,
     );
-    redirect("/acceso?estado=admin-requerido");
+    redirect("/login?estado=admin-requerido");
   }
 
   if (!hasSupabaseServiceRole()) {

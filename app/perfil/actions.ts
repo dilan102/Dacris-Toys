@@ -17,7 +17,7 @@ function getString(formData: FormData, key: string) {
 }
 
 function profileRedirect(status: string): never {
-  redirect(`/acceso?estado=${encodeURIComponent(status)}`);
+  redirect(`/login?estado=${encodeURIComponent(status)}`);
 }
 
 export async function adminLoginAction(formData: FormData) {
@@ -42,14 +42,14 @@ export async function adminLoginAction(formData: FormData) {
 
   await clearLoginFailures(username);
   await setSessionUser(session);
-  revalidatePath("/perfil");
+  revalidatePath("/login");
   revalidatePath("/admin");
   redirect("/admin");
 }
 
 export async function logoutAction() {
   await clearSessionUser();
-  revalidatePath("/perfil");
+  revalidatePath("/login");
   revalidatePath("/admin");
-  redirect("/perfil");
+  redirect("/");
 }

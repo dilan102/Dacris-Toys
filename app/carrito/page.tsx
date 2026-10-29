@@ -16,7 +16,7 @@ export default async function CartPage() {
 
         <CartClient products={products} />
       </section>
-      <BottomNav active="carrito" alwaysVisible />
+      <BottomNav active="categorias" alwaysVisible />
     </main>
   );
 }

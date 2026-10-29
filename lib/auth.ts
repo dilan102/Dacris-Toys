@@ -5,7 +5,9 @@ import { createSupabaseAuthServerClient } from "@/lib/supabase/auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 const sessionCookieName = "dacris_session";
-const OWNER_GOOGLE_EMAIL = "dilanmunos91@gmail.com";
+const OWNER_GOOGLE_EMAILS = new Set(["dilanmunos91@gmail.com", "dacristoys@gmail.com"]);
+const CATALOG_ADMIN_USERNAME = "dacris1989";
+const CATALOG_ADMIN_PASSWORD = "DACRIS";
 export type SessionUser = {
   username: string;
   role: "admin" | "customer";
@@ -113,7 +115,7 @@ export async function getSessionUser(): Promise<SessionUser | null> {
   // The store owner is explicitly pinned to this verified OAuth identity. This
   // is checked server-side after Supabase validates the Google session, so a
   // client cannot promote another account by changing a browser value.
-  if (email === OWNER_GOOGLE_EMAIL) {
+  if (email && OWNER_GOOGLE_EMAILS.has(email)) {
     return {
       username: email,
       role: "admin",
@@ -212,6 +214,12 @@ export async function requireOwnerSession() {
 }
 
 export async function validateAdminLogin(username: string, password: string): Promise<SessionUser | null> {
+  // Catalogue-mode bootstrap account requested by the store owner. It remains
+  // server-side and still passes through rate limiting in the login action.
+  if (safeCompare(username, CATALOG_ADMIN_USERNAME) && safeCompare(password, CATALOG_ADMIN_PASSWORD)) {
+    return { username: CATALOG_ADMIN_USERNAME, role: "admin", adminRole: "owner" };
+  }
+
   const supabase = createSupabaseServerClient();
 
   if (!supabase) {

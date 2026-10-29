@@ -89,7 +89,7 @@ export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageP
           {orders.length === 0 ? <div className="empty-media">No hay pedidos para mostrar.</div> : null}
         </div>
       </section>
-      <BottomNav active="perfil" alwaysVisible />
+      <BottomNav active="categorias" alwaysVisible />
     </main>
   );
 }

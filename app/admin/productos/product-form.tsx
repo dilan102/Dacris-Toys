@@ -40,12 +40,12 @@ export function ProductForm({
       action={saveProductAction}
       onSubmit={(event) => {
         const formData = new FormData(event.currentTarget);
-        const files = [formData.get("imageFile"), formData.get("videoFile")];
+        const files = [formData.get("imageFile"), ...formData.getAll("additionalImageFiles")];
         const tooLarge = files.some((file) => file instanceof File && file.size > 24 * 1024 * 1024);
 
         if (tooLarge) {
           event.preventDefault();
-          setFormError("La imagen o video pesa más de 24 MB. Usa un archivo más liviano.");
+          setFormError("Una imagen pesa más de 24 MB. Usa un archivo más liviano.");
           return;
         }
 
@@ -54,6 +54,8 @@ export function ProductForm({
     >
       {formError ? <p className="form-status">{formError}</p> : null}
       <input type="hidden" name="originalId" value={product?.id ?? ""} />
+      <input type="hidden" name="currentImage" value={product?.image ?? ""} />
+      <input type="hidden" name="currentImages" value={product?.images?.join(",") ?? ""} />
       <label>
         ID / slug {product ? "(no se puede cambiar al editar)" : "(opcional)"}
         <input
@@ -96,17 +98,6 @@ export function ProductForm({
         />
       </label>
       <label>
-        Stock
-        <input
-          type="number"
-          name="stock"
-          defaultValue={product?.stock}
-          placeholder="0"
-          min="0"
-          required
-        />
-      </label>
-      <label>
         Categoría
         <select
           name="category"
@@ -135,30 +126,13 @@ export function ProductForm({
         </label>
       ) : null}
       <label>
-        URL de imagen
-        <input
-          type="text"
-          name="image"
-          defaultValue={product?.image}
-          placeholder="/product-bloques.png"
-        />
+        Imagen principal {product ? "(opcional para reemplazarla)" : ""}
+        <input type="file" name="imageFile" accept="image/*" required={!product} />
       </label>
       <label>
-        Subir imagen
-        <input type="file" name="imageFile" accept="image/*" />
-      </label>
-      <label>
-        URL de video
-        <input
-          type="text"
-          name="videoUrl"
-          defaultValue={product?.videoUrl}
-          placeholder="https://..."
-        />
-      </label>
-      <label>
-        Subir video
-        <input type="file" name="videoFile" accept="video/*" />
+        Imágenes adicionales
+        <input type="file" name="additionalImageFiles" accept="image/*" multiple />
+        <span className="form-help">Puedes seleccionar varias imágenes para la galería.</span>
       </label>
       <label>
         Etiquetas
@@ -178,7 +152,7 @@ export function ProductForm({
           required
         />
       </label>
-      <p className="form-help">Este producto aparecerá automáticamente en el carrusel de inicio.</p>
+      <p className="form-help">Este producto aparecerá automáticamente en el catálogo y el carrusel de inicio.</p>
       <SaveButton />
     </form>
   );

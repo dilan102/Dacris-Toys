@@ -14,8 +14,9 @@ type AdminProductPageProps = {
 
 const statusMessages: Record<string, string> = {
   "borrar-error": "No se pudo borrar el producto. Revisa permisos de Supabase.",
-  "datos-invalidos": "Revisa nombre, categoría, precio y stock antes de guardar.",
-  "archivo-invalido": "No se pudo subir el archivo. Usa una imagen JPG, PNG, WebP o AVIF, o un video MP4, WebM o MOV de máximo 24 MB.",
+  "datos-invalidos": "Revisa nombre, categoría y precio antes de guardar.",
+  "archivo-invalido": "No se pudo subir la imagen. Usa JPG, PNG, WebP o AVIF de máximo 24 MB.",
+  "imagen-principal-requerida": "Selecciona una imagen principal para publicar el producto.",
   "slug-duplicado": "Ese ID ya pertenece a otro producto. Usa uno diferente o déjalo vacío para generarlo automáticamente.",
   "slug-no-editable": "El ID no se puede cambiar después de crear el producto.",
   "configuracion-servidor": "No se pueden guardar productos todavía: falta configurar SUPABASE_SERVICE_ROLE_KEY en el servidor.",
@@ -46,14 +47,7 @@ export default async function AdminProductPage({ params, searchParams }: AdminPr
     <main className="site-shell inner-page admin-page">
       <AppHeader title={product ? "Editar producto" : "Nuevo producto"} backHref="/admin/productos" />
       <section className="content-wrap editor-layout">
-        {product?.videoUrl ? (
-          <video
-            className="editor-preview-media"
-            src={product.videoUrl}
-            poster={product.image}
-            controls
-          />
-        ) : product ? (
+        {product ? (
           <Image
             className="editor-preview-media"
             src={product.image}
@@ -81,7 +75,7 @@ export default async function AdminProductPage({ params, searchParams }: AdminPr
           </form>
         ) : null}
       </section>
-      <BottomNav active="perfil" alwaysVisible />
+      <BottomNav active="categorias" alwaysVisible />
     </main>
   );
 }

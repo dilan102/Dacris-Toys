@@ -24,7 +24,7 @@ export default function CheckoutPage() {
           </p>
         </aside>
       </section>
-      <BottomNav active="carrito" alwaysVisible />
+      <BottomNav active="categorias" alwaysVisible />
     </main>
   );
 }

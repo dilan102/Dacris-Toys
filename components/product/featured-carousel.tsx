@@ -12,10 +12,9 @@ import type { Product } from "@/lib/catalog";
 
 type FeaturedCarouselProps = {
   rows: Product[][];
-  favoriteProductIds?: string[];
 };
 
-export function FeaturedCarousel({ rows, favoriteProductIds = [] }: FeaturedCarouselProps) {
+export function FeaturedCarousel({ rows }: FeaturedCarouselProps) {
   const startX = useRef(0);
   const startScrollLeft = useRef(0);
   const isTouching = useRef(false);
@@ -183,10 +182,7 @@ export function FeaturedCarousel({ rows, favoriteProductIds = [] }: FeaturedCaro
         >
           {[...row, ...row, ...row].map((product, index) => (
             <div className="featured-slide" key={`${product.id}-${index}`}>
-              <ProductCard
-                isFavorite={favoriteProductIds.includes(product.id)}
-                product={product}
-              />
+              <ProductCard product={product} />
             </div>
           ))}
         </div>

@@ -14,6 +14,7 @@ type ProductRow = {
   detail: string;
   price: number;
   image: string;
+  images?: string[] | string | null;
   video_url?: string | null;
   videoUrl?: string | null;
   category: string;
@@ -54,6 +55,7 @@ function mapProduct(row: ProductRow): Product {
     detail: row.detail,
     price: Number(row.price),
     image: row.image,
+    images: parseTags(row.images),
     videoUrl: row.video_url ?? row.videoUrl ?? undefined,
     category: row.category,
     subcategory: row.subcategory ?? undefined,
@@ -64,7 +66,7 @@ function mapProduct(row: ProductRow): Product {
   };
 }
 
-function toSnakeProductRow(product: ProductInput): ProductWriteRow {
+function toSnakeProductRow(product: ProductInput, includeImages = true): ProductWriteRow {
   return {
     id: product.id,
     name: product.name,
@@ -72,6 +74,7 @@ function toSnakeProductRow(product: ProductInput): ProductWriteRow {
     detail: product.detail,
     price: product.price,
     image: product.image,
+    ...(includeImages ? { images: product.images ?? [] } : {}),
     video_url: product.videoUrl || null,
     category: product.category,
     subcategory: product.subcategory || null,
@@ -82,7 +85,7 @@ function toSnakeProductRow(product: ProductInput): ProductWriteRow {
   };
 }
 
-function toCamelProductRow(product: ProductInput): ProductWriteRow {
+function toCamelProductRow(product: ProductInput, includeImages = true): ProductWriteRow {
   return {
     id: product.id,
     name: product.name,
@@ -90,6 +93,7 @@ function toCamelProductRow(product: ProductInput): ProductWriteRow {
     detail: product.detail,
     price: product.price,
     image: product.image,
+    ...(includeImages ? { images: product.images ?? [] } : {}),
     videoUrl: product.videoUrl || null,
     category: product.category,
     subcategory: product.subcategory || null,
@@ -100,7 +104,7 @@ function toCamelProductRow(product: ProductInput): ProductWriteRow {
   };
 }
 
-function toBasicProductRow(product: ProductInput): ProductWriteRow {
+function toBasicProductRow(product: ProductInput, includeImages = true): ProductWriteRow {
   return {
     id: product.id,
     name: product.name,
@@ -108,6 +112,7 @@ function toBasicProductRow(product: ProductInput): ProductWriteRow {
     detail: product.detail,
     price: product.price,
     image: product.image,
+    ...(includeImages ? { images: product.images ?? [] } : {}),
     category: product.category,
     subcategory: product.subcategory || null,
     stock: product.stock,
@@ -214,6 +219,12 @@ export async function saveProduct(product: ProductInput) {
     withTextTags(toCamelProductRow(product), product),
     toBasicProductRow(product),
     withTextTags(toBasicProductRow(product), product),
+    toSnakeProductRow(product, false),
+    withTextTags(toSnakeProductRow(product, false), product),
+    toCamelProductRow(product, false),
+    withTextTags(toCamelProductRow(product, false), product),
+    toBasicProductRow(product, false),
+    withTextTags(toBasicProductRow(product, false), product),
   ];
   let lastError = "";
 
