@@ -31,6 +31,8 @@ export function HomeHero() {
     "--nav-welcome-offset": `${(1 - navProgress) * -8}px`,
     "--nav-welcome-scale": 0.94 + navProgress * 0.06,
     "--nav-round-scale": 0.82 + navProgress * 0.18,
+    "--whatsapp-callout-offset": `${navProgress * 10}px`,
+    "--whatsapp-callout-scale": 1 - navProgress * 0.06,
   } as CSSProperties;
 
   return (
@@ -60,6 +62,20 @@ export function HomeHero() {
         >
           <Image src="/Dacris-Logo.png" alt="" width={1536} height={1024} />
         </Link>
+      </div>
+
+      <div className="whatsapp-contact" style={navStyle}>
+        <p className="whatsapp-callout">Si eres mayorista, contáctate con nosotros</p>
+        <a
+          className="whatsapp-button"
+          href="https://wa.me/573122180298"
+          target="_blank"
+          rel="noreferrer"
+          aria-label="Contactar a Dacri's Toys por WhatsApp"
+        >
+          <Icon name="whatsapp" />
+          <span>WhatsApp</span>
+        </a>
       </div>
 
       <div className="hero-copy">
