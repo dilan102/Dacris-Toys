@@ -3089,10 +3089,11 @@ svg {
 @media (min-width: 1120px) {
   .hero {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(360px, 520px);
+    grid-template-columns: minmax(440px, 0.95fr) minmax(460px, 0.8fr);
     grid-template-rows: auto 1fr auto;
-    column-gap: 44px;
-    min-height: max(100svh, 690px);
+    column-gap: clamp(44px, 6vw, 104px);
+    min-height: max(100svh, 720px);
+    padding: 104px clamp(52px, 7vw, 132px) 38px;
     background-position: right top;
     background-size: auto 100%;
   }
@@ -3102,9 +3103,28 @@ svg {
   }
 
   .hero-copy {
+    width: min(100%, 620px);
     align-self: center;
     margin-top: 0;
     text-align: left;
+  }
+
+  .hero-copy .eyebrow {
+    font-size: 11px;
+  }
+
+  .hero h1 {
+    max-width: 620px;
+    font-size: clamp(54px, 4.6vw, 72px);
+  }
+
+  .hero h1 span {
+    font-size: clamp(76px, 6.5vw, 102px);
+  }
+
+  .hero-copy > p:last-child {
+    max-width: 390px;
+    font-size: 17px;
   }
 
   .hero-copy > p:last-child,
@@ -3115,6 +3135,7 @@ svg {
   .hero-logo {
     align-self: center;
     width: 100%;
+    max-width: 630px;
     margin-top: 0;
   }
 
@@ -3125,9 +3146,32 @@ svg {
     margin-top: 0;
   }
 
+  .whatsapp-contact {
+    right: clamp(28px, 4vw, 72px);
+    bottom: 28px;
+  }
+
   .trust-bar {
     grid-column: 1 / -1;
+    width: min(100%, 700px);
     margin-top: 30px;
+  }
+
+  .content-wrap {
+    padding: 42px 40px 0;
+  }
+
+  .section {
+    margin-top: 46px;
+  }
+
+  .section h2,
+  .offer-card h2 {
+    font-size: 28px;
+  }
+
+  .section-description {
+    font-size: 15px;
   }
 
   .guarantee-grid {
@@ -3144,6 +3188,7 @@ svg {
     justify-content: center;
     align-items: flex-start;
     gap: 22px;
+    margin-top: 22px;
   }
 
   .category-showcase {
@@ -3159,9 +3204,26 @@ svg {
     flex-basis: min(47%, 665px);
   }
 
-  .section h2,
-  .offer-card h2 {
-    font-size: 24px;
+  .product-grid {
+    gap: 24px;
+    margin-top: 24px;
+  }
+
+  .product-card {
+    padding: 14px;
+    border-radius: 22px;
+  }
+
+  .product-card h3 {
+    font-size: 17px;
+  }
+
+  .product-card p {
+    font-size: 13.5px;
+  }
+
+  .featured-carousel {
+    margin-top: 24px;
   }
 
   .admin-actions {
