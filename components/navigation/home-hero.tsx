@@ -20,8 +20,8 @@ export function HomeHero({ isAdmin = false }: HomeHeroProps) {
       const heroBottom = heroRef.current?.getBoundingClientRect().bottom ?? Infinity;
       // The last 240px of the hero become the transition zone for the navbar.
       setNavProgress(Math.min(1, Math.max(0, (160 - heroBottom) / 240)));
-      // Keep the wholesale message until the hero has just passed the viewport.
-      setWhatsappProgress(Math.min(1, Math.max(0, (55 - heroBottom) / 90)));
+      // Change the WhatsApp control only once the first catalogue section begins.
+      setWhatsappProgress(Math.min(1, Math.max(0, -heroBottom / 64)));
     };
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
