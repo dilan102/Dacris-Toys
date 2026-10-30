@@ -3094,8 +3094,12 @@ svg {
     column-gap: clamp(44px, 6vw, 104px);
     min-height: max(100svh, 720px);
     padding: 104px clamp(52px, 7vw, 132px) 38px;
-    background-position: right top;
-    background-size: auto 100%;
+    background-color: #9fdafa;
+    background-image:
+      radial-gradient(circle at 76% 46%, rgba(255, 255, 255, 0.7) 0, rgba(255, 255, 255, 0) 39%),
+      url("/Dacris-Hero-Fondo.png");
+    background-position: center, right 48%;
+    background-size: auto, clamp(650px, 58vw, 880px) auto;
   }
 
   .hero-top {
