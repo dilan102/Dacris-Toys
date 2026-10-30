@@ -325,6 +325,34 @@ export async function uploadProductMedia(file: File, productId: string, kind: "i
   return data.publicUrl;
 }
 
+export async function createProductVideoUploadUrl(productId: string, mimeType: string) {
+  const supabase = createSupabaseServerClient();
+
+  if (!supabase) {
+    throw new Error("Faltan variables de Supabase para subir archivos.");
+  }
+
+  const extension = mediaFormats.video[mimeType];
+  if (!extension) {
+    throw new Error("Formato no permitido. Usa MP4, WebM o MOV.");
+  }
+
+  const path = `${safeMediaFolder(productId)}/video/${randomUUID()}.${extension}`;
+  const { data, error } = await supabase.storage
+    .from("product-media")
+    .createSignedUploadUrl(path, { upsert: false });
+
+  if (error || !data) throw new Error(error?.message || "No se pudo preparar la subida del video.");
+
+  const { data: publicUrl } = supabase.storage.from("product-media").getPublicUrl(path);
+
+  return {
+    path,
+    token: data.token,
+    publicUrl: publicUrl.publicUrl,
+  };
+}
+
 export async function getProductsByCategoryFromDb(
   slug: string,
   search = "",

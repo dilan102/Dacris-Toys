@@ -9,6 +9,7 @@ import {
   deleteProduct,
   getProductById,
   saveProduct,
+  createProductVideoUploadUrl,
   uploadProductMedia,
   type ProductInput,
 } from "@/lib/catalog-db";
@@ -31,6 +32,25 @@ function buildSlug(value: string) {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
+}
+
+export async function prepareProductVideoUploadAction(productId: string, mimeType: string) {
+  try {
+    await requireAdminSession();
+
+    if (!hasSupabaseServiceRole()) {
+      return { success: false as const, message: "Falta configurar la subida de archivos en el servidor." };
+    }
+
+    const upload = await createProductVideoUploadUrl(productId, mimeType);
+    return { success: true as const, ...upload };
+  } catch (error) {
+    console.error(
+      "No se pudo preparar la subida del video:",
+      error instanceof Error ? error.message : error,
+    );
+    return { success: false as const, message: "No se pudo preparar la subida del video. Inténtalo de nuevo." };
+  }
 }
 
 function redirectToEditor(id: string, status: string): never {
@@ -152,6 +172,7 @@ export async function saveProductAction(formData: FormData) {
   const imageFile = formData.get("imageFile");
   const additionalImageFiles = formData.getAll("additionalImageFiles");
   const videoFile = formData.get("videoFile");
+  const directVideoUrl = getString(formData, "uploadedVideo");
   let uploadedImage = "";
   let uploadedImages: string[] = [];
   let uploadedVideo = "";
@@ -160,7 +181,7 @@ export async function saveProductAction(formData: FormData) {
     [uploadedImage, uploadedImages, uploadedVideo] = await Promise.all([
       uploadOptionalProductMedia(imageFile, id, "image"),
       uploadProductImages(additionalImageFiles, id),
-      uploadOptionalProductMedia(videoFile, id, "video"),
+      directVideoUrl ? Promise.resolve("") : uploadOptionalProductMedia(videoFile, id, "video"),
     ]);
   } catch (error) {
     console.error(
@@ -184,7 +205,7 @@ export async function saveProductAction(formData: FormData) {
     price,
     image: uploadedImage || getString(formData, "currentImage") || "/product-bloques.png",
     images: [...existingImages, ...uploadedImages],
-    videoUrl: uploadedVideo || getString(formData, "currentVideo") || undefined,
+    videoUrl: directVideoUrl || uploadedVideo || getString(formData, "currentVideo") || undefined,
     category,
     subcategory: subcategory || undefined,
     // Retained for the dormant checkout flow; inventory is not managed in catalogue mode.
