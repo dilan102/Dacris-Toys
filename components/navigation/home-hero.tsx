@@ -17,12 +17,20 @@ export function HomeHero({ isAdmin = false }: HomeHeroProps) {
 
   useEffect(() => {
     const handleScroll = () => {
-      const heroBottom = heroRef.current?.getBoundingClientRect().bottom ?? Infinity;
+      const heroBounds = heroRef.current?.getBoundingClientRect();
+      const heroBottom = heroBounds?.bottom ?? Infinity;
       // The last 240px of the hero become the transition zone for the navbar.
       setNavProgress(Math.min(1, Math.max(0, (160 - heroBottom) / 240)));
-      // Keep the wholesale prompt until the bottom edge of the hero reaches
-      // the middle of the viewport.
-      setWhatsappProgress(heroBottom <= window.innerHeight / 2 ? 1 : 0);
+      const heroHeight = heroBounds?.height ?? 1;
+      const distanceScrolledIntoHero = Math.max(0, -(heroBounds?.top ?? 0));
+      const transitionStart = heroHeight * 0.25;
+      const transitionLength = Math.max(96, heroHeight * 0.12);
+
+      // Begin after a quarter of the hero has been scrolled, then smoothly
+      // transition the wholesale prompt and WhatsApp control.
+      setWhatsappProgress(
+        Math.min(1, Math.max(0, (distanceScrolledIntoHero - transitionStart) / transitionLength)),
+      );
     };
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });

@@ -262,7 +262,12 @@ svg {
   font-size: 14px;
   font-weight: 950;
   text-decoration: none;
-  transition: transform 180ms ease, background 180ms ease;
+  transition:
+    width 180ms ease,
+    gap 180ms ease,
+    padding 180ms ease,
+    transform 180ms ease,
+    background 180ms ease;
 }
 
 .whatsapp-button:hover,
@@ -283,6 +288,7 @@ svg {
   overflow: hidden;
   opacity: var(--whatsapp-label-opacity, 1);
   white-space: nowrap;
+  transition: width 180ms ease, opacity 150ms ease;
 }
 
 .whatsapp-callout {
@@ -302,6 +308,7 @@ svg {
   opacity: var(--whatsapp-callout-opacity, 1);
   transform: translateY(var(--whatsapp-callout-offset)) scale(var(--whatsapp-callout-scale));
   pointer-events: none;
+  transition: opacity 180ms ease, transform 180ms ease;
 }
 
 .whatsapp-callout::after {
