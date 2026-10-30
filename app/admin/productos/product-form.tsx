@@ -40,12 +40,16 @@ export function ProductForm({
       action={saveProductAction}
       onSubmit={(event) => {
         const formData = new FormData(event.currentTarget);
-        const files = [formData.get("imageFile"), ...formData.getAll("additionalImageFiles")];
+        const files = [
+          formData.get("imageFile"),
+          ...formData.getAll("additionalImageFiles"),
+          formData.get("videoFile"),
+        ];
         const tooLarge = files.some((file) => file instanceof File && file.size > 24 * 1024 * 1024);
 
         if (tooLarge) {
           event.preventDefault();
-          setFormError("Una imagen pesa más de 24 MB. Usa un archivo más liviano.");
+          setFormError("Una imagen o video pesa más de 24 MB. Usa un archivo más liviano.");
           return;
         }
 
@@ -56,6 +60,7 @@ export function ProductForm({
       <input type="hidden" name="originalId" value={product?.id ?? ""} />
       <input type="hidden" name="currentImage" value={product?.image ?? ""} />
       <input type="hidden" name="currentImages" value={product?.images?.join(",") ?? ""} />
+      <input type="hidden" name="currentVideo" value={product?.videoUrl ?? ""} />
       <label>
         ID / slug {product ? "(no se puede cambiar al editar)" : "(opcional)"}
         <input
@@ -133,6 +138,11 @@ export function ProductForm({
         Imágenes adicionales
         <input type="file" name="additionalImageFiles" accept="image/*" multiple />
         <span className="form-help">Puedes seleccionar varias imágenes para la galería.</span>
+      </label>
+      <label>
+        Video del producto {product?.videoUrl ? "(opcional para reemplazarlo)" : "(opcional)"}
+        <input type="file" name="videoFile" accept="video/mp4,video/webm,video/quicktime" />
+        <span className="form-help">Formatos permitidos: MP4, WebM o MOV. Máximo 24 MB.</span>
       </label>
       <label>
         Etiquetas

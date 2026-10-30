@@ -151,13 +151,16 @@ export async function saveProductAction(formData: FormData) {
 
   const imageFile = formData.get("imageFile");
   const additionalImageFiles = formData.getAll("additionalImageFiles");
+  const videoFile = formData.get("videoFile");
   let uploadedImage = "";
   let uploadedImages: string[] = [];
+  let uploadedVideo = "";
 
   try {
-    [uploadedImage, uploadedImages] = await Promise.all([
+    [uploadedImage, uploadedImages, uploadedVideo] = await Promise.all([
       uploadOptionalProductMedia(imageFile, id, "image"),
       uploadProductImages(additionalImageFiles, id),
+      uploadOptionalProductMedia(videoFile, id, "video"),
     ]);
   } catch (error) {
     console.error(
@@ -181,6 +184,7 @@ export async function saveProductAction(formData: FormData) {
     price,
     image: uploadedImage || getString(formData, "currentImage") || "/product-bloques.png",
     images: [...existingImages, ...uploadedImages],
+    videoUrl: uploadedVideo || getString(formData, "currentVideo") || undefined,
     category,
     subcategory: subcategory || undefined,
     // Retained for the dormant checkout flow; inventory is not managed in catalogue mode.

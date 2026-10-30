@@ -2,16 +2,17 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { HomeMenu } from "@/components/navigation/home-menu";
 import { Icon } from "@/components/ui/icon";
 
 export function HomeHero() {
-  const [isCompact, setIsCompact] = useState(false);
+  const heroRef = useRef<HTMLElement>(null);
+  const [isPastHero, setIsPastHero] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsCompact(window.scrollY > 80);
+      setIsPastHero((heroRef.current?.getBoundingClientRect().bottom ?? Infinity) <= 96);
     };
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -19,15 +20,32 @@ export function HomeHero() {
   }, []);
 
   return (
-    <section className="hero">
-      <div className={`hero-top ${isCompact ? "hero-top-compact" : ""}`} aria-label="Navegación principal">
+    <section className="hero" ref={heroRef}>
+      <div className={`hero-top ${isPastHero ? "hero-top-compact" : ""}`} aria-label="Navegación principal">
         <HomeMenu />
         <div className="hero-center">
-          <Link className="brand-pill brand-welcome hero-brand" href="/" aria-label="Ir al inicio">
+          <Link
+            className={`brand-pill hero-brand ${isPastHero ? "hero-brand-hidden" : ""}`}
+            href="/"
+            aria-label="Ir al inicio"
+          >
+            <Image src="/Dacris-Logo.png" alt="Dacri's Toys" width={1536} height={1024} priority />
+          </Link>
+          <Link
+            className={`brand-pill brand-welcome hero-welcome ${isPastHero ? "hero-welcome-visible" : ""}`}
+            href="/"
+            aria-label="Ir al inicio"
+          >
             Bienvenidos
           </Link>
         </div>
-        <span className="hero-header-spacer" aria-hidden />
+        <Link
+          className={`hero-round-logo ${isPastHero ? "hero-round-logo-visible" : ""}`}
+          href="/"
+          aria-label="Ir al inicio"
+        >
+          <Image src="/Dacris-Logo.png" alt="" width={1536} height={1024} />
+        </Link>
       </div>
 
       <div className="hero-copy">

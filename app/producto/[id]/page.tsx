@@ -58,7 +58,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
           <Link href={productCategoryHref}>{productCategoryLabel}</Link>
         </nav>
         <section className="product-detail">
-          <ProductGallery name={product.name} mainImage={product.image} images={product.images} />
+          <ProductGallery
+            name={product.name}
+            mainImage={product.image}
+            images={product.images}
+            videoUrl={product.videoUrl}
+          />
           <div className="detail-panel">
             <p className="detail-category">{productCategoryLabel}</p>
             <h1>{product.name}</h1>
