@@ -100,6 +100,15 @@ svg {
 }
 
 .hero-top {
+  --nav-progress: 0;
+  --nav-vertical-padding: 8px;
+  --nav-horizontal-padding: 0px;
+  --nav-shadow-opacity: 0;
+  --nav-brand-offset: 0px;
+  --nav-brand-scale: 1;
+  --nav-welcome-offset: -8px;
+  --nav-welcome-scale: 0.94;
+  --nav-round-scale: 0.82;
   position: fixed;
   top: 12px;
   left: 50%;
@@ -111,13 +120,12 @@ svg {
   gap: 12px;
   width: min(calc(100% - 40px), 1120px);
   margin: 0 auto;
-  padding: 8px 0;
+  padding: var(--nav-vertical-padding) var(--nav-horizontal-padding);
   border-radius: 999px;
+  background: rgb(236 250 255 / var(--nav-progress));
+  box-shadow: 0 8px 22px rgb(20 86 133 / var(--nav-shadow-opacity));
+  backdrop-filter: blur(12px);
   transform: translateX(-50%);
-  transition:
-    padding 180ms ease,
-    background 180ms ease,
-    box-shadow 180ms ease;
 }
 
 .hero-top > :first-child {
@@ -126,13 +134,6 @@ svg {
 
 .hero-top > :last-child {
   grid-column: 3;
-}
-
-.hero-top-compact {
-  padding: 4px 10px;
-  background: rgba(236, 250, 255, 0.78);
-  box-shadow: 0 8px 22px rgba(20, 86, 133, 0.16);
-  backdrop-filter: blur(12px);
 }
 
 .icon-button {
@@ -179,11 +180,15 @@ svg {
   align-items: center;
   justify-content: center;
   padding-inline: 18px;
-  color: #26324a;
-  font-size: 16px;
+  border: 1px solid rgba(88, 182, 239, 0.44);
+  color: #0a5791;
+  background: linear-gradient(135deg, #ffffff 0%, #e8f8ff 100%);
+  font-size: 15px;
   font-weight: 950;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.08em;
   text-decoration: none;
+  text-transform: uppercase;
+  text-shadow: 0 1px 0 white;
 }
 
 .hero-center {
@@ -198,28 +203,11 @@ svg {
 
 .hero-center .brand-pill {
   position: absolute;
-  transition:
-    opacity 240ms ease,
-    transform 240ms ease,
-    box-shadow 240ms ease;
 }
 
 .hero-welcome {
-  pointer-events: none;
-  opacity: 0;
-  transform: translateY(-8px) scale(0.94);
-}
-
-.hero-welcome-visible {
-  pointer-events: auto;
-  opacity: 1;
-  transform: translateY(0) scale(1);
-}
-
-.hero-brand-hidden {
-  pointer-events: none;
-  opacity: 0;
-  transform: translateY(-8px) scale(0.94);
+  opacity: var(--nav-progress);
+  transform: translateY(var(--nav-welcome-offset)) scale(var(--nav-welcome-scale));
 }
 
 .hero-round-logo {
@@ -232,10 +220,8 @@ svg {
   border-radius: 50%;
   background: white;
   box-shadow: 0 6px 16px rgba(20, 86, 133, 0.18);
-  pointer-events: none;
-  opacity: 0;
-  transform: scale(0.82);
-  transition: opacity 220ms ease, transform 220ms ease;
+  opacity: var(--nav-progress);
+  transform: scale(var(--nav-round-scale));
 }
 
 .hero-round-logo img {
@@ -245,10 +231,9 @@ svg {
   object-position: center;
 }
 
-.hero-round-logo-visible {
-  pointer-events: auto;
-  opacity: 1;
-  transform: scale(1);
+.hero-brand {
+  opacity: calc(1 - var(--nav-progress));
+  transform: translateY(var(--nav-brand-offset)) scale(var(--nav-brand-scale));
 }
 
 .login-pill {
