@@ -16,6 +16,7 @@ import {
   getFeaturedProductsFromDb,
   getProducts,
 } from "@/lib/catalog-db";
+import { getSessionUser } from "@/lib/auth";
 
 const guarantees = [
   { icon: "truck", title: "Envíos", text: "Coordinamos la entrega de tu pedido." },
@@ -31,9 +32,10 @@ function makeCarouselRows(products: Product[]) {
 }
 
 export default async function Home() {
-  const [recentProducts, featuredProducts] = await Promise.all([
+  const [recentProducts, featuredProducts, session] = await Promise.all([
     getProducts("created_at"),
     getFeaturedProductsFromDb(),
+    getSessionUser(),
   ]);
   const recentRows = makeCarouselRows(recentProducts);
   const availableFeaturedProducts = featuredProducts;
@@ -44,7 +46,7 @@ export default async function Home() {
 
   return (
     <main className="site-shell">
-      <HomeHero />
+      <HomeHero isAdmin={session?.role === "admin"} />
       <div className="content-wrap" id="catalogo">
         <section className="section">
           <div className="section-title-row">

@@ -9,7 +9,11 @@ const menuItems = [
   { label: "Categorías", href: "/categorias/todos", icon: "grid" },
 ];
 
-export function HomeMenu() {
+type HomeMenuProps = {
+  isAdmin?: boolean;
+};
+
+export function HomeMenu({ isAdmin = false }: HomeMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
@@ -57,6 +61,12 @@ export function HomeMenu() {
                 {item.label}
               </Link>
             ))}
+            {isAdmin ? (
+              <Link href="/admin/productos" onClick={() => setIsOpen(false)}>
+                <Icon name="user" />
+                Admin
+              </Link>
+            ) : null}
           </nav>
         </div>
       </div>

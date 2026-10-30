@@ -6,15 +6,22 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { HomeMenu } from "@/components/navigation/home-menu";
 import { Icon } from "@/components/ui/icon";
 
-export function HomeHero() {
+type HomeHeroProps = {
+  isAdmin?: boolean;
+};
+
+export function HomeHero({ isAdmin = false }: HomeHeroProps) {
   const heroRef = useRef<HTMLElement>(null);
   const [navProgress, setNavProgress] = useState(0);
+  const [whatsappProgress, setWhatsappProgress] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => {
       const heroBottom = heroRef.current?.getBoundingClientRect().bottom ?? Infinity;
       // The last 240px of the hero become the transition zone for the navbar.
       setNavProgress(Math.min(1, Math.max(0, (160 - heroBottom) / 240)));
+      // Keep the wholesale message until the hero has just passed the viewport.
+      setWhatsappProgress(Math.min(1, Math.max(0, (55 - heroBottom) / 90)));
     };
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -31,14 +38,21 @@ export function HomeHero() {
     "--nav-welcome-offset": `${(1 - navProgress) * -8}px`,
     "--nav-welcome-scale": 0.94 + navProgress * 0.06,
     "--nav-round-scale": 0.82 + navProgress * 0.18,
-    "--whatsapp-callout-offset": `${navProgress * 10}px`,
-    "--whatsapp-callout-scale": 1 - navProgress * 0.06,
+    "--whatsapp-callout-opacity": 1 - whatsappProgress,
+    "--whatsapp-callout-offset": `${whatsappProgress * 10}px`,
+    "--whatsapp-callout-scale": 1 - whatsappProgress * 0.06,
+    "--whatsapp-button-width": `${146 - whatsappProgress * 92}px`,
+    "--whatsapp-button-gap": `${9 * (1 - whatsappProgress)}px`,
+    "--whatsapp-button-padding-left": `${15 * (1 - whatsappProgress)}px`,
+    "--whatsapp-button-padding-right": `${18 * (1 - whatsappProgress)}px`,
+    "--whatsapp-label-width": `${72 * (1 - whatsappProgress)}px`,
+    "--whatsapp-label-opacity": 1 - whatsappProgress,
   } as CSSProperties;
 
   return (
     <section className="hero" ref={heroRef}>
       <div className="hero-top" style={navStyle} aria-label="Navegación principal">
-        <HomeMenu />
+        <HomeMenu isAdmin={isAdmin} />
         <div className="hero-center">
           <Link
             className="brand-pill hero-brand"
