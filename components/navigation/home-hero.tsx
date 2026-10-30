@@ -20,9 +20,9 @@ export function HomeHero({ isAdmin = false }: HomeHeroProps) {
       const heroBottom = heroRef.current?.getBoundingClientRect().bottom ?? Infinity;
       // The last 240px of the hero become the transition zone for the navbar.
       setNavProgress(Math.min(1, Math.max(0, (160 - heroBottom) / 240)));
-      // Keep the wholesale prompt throughout the hero; change state exactly
-      // when the catalogue begins after it.
-      setWhatsappProgress(heroBottom <= 0 ? 1 : 0);
+      // Keep the wholesale prompt until the bottom edge of the hero reaches
+      // the middle of the viewport.
+      setWhatsappProgress(heroBottom <= window.innerHeight / 2 ? 1 : 0);
     };
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
