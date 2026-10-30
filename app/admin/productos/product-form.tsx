@@ -75,16 +75,15 @@ export function ProductForm({
       action={saveProductAction}
       onSubmit={async (event) => {
         const formData = new FormData(event.currentTarget);
-        const files = [
+        const imageFiles = [
           formData.get("imageFile"),
           ...formData.getAll("additionalImageFiles"),
-          formData.get("videoFile"),
         ];
-        const tooLarge = files.some((file) => file instanceof File && file.size > 24 * 1024 * 1024);
+        const tooLarge = imageFiles.some((file) => file instanceof File && file.size > 24 * 1024 * 1024);
 
         if (tooLarge) {
           event.preventDefault();
-          setFormError("Una imagen o video pesa más de 24 MB. Usa un archivo más liviano.");
+          setFormError("Una imagen pesa más de 24 MB. Usa un archivo más liviano.");
           return;
         }
 
@@ -199,7 +198,7 @@ export function ProductForm({
           accept="video/mp4,video/webm,video/quicktime"
           disabled={isUploadingVideo}
         />
-        <span className="form-help">Formatos permitidos: MP4, WebM o MOV. Máximo 24 MB.</span>
+        <span className="form-help">Formatos permitidos: MP4, WebM o MOV.</span>
       </label>
       {isUploadingVideo ? <p className="form-help">Subiendo video...</p> : null}
       <label>

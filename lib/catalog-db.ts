@@ -257,7 +257,7 @@ export async function deleteProduct(id: string) {
   if (error) throw new Error(error.message);
 }
 
-const MAX_PRODUCT_MEDIA_BYTES = 24 * 1024 * 1024;
+const MAX_PRODUCT_IMAGE_BYTES = 24 * 1024 * 1024;
 
 const mediaFormats: Record<"image" | "video", Record<string, string>> = {
   image: {
@@ -288,7 +288,7 @@ function safeMediaFolder(productId: string) {
 
 function validateProductMedia(file: File, kind: "image" | "video") {
   if (file.size <= 0) throw new Error("El archivo está vacío.");
-  if (file.size > MAX_PRODUCT_MEDIA_BYTES) {
+  if (kind === "image" && file.size > MAX_PRODUCT_IMAGE_BYTES) {
     throw new Error("El archivo supera el límite de 24 MB.");
   }
 
