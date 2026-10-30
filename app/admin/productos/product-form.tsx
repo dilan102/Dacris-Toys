@@ -37,6 +37,7 @@ export function ProductForm({
   const [category, setCategory] = useState(initialCategory);
   const [formError, setFormError] = useState("");
   const [isUploadingVideo, setIsUploadingVideo] = useState(false);
+  const [uploadedVideoName, setUploadedVideoName] = useState("");
   const videoInputRef = useRef<HTMLInputElement>(null);
   const uploadedVideoRef = useRef<HTMLInputElement>(null);
   const showSubcategory = category === "jugueteria";
@@ -67,6 +68,7 @@ export function ProductForm({
     if (error) throw new Error("No se pudo subir el video. Inténtalo de nuevo.");
     if (uploadedVideoRef.current) uploadedVideoRef.current.value = upload.publicUrl;
     if (videoInputRef.current) videoInputRef.current.value = "";
+    setUploadedVideoName(video.name);
   };
 
   return (
@@ -197,10 +199,19 @@ export function ProductForm({
           name="videoFile"
           accept="video/mp4,video/webm,video/quicktime"
           disabled={isUploadingVideo}
+          onChange={() => {
+            if (uploadedVideoRef.current) uploadedVideoRef.current.value = "";
+            setUploadedVideoName("");
+          }}
         />
         <span className="form-help">Formatos permitidos: MP4, WebM o MOV.</span>
       </label>
       {isUploadingVideo ? <p className="form-help">Subiendo video...</p> : null}
+      {uploadedVideoName ? (
+        <p className="form-help" role="status">
+          Video cargado: {uploadedVideoName}. Se guardará al enviar el producto.
+        </p>
+      ) : null}
       <label>
         Etiquetas
         <input
